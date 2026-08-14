@@ -70,7 +70,9 @@ src/
   database/                schema.sql (DDL), db.py (connection mgmt), seed.py (demo data)
   models/models.py        Dataclasses + enums for every domain object (Tier, Source, Brief, ...)
   providers/               Abstract provider interfaces (base.py) + mock implementations
-                           (mock_providers.py) + registry.py (mock/live provider selection)
+                           (mock_providers.py) + registry.py (mock/live provider selection) +
+                           edgar_client.py (shared SEC EDGAR client) + live_edgar.py (live US
+                           fundamentals/filings)
   scoring/                 12-component scorecard: defaults.py (weights), context.py (cited
                            evidence bundle), component_scorers.py (per-component logic),
                            scorecard.py (weighting, caps, warnings)
@@ -81,9 +83,12 @@ src/
                            detection), alert, notes, audit, settings
   utils/                   export.py (Markdown/HTML brief export), formatting.py
   ui/                       One module per Streamlit page, plus components.py for shared widgets
-  radar/                   Autonomous scanner — separate feature, see section 5. feeds.py (RSS
-                           sources), keyword_filter.py (free pre-filter), llm_tagger.py (Claude
-                           Haiku 4.5 tagging), store.py (JSON persistence), scan.py (orchestration)
+  radar/                   Autonomous scanner — separate feature, see section 5. feeds.py (RSS +
+                           SEC EDGAR search sources), keyword_filter.py / freshness.py (free
+                           pre-filters), llm_tagger.py (Claude Haiku 4.5 tagging),
+                           ticker_registry.py (SEC ticker verification), store.py (JSON
+                           persistence), analytics.py (trend aggregation), notifier.py (optional
+                           webhook), scan.py (orchestration)
 scripts/run_radar_scan.py  CLI entrypoint the GitHub Actions workflow calls
 .github/workflows/         radar_scan.yml — the scheduled job that runs Radar
 tests/                     pytest suite (see section 6)
@@ -230,12 +235,64 @@ It is held to the same guardrails as the rest of the app:
 - **No advice language, hard-enforced** — every LLM-generated summary is run through
   `guardrails.language_filters.enforce_no_advice_language()` before it's ever saved; anything that
   fails is discarded and logged, not shown.
-- **Fully auditable** — every scan run (feeds checked, items seen, items sent to the LLM, items
-  saved, items rejected by the guardrail, any errors) is recorded in `data/radar_state.json` and
-  visible in the "Scan run history" expander at the bottom of the Radar page.
+- **Ticker tagging cross-checked, not trusted outright** — US tickers the LLM tags are verified
+  against SEC EDGAR's free ticker registry (`src/radar/ticker_registry.py`); the app labels each
+  tag "verified" or "unverified" rather than presenting every guess as confirmed. Non-US tickers
+  are always labeled unverified — no equivalent free registry is wired up for them yet.
+- **Fully auditable** — every scan run (feeds checked, items within the freshness window, items
+  sent to the LLM, items saved, items rejected by the guardrail, any errors) is recorded in
+  `data/radar_state.json` and visible in the "Scan run history" expander at the bottom of the Radar
+  page. An **overdue-scan banner** on that page fires if the last recorded run is more than 3x the
+  expected 2-hour cadence old — a signal the scheduled job stopped firing silently.
 - **Cost-bounded** — a hard cap (`EDGE_RADAR_MAX_ITEMS_PER_RUN`, default 25) on how many candidate
   items get an LLM call per run; a free, zero-cost keyword pre-filter runs first so only plausibly
   relevant items reach that cap.
+
+### What it captures and where from
+
+For each item that survives the freshness gate and keyword pre-filter, Claude Haiku 4.5 is given
+**only the item's title and RSS snippet** (never the full article body — no scraping) and asked to
+judge relevance, tag any concretely-implicated public company, and write a 1–2 sentence factual
+summary grounded only in that text. The result: headline, summary, niche, source link, ticker
+tag(s) with jurisdiction and verified/unverified status, and timestamps.
+
+Sources are the entire crawl surface — Radar never follows links off these or discovers new sources
+on its own. All hand-picked and URL-verified before being added (`src/radar/feeds.py`):
+
+| Niche | Sources |
+|---|---|
+| AI Buildout | Data Center Dynamics, Data Center Knowledge, Semiconductor Engineering, NVIDIA Newsroom, TechCrunch AI, IEEE Spectrum AI, **+ SEC EDGAR full-text search** for real 8-K filings mentioning data-center capex (capped at 8/run — see below) |
+| Humanoids | IEEE Spectrum Robotics, The Robot Report |
+| Space | NASA News Releases, SpaceNews, Ars Technica Space, Space.com |
+| Macro / Rates / Policy | Federal Reserve press releases, European Central Bank press, Bank of Japan press (English), Bank of England news |
+
+The SEC EDGAR entry is not RSS — it's a live full-text search (`src/providers/edgar_client.py`,
+free and keyless, same API `live_edgar.py` uses) for real 8-K filings mentioning data-center capex,
+filed in roughly the last 2 days. Its findings carry a **confirmed filer straight from the filing
+itself**, not an LLM's guess at who a news story is about — the strongest-grounded ticker tags
+Radar produces. Capped at the 8 most relevant hits per run so one broad-matching source can't crowd
+out every other feed's share of the per-run LLM budget.
+
+### Cross-referenced against your Watchlist, and trend views
+
+Radar isn't just a separate feed you have to remember to check:
+- **Ticker Detail** has a "Radar Mentions" tab showing any findings that tag the currently selected
+  ticker.
+- The **Radar** page has a "Watchlist only" filter to see just what's relevant to tickers you're
+  already tracking.
+- The **Radar Trends** page aggregates the findings history — mentions per day, per niche, and the
+  most-mentioned tickers over a selectable 7/14/30-day window — instead of only a flat
+  reverse-chronological list.
+
+### Optional: webhook notifications
+
+Set `EDGE_RADAR_WEBHOOK_URL` (as a GitHub Actions repo secret, same place as `ANTHROPIC_API_KEY`)
+to a Slack/Discord/Mattermost incoming webhook URL, and Radar posts a one-message digest of each
+run's new findings. **This is not filtered to your Watchlist** — the scan job runs in GitHub
+Actions, which only has the checked-out repo; your Watchlist lives in `data/edge_research.db`, a
+local SQLite file that's gitignored and never committed, so the job has no way to see it. Left
+unset (the default), nothing is sent — this is genuinely inactive infrastructure, not a hidden
+default-on notification.
 
 ### Architecture — why no new database
 

@@ -30,6 +30,12 @@ jobs:
       - name: Run Radar scan
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Optional — a Slack/Discord/Mattermost incoming webhook URL. Leave
+          # this repo secret unset and notifications simply don't fire; see
+          # README "Radar" section and src/radar/notifier.py for what it does
+          # (and importantly, does NOT do — it's not filtered to your
+          # Watchlist, since this job can't see your local database).
+          EDGE_RADAR_WEBHOOK_URL: ${{ secrets.EDGE_RADAR_WEBHOOK_URL }}
         run: python -m scripts.run_radar_scan
 
       - name: Commit updated findings

@@ -26,6 +26,7 @@ from src.radar.keyword_filter import is_plausibly_relevant
 from src.radar.llm_tagger import TaggingError, tag_item
 from src.radar.models import RadarFinding, ScanRunRecord
 from src.radar.ticker_registry import verify_ticker_tags
+from src.radar import notifier as notify
 
 DEFAULT_MAX_ITEMS_PER_RUN = 25
 
@@ -140,5 +141,11 @@ def run(max_items_per_run: int | None = None) -> ScanRunRecord:
         existing_seen_hashes=seen_hashes,
         existing_run_history=existing_run_history,
     )
+
+    # Best-effort, after the run's own record is already final — a broken
+    # webhook must never affect what got saved or the run's audit record.
+    webhook_error = notify.send_webhook_notification(new_findings)
+    if webhook_error:
+        print(f"Radar webhook notification failed (non-fatal): {webhook_error}")
 
     return run_record
