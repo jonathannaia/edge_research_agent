@@ -90,12 +90,22 @@ def render(settings: Settings) -> None:
     st.write(f"{len(rows)} of {len(findings)} findings shown.")
 
     for f in rows:
-        ticker_str = ", ".join(f"{t.ticker} ({t.jurisdiction})" for t in f.tickers) if f.tickers else "No ticker identified"
+        ticker_str = (
+            ", ".join(
+                f"{t.ticker} ({t.jurisdiction}, {'verified' if t.verified else 'unverified'})" for t in f.tickers
+            )
+            if f.tickers else "No ticker identified"
+        )
         with st.container(border=True):
             st.markdown(f"**{f.headline}**")
             st.caption(f"{f.niche} · {f.source_name} · {_hours_ago(f.retrieved_at)}")
             st.write(f.summary)
             st.write(f"**Tickers:** {ticker_str}")
+            if f.tickers:
+                st.caption(
+                    "\"Verified\" = cross-checked against SEC EDGAR's ticker registry (US tickers only "
+                    "for now). \"Unverified\" means not confirmed either way, not necessarily wrong."
+                )
             st.write(f"[Read source]({f.source_url})")
             if f.relevance_reason:
                 st.caption(f"Why flagged: {f.relevance_reason}")

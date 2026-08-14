@@ -5,3 +5,7 @@ pytest>=8.0,<9.0
 # Radar (autonomous scanner) only — not used by the manual research app
 anthropic>=0.40,<1.0
 feedparser>=6.0,<7.0
+
+# Live SEC EDGAR provider (src/providers/edgar_client.py) — used for a
+# reliable CA bundle when calling data.sec.gov / www.sec.gov over HTTPS
+certifi>=2024.0.0

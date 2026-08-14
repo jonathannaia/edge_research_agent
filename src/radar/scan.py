@@ -25,6 +25,7 @@ from src.radar.freshness import is_fresh
 from src.radar.keyword_filter import is_plausibly_relevant
 from src.radar.llm_tagger import TaggingError, tag_item
 from src.radar.models import RadarFinding, ScanRunRecord
+from src.radar.ticker_registry import verify_ticker_tags
 
 DEFAULT_MAX_ITEMS_PER_RUN = 25
 
@@ -108,7 +109,7 @@ def run(max_items_per_run: int | None = None) -> ScanRunRecord:
                 source_type=feed.source_type,
                 published_at=entry.get("published", ""),
                 retrieved_at=retrieved_at,
-                tickers=tagged.tickers,
+                tickers=verify_ticker_tags(tagged.tickers),
                 relevance_reason=tagged.relevance_reason,
                 url_hash=store.url_hash(link),
                 id=store.url_hash(link),

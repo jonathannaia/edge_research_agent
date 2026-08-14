@@ -5,14 +5,15 @@ import streamlit as st
 from src.config.settings import Settings
 
 PROVIDER_DOMAINS = [
-    ("Fundamentals", "SEC EDGAR company facts API (free) or a fundamentals vendor.", "EDGE_FUNDAMENTALS_API_KEY"),
-    ("Filings", "SEC EDGAR full-text search & submissions API (free, requires a compliant User-Agent).", "EDGE_SEC_USER_AGENT"),
-    ("Earnings transcripts", "A transcript vendor (e.g. a paid API) or manually pasted excerpts via the Sources page.", "—"),
-    ("Insider transactions", "SEC EDGAR Form 4 filings (free).", "EDGE_SEC_USER_AGENT"),
-    ("Ownership data", "SEC 13F aggregation or a data vendor.", "—"),
-    ("Price & volume", "A market data vendor (free tier or paid).", "EDGE_MARKET_DATA_API_KEY"),
-    ("Earnings calendar", "A market data vendor or company IR page.", "EDGE_MARKET_DATA_API_KEY"),
-    ("News & press releases", "A news API or official company RSS/press feeds.", "EDGE_NEWS_API_KEY"),
+    # (Domain, Typical live source, Env var(s), Status)
+    ("Fundamentals (US)", "SEC EDGAR XBRL company facts API (free).", "EDGE_SEC_USER_AGENT", "LIVE"),
+    ("Filings (US)", "SEC EDGAR submissions API (free, requires a compliant User-Agent).", "EDGE_SEC_USER_AGENT", "LIVE"),
+    ("Earnings transcripts", "A transcript vendor (e.g. a paid API) or manually pasted excerpts via the Sources page.", "—", "Mock only"),
+    ("Insider transactions", "SEC EDGAR Form 4 filings (free).", "EDGE_SEC_USER_AGENT", "Mock only"),
+    ("Ownership data", "SEC 13F aggregation or a data vendor.", "—", "Mock only"),
+    ("Price & volume", "A market data vendor (free tier or paid).", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
+    ("Earnings calendar", "A market data vendor or company IR page.", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
+    ("News & press releases", "A news API or official company RSS/press feeds.", "EDGE_NEWS_API_KEY", "Mock only"),
 ]
 
 JURISDICTION_REGULATORS = [
@@ -26,16 +27,24 @@ JURISDICTION_REGULATORS = [
 
 def render(settings: Settings) -> None:
     st.metric("Current data mode", settings.data_mode)
-    st.write(
-        "V1 ships with **mock providers only** — every provider interface below is implemented against "
-        "local fixtures / synthetic data so the app is fully usable with no API keys. To go live for a "
-        "given data domain, implement its interface in `src/providers/` (e.g. `live_edgar.py`) and wire it "
-        "into `src/providers/registry.py` — one domain at a time, no big-bang cutover required."
-    )
+    if settings.data_mode == "live":
+        st.success(
+            "Live mode is on. US fundamentals and filings pull real data from SEC EDGAR "
+            "(`src/providers/live_edgar.py`). Every other domain below is still mock, and a ticker "
+            "EDGAR has no data for falls back to mock automatically — always check the `is_mock` "
+            "badge on what you're looking at, never assume live mode means everything is real."
+        )
+    else:
+        st.write(
+            "Set `EDGE_DATA_MODE=live` in `.env` to turn on live SEC EDGAR fundamentals and filings for "
+            "US tickers — no API key needed, just a compliant `EDGE_SEC_USER_AGENT`. Every other domain "
+            "below is still mock-only; implement its interface in `src/providers/` and wire it into "
+            "`src/providers/registry.py` to go live, one domain at a time."
+        )
 
     st.subheader("Provider domains")
     st.dataframe(
-        [{"Domain": d, "Typical live source": s, "Env var(s)": e} for d, s, e in PROVIDER_DOMAINS],
+        [{"Domain": d, "Typical live source": s, "Env var(s)": e, "Status": st_} for d, s, e, st_ in PROVIDER_DOMAINS],
         width='stretch', hide_index=True,
     )
 

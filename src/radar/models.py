@@ -28,6 +28,12 @@ class TickerTag:
     ticker: str
     company_name: str
     jurisdiction: str  # matches src.models.models.Jurisdiction values
+    # True only if cross-checked against a real ticker registry (currently
+    # SEC EDGAR for US tickers only — see src/radar/ticker_registry.py).
+    # False means "not confirmed", not "wrong" — the LLM's tag may still be
+    # correct, just unverified. Non-US tags are always False for now since
+    # no equivalent free registry is wired up yet.
+    verified: bool = False
 
 
 @dataclass
