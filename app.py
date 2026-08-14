@@ -17,6 +17,7 @@ from src.ui import (
     guardrails_page as ui_guardrails,
     new_brief as ui_new_brief,
     radar as ui_radar,
+    radar_trends as ui_radar_trends,
     scoring_settings as ui_scoring_settings,
     sources as ui_sources,
     ticker_detail as ui_ticker_detail,
@@ -49,6 +50,7 @@ PAGES = {
     "Research Rules / Guardrails": ui_guardrails,
     "App Settings": ui_app_settings,
     "Radar": ui_radar,
+    "Radar Trends": ui_radar_trends,
 }
 
 # Two independent categories, per the user's split: everything you drive
@@ -61,7 +63,7 @@ SECTIONS = {
         "Alerts / Review Queue", "Sources", "Scoring Settings", "Data Provider Settings",
         "Research Rules / Guardrails", "App Settings",
     ],
-    "Radar (Autonomous)": ["Radar"],
+    "Radar (Autonomous)": ["Radar", "Radar Trends"],
 }
 PAGE_SECTION = {page: section for section, pages in SECTIONS.items() for page in pages}
 
