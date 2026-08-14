@@ -1,5 +1,116 @@
 [
   {
+    "niche": "Space",
+    "headline": "Rocket Report: Rocket Lab shows off its flexibility; Blue Origin's two-pad plan",
+    "summary": "Rocket Lab demonstrates operational flexibility while Blue Origin plans a two-pad launch facility, amid discussion of constrained launch capacity in the space industry.",
+    "source_url": "https://arstechnica.com/space/2026/08/rocket-report-rocket-lab-shows-off-its-flexibility-blue-origins-two-pad-plan/",
+    "source_name": "Ars Technica — Space",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 11:00:49 +0000",
+    "retrieved_at": "2026-08-14T20:31:19+00:00",
+    "tickers": [
+      {
+        "ticker": "RKLB",
+        "company_name": "Rocket Lab USA Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Article discusses launch capacity and specific space companies' operational plans.",
+    "url_hash": "9b5bff2aaa96ad50",
+    "id": "9b5bff2aaa96ad50"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Hyperscalers might regret embracing natural gas if new forecast proves correct",
+    "summary": "A forecast predicts natural gas prices could triple in some U.S. regions, potentially increasing operational costs for hyperscalers powering AI data centers with natural gas.",
+    "source_url": "https://techcrunch.com/2026/08/14/hyperscalers-might-regret-embracing-natural-gas-if-new-forecast-proves-correct/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 14:05:00 +0000",
+    "retrieved_at": "2026-08-14T20:31:05+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses power costs for hyperscaler AI data centers, a key AI Buildout infrastructure consideration.",
+    "url_hash": "51108fffa3587a39",
+    "id": "51108fffa3587a39"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Does Mark Zuckerberg really believe AI is ‘for everyone’?",
+    "summary": "Meta released Glimmer, an open-weight AI model that users can download and run locally, alongside a statement from Mark Zuckerberg advocating for AI accessibility beyond centralized labs, contrasting with the company's more restricted Muse Spark model.",
+    "source_url": "https://techcrunch.com/video/does-mark-zuckerberg-really-believe-ai-is-for-everyone/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 15:43:28 +0000",
+    "retrieved_at": "2026-08-14T20:31:02+00:00",
+    "tickers": [
+      {
+        "ticker": "META",
+        "company_name": "Meta Platforms",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Meta released an open-weight AI model and infrastructure decision directly relevant to AI buildout and accessibility.",
+    "url_hash": "744ebd52ee08e82a",
+    "id": "744ebd52ee08e82a"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Nvidia’s $500B AI Infrastructure Bet Raises Power Stakes",
+    "summary": "Nvidia is pursuing a $500B financing initiative for AI infrastructure that could reshape how operators fund deployments, with power and interconnection remaining critical constraints on scaling.",
+    "source_url": "https://www.datacenterknowledge.com/investing/nvidia-s-500b-ai-infrastructure-bet-raises-power-stakes",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 13 Aug 2026 21:09:14 GMT",
+    "retrieved_at": "2026-08-14T20:30:59+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia Corporation",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly addresses Nvidia's major AI infrastructure financing initiative and power constraints for AI buildout.",
+    "url_hash": "853eaa7173bde2cc",
+    "id": "853eaa7173bde2cc"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Galaxy Bets Its Data Center Edge on Power, Not ‘Bragawatts’",
+    "summary": "Galaxy's data center strategy prioritizes resilient, redundant power transmission systems over simply maximizing megawatt capacity, arguing that power quality and reliability matter more than quantity alone.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-construction/galaxy-bets-its-data-center-edge-on-power-not-bragawatts-",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 12:38:54 GMT",
+    "retrieved_at": "2026-08-14T20:30:57+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses data center power infrastructure strategy, which is core to AI buildout scope.",
+    "url_hash": "bd35c1c86e8874df",
+    "id": "bd35c1c86e8874df"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Land Banking Explained: A Novel Strategy for Data Center Expansion",
+    "summary": "Data center operators are using land banking as a strategy to secure sites for future expansion amid rising demand and increasingly difficult site selection challenges.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-site-selection/land-banking-explained-a-novel-strategy-for-data-center-expansion",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 17:46:14 GMT",
+    "retrieved_at": "2026-08-14T20:30:56+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses data center expansion strategy and land acquisition for future infrastructure growth.",
+    "url_hash": "48139c0271b90104",
+    "id": "48139c0271b90104"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Chip Industry Week In Review",
     "summary": "A weekly industry review covering semiconductor developments including Lam Research and ASE expansions, data center shifts, Nvidia's new plans, and various chip architecture and technology advances.",
