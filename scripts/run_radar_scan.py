@@ -19,6 +19,7 @@ def main() -> int:
     print(f"Radar scan finished: status={record.status}")
     print(f"  feeds checked:        {record.feeds_checked}")
     print(f"  items seen:           {record.items_seen}")
+    print(f"  after freshness gate: {record.items_after_freshness_filter}")
     print(f"  after keyword filter: {record.items_after_keyword_filter}")
     print(f"  sent to LLM:          {record.items_sent_to_llm}")
     print(f"  saved:                {record.items_saved}")

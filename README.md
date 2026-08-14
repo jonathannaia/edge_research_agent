@@ -211,6 +211,10 @@ schedule and never touches your Watchlist, theses, or research briefs, and nothi
 manual workflow affects it either.
 
 It is held to the same guardrails as the rest of the app:
+- **24-hour freshness gate, hard-enforced** — an item must have a publish timestamp within the last
+  24 hours (`EDGE_RADAR_MAX_AGE_HOURS`, default 24) or it's dropped before it ever reaches the LLM.
+  An item with no parseable publish date is dropped too — unknown age is treated as stale, not
+  assumed fresh. This runs first, for free, ahead of every other filter.
 - **Cited by construction** — every finding links to its source article; there's no free-floating
   claim, because the finding *is* a summary of that one article.
 - **No advice language, hard-enforced** — every LLM-generated summary is run through

@@ -21,6 +21,7 @@ from datetime import datetime, timezone
 from src.guardrails.language_filters import AdviceLanguageError, enforce_no_advice_language
 from src.radar import feeds as feeds_module
 from src.radar import store
+from src.radar.freshness import is_fresh
 from src.radar.keyword_filter import is_plausibly_relevant
 from src.radar.llm_tagger import TaggingError, tag_item
 from src.radar.models import RadarFinding, ScanRunRecord
@@ -44,9 +45,18 @@ def run(max_items_per_run: int | None = None) -> ScanRunRecord:
     raw_items, fetch_errors = feeds_module.fetch_all()
     errors.extend(fetch_errors)
 
+    # Freshness gate FIRST — never surface anything older than
+    # EDGE_RADAR_MAX_AGE_HOURS (default 24h), regardless of how far back a
+    # feed's own RSS history goes. Free (no LLM cost either way), so it runs
+    # before dedup and the keyword filter.
+    fresh_items = [
+        (feed, entry) for feed, entry in raw_items
+        if is_fresh(entry.get("published_epoch"))
+    ]
+
     # Drop already-seen items (dedup by URL) before any further processing.
     unseen = []
-    for feed, entry in raw_items:
+    for feed, entry in fresh_items:
         link = entry.get("link", "")
         if not link:
             continue
@@ -114,6 +124,7 @@ def run(max_items_per_run: int | None = None) -> ScanRunRecord:
         status=status,
         feeds_checked=len(feeds_module.FEEDS),
         items_seen=len(raw_items),
+        items_after_freshness_filter=len(fresh_items),
         items_after_keyword_filter=len(candidates),
         items_sent_to_llm=len(candidates),
         items_saved=len(new_findings),

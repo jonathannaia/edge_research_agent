@@ -45,7 +45,9 @@ def render(settings: Settings) -> None:
     st.caption(
         "Fully autonomous, strictly scoped to four niches: AI Buildout, Humanoids, Space, and "
         "Macro/Rates/Policy. Separate from your manual Watchlist and Research Briefs — nothing here "
-        "affects those, and nothing there affects this."
+        "affects those, and nothing there affects this. Every finding must be published within the "
+        "last 24 hours (`EDGE_RADAR_MAX_AGE_HOURS`) — anything older, or with no parseable publish "
+        "date, is dropped before it ever reaches the AI model."
     )
     st.warning(RADAR_DISCLAIMER)
 
@@ -112,6 +114,7 @@ def _render_run_history(run_history) -> None:
                 "Status": r.status,
                 "Feeds": r.feeds_checked,
                 "Items seen": r.items_seen,
+                "Within 24h": r.items_after_freshness_filter,
                 "Sent to LLM": r.items_sent_to_llm,
                 "Saved": r.items_saved,
                 "Guardrail-rejected": r.items_rejected_by_guardrail,

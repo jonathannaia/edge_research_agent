@@ -8,6 +8,7 @@ research pipeline).
 """
 from __future__ import annotations
 
+import calendar
 from dataclasses import dataclass
 
 from src.radar.models import Niche
@@ -58,12 +59,20 @@ def fetch_feed(feed: Feed, timeout: int = 15) -> tuple[list[dict], str | None]:
 
     entries = []
     for e in parsed.entries:
+        # feedparser normalizes whatever date format the feed uses into a
+        # UTC time.struct_time on *_parsed — far more reliable than trying
+        # to parse the raw "published" string ourselves. This is what the
+        # freshness gate in scan.py filters on.
+        date_struct = e.get("published_parsed") or e.get("updated_parsed")
+        published_epoch = calendar.timegm(date_struct) if date_struct else None
+
         entries.append(
             {
                 "title": (e.get("title") or "").strip(),
                 "link": (e.get("link") or "").strip(),
                 "summary": (e.get("summary") or e.get("description") or "").strip(),
                 "published": e.get("published") or e.get("updated") or "",
+                "published_epoch": published_epoch,
             }
         )
     return entries, None

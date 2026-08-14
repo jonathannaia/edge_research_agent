@@ -61,6 +61,7 @@ class ScanRunRecord:
     status: str  # "ok" | "partial_error" | "error"
     feeds_checked: int
     items_seen: int
+    items_after_freshness_filter: int  # items within EDGE_RADAR_MAX_AGE_HOURS (default 24h)
     items_after_keyword_filter: int
     items_sent_to_llm: int
     items_saved: int

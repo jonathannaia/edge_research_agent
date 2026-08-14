@@ -1,11 +1,35 @@
 """Radar tests. The LLM tagger is always mocked here — the test suite must
 never make a real Anthropic API call (cost, determinism, CI without a key)."""
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
 from src.radar import scan, store
+from src.radar.freshness import is_fresh
 from src.radar.keyword_filter import is_plausibly_relevant
 from src.radar.llm_tagger import TaggingResult
 from src.radar.models import Niche, RadarFinding, ScanRunRecord, TickerTag
+
+
+def _epoch_hours_ago(hours: float) -> int:
+    return int((datetime.now(timezone.utc) - timedelta(hours=hours)).timestamp())
+
+
+# --- freshness ---
+
+def test_freshness_accepts_item_within_window():
+    assert is_fresh(_epoch_hours_ago(1)) is True
+
+
+def test_freshness_accepts_item_right_at_window_edge():
+    assert is_fresh(_epoch_hours_ago(23.9), max_hours=24) is True
+
+
+def test_freshness_rejects_item_older_than_window():
+    assert is_fresh(_epoch_hours_ago(36), max_hours=24) is False
+
+
+def test_freshness_rejects_item_with_no_publish_date():
+    assert is_fresh(None) is False
 
 
 # --- keyword_filter ---
@@ -45,8 +69,8 @@ def test_store_round_trip_and_dedup(tmp_path, monkeypatch):
     )
     run_record = ScanRunRecord(
         started_at="2026-08-01T00:59:00+00:00", finished_at="2026-08-01T01:00:00+00:00",
-        status="ok", feeds_checked=1, items_seen=1, items_after_keyword_filter=1,
-        items_sent_to_llm=1, items_saved=1, items_rejected_by_guardrail=0,
+        status="ok", feeds_checked=1, items_seen=1, items_after_freshness_filter=1,
+        items_after_keyword_filter=1, items_sent_to_llm=1, items_saved=1, items_rejected_by_guardrail=0,
     )
 
     store.save_scan_results([finding], run_record)
@@ -78,7 +102,8 @@ def test_store_bounds_findings_to_max(tmp_path, monkeypatch):
         )
         run_record = ScanRunRecord(
             started_at="x", finished_at="y", status="ok", feeds_checked=1, items_seen=1,
-            items_after_keyword_filter=1, items_sent_to_llm=1, items_saved=1, items_rejected_by_guardrail=0,
+            items_after_freshness_filter=1, items_after_keyword_filter=1, items_sent_to_llm=1,
+            items_saved=1, items_rejected_by_guardrail=0,
         )
         store.save_scan_results([finding], run_record)
 
@@ -97,7 +122,7 @@ def test_scan_rejects_finding_with_advice_language(tmp_path, monkeypatch):
     monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
 
     feed = _fake_feed()
-    entry = {"title": "Fed signals rate cut", "link": "https://example.com/fed-story", "summary": "Central bank hints at policy shift.", "published": ""}
+    entry = {"title": "Fed signals rate cut", "link": "https://example.com/fed-story", "summary": "Central bank hints at policy shift.", "published": "", "published_epoch": _epoch_hours_ago(1)}
 
     with patch("src.radar.scan.feeds_module.fetch_all", return_value=([(feed, entry)], [])):
         with patch(
@@ -121,7 +146,7 @@ def test_scan_saves_clean_finding(tmp_path, monkeypatch):
     monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
 
     feed = _fake_feed()
-    entry = {"title": "Fed holds rates steady", "link": "https://example.com/fed-hold", "summary": "The Federal Reserve left rates unchanged.", "published": ""}
+    entry = {"title": "Fed holds rates steady", "link": "https://example.com/fed-hold", "summary": "The Federal Reserve left rates unchanged.", "published": "", "published_epoch": _epoch_hours_ago(1)}
 
     with patch("src.radar.scan.feeds_module.fetch_all", return_value=([(feed, entry)], [])):
         with patch(
@@ -147,7 +172,7 @@ def test_scan_skips_items_below_keyword_relevance(tmp_path, monkeypatch):
     monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
 
     feed = _fake_feed()
-    entry = {"title": "Local bakery opens new branch", "link": "https://example.com/bakery", "summary": "", "published": ""}
+    entry = {"title": "Local bakery opens new branch", "link": "https://example.com/bakery", "summary": "", "published": "", "published_epoch": _epoch_hours_ago(1)}
 
     with patch("src.radar.scan.feeds_module.fetch_all", return_value=([(feed, entry)], [])):
         with patch("src.radar.scan.tag_item") as mock_tag:
@@ -155,4 +180,42 @@ def test_scan_skips_items_below_keyword_relevance(tmp_path, monkeypatch):
             mock_tag.assert_not_called()
 
     assert record.items_after_keyword_filter == 0
+    assert record.items_saved == 0
+
+
+def test_scan_drops_item_older_than_freshness_window(tmp_path, monkeypatch):
+    monkeypatch.setattr(store, "FINDINGS_PATH", tmp_path / "radar_findings.json")
+    monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
+
+    feed = _fake_feed()
+    entry = {
+        "title": "Fed holds rates steady", "link": "https://example.com/fed-old",
+        "summary": "The Federal Reserve left rates unchanged.", "published": "",
+        "published_epoch": _epoch_hours_ago(36),  # older than the default 24h window
+    }
+
+    with patch("src.radar.scan.feeds_module.fetch_all", return_value=([(feed, entry)], [])):
+        with patch("src.radar.scan.tag_item") as mock_tag:
+            record = scan.run(max_items_per_run=5)
+            mock_tag.assert_not_called()  # never even reaches the LLM — dropped for free
+
+    assert record.items_after_freshness_filter == 0
+    assert record.items_saved == 0
+    assert store.load_findings() == []
+
+
+def test_scan_drops_item_with_no_publish_date(tmp_path, monkeypatch):
+    monkeypatch.setattr(store, "FINDINGS_PATH", tmp_path / "radar_findings.json")
+    monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
+
+    feed = _fake_feed()
+    entry = {"title": "Fed holds rates steady", "link": "https://example.com/fed-nodate", "summary": "", "published": ""}
+    # no "published_epoch" key at all — simulates a feed entry with no parseable date
+
+    with patch("src.radar.scan.feeds_module.fetch_all", return_value=([(feed, entry)], [])):
+        with patch("src.radar.scan.tag_item") as mock_tag:
+            record = scan.run(max_items_per_run=5)
+            mock_tag.assert_not_called()
+
+    assert record.items_after_freshness_filter == 0
     assert record.items_saved == 0
