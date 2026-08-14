@@ -17,11 +17,39 @@ PROVIDER_DOMAINS = [
 ]
 
 JURISDICTION_REGULATORS = [
-    ("United States", "SEC EDGAR", "Free. Full-text search & submissions API, requires a compliant User-Agent header."),
-    ("Japan", "EDINET", "Free. Financial Services Agency's disclosure system; API returns filings in Japanese."),
-    ("South Korea", "DART", "Free with a registered API key from the Financial Supervisory Service; filings in Korean."),
-    ("China", "CNINFO / SSE / SZSE", "Free public disclosure portals; filings in Simplified Chinese."),
-    ("Hong Kong", "HKEXnews", "Free public disclosure portal for HKEX-listed issuers."),
+    # (Jurisdiction, Regulator, Notes, Status)
+    (
+        "United States", "SEC EDGAR",
+        "Free, keyless — just a compliant User-Agent header.",
+        "LIVE (see src/providers/live_edgar.py)",
+    ),
+    (
+        "Japan", "EDINET",
+        "Free official API (v2). Requires registering an account at "
+        "api.edinet-fsa.go.jp with phone number verification to get an API key. "
+        "Filings are in Japanese — no translation step built yet.",
+        "Blocked on account signup (needs your phone number — can't be done on your behalf)",
+    ),
+    (
+        "South Korea", "DART (OpenDART)",
+        "Free official API. Requires registering an account at opendart.fss.or.kr "
+        "with email verification to get a 40-char API key. Filings are in Korean — "
+        "no translation step built yet.",
+        "Blocked on account signup (needs your email verification — can't be done on your behalf)",
+    ),
+    (
+        "China", "CNINFO / SSE / SZSE",
+        "No official public API exists. Only options are scraping undocumented "
+        "endpoints or a paid third-party vendor.",
+        "Blocked — scraping would violate the app's own ToS-compliance guardrail",
+    ),
+    (
+        "Hong Kong", "HKEXnews",
+        "Public and login-free to browse, but its search is a stateful Java web "
+        "form (session/viewstate-based), not a documented API — confirmed by "
+        "direct inspection, not assumed.",
+        "Blocked — no stable programmatic access without reverse-engineering a fragile, unsupported endpoint",
+    ),
 ]
 
 
@@ -52,19 +80,20 @@ def render(settings: Settings) -> None:
     st.write(
         "Each ticker carries a `jurisdiction` field (set when you add it on the Watchlist page) that "
         "identifies its primary regulator. `SourceType.Regulatory Filing` is deliberately generic — "
-        "it covers all of these — so a live `FilingsProvider` implementation should branch on the "
-        "ticker's jurisdiction to call the right regulator's API. None of these are wired up in V1; "
-        "all filings are mock data regardless of jurisdiction."
+        "it covers all of these — so a live `FilingsProvider` implementation branches on the ticker's "
+        "jurisdiction to call the right regulator's API. Only US filings are live so far; the other "
+        "three are genuinely blocked right now, each for a different documented reason (see Status "
+        "below) — not just unimplemented."
     )
     st.dataframe(
-        [{"Jurisdiction": j, "Regulator / system": r, "Notes": n} for j, r, n in JURISDICTION_REGULATORS],
+        [{"Jurisdiction": j, "Regulator / system": r, "Notes": n, "Status": s} for j, r, n, s in JURISDICTION_REGULATORS],
         width='stretch', hide_index=True,
     )
     st.caption(
-        "Non-English filings (EDINET, DART, CNINFO) will need translation before they can feed the "
-        "same excerpt-tagging pipeline as English-language SEC filings — that translation step isn't "
-        "built in V1 and should preserve the original-language text alongside any translation for "
-        "auditability (guardrail principle #9)."
+        "Non-English filings (EDINET, DART) will need translation before they can feed the same "
+        "excerpt-tagging pipeline as English-language SEC filings — that translation step isn't built "
+        "yet either, and should preserve the original-language text alongside any translation for "
+        "auditability (guardrail principle #9) once it is."
     )
 
     st.subheader("Cost-control limits (apply in both mock and live mode)")

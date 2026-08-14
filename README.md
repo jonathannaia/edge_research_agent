@@ -176,28 +176,38 @@ downstream (scoring, guardrails, UI) needs to change.
 | Earnings calendar | `EarningsCalendarProvider` | A market data vendor or company IR page | |
 | News/press releases | `NewsProvider` | A news API, or official company RSS/press feeds | Never scrape a site in a way that violates its terms of service. |
 
-Set `EDGE_DATA_MODE=live` in `.env` once you've wired at least one live provider; `registry.py`
-is the single place that decides mock vs. live per domain.
+Set `EDGE_DATA_MODE=live` in `.env` to turn on live fundamentals and filings for **US tickers** —
+`src/providers/live_edgar.py` implements both against SEC EDGAR's free, keyless APIs, with a
+per-ticker fallback to mock (still correctly labeled) if EDGAR has no data for a given ticker.
+`registry.py` is the single place that decides mock vs. live per domain; every other domain
+(price, transcripts, insiders, ownership, earnings calendar, news) is still mock-only.
 
 ### Filings beyond the US
 
 Every ticker carries a `jurisdiction` field (set via the dropdown on the Watchlist page: United
 States, Japan, South Korea, China, Hong Kong, or Other). `SourceType`'s regulatory-filing category
-is deliberately jurisdiction-agnostic — a live `FilingsProvider` should branch on the ticker's
-jurisdiction to call the matching regulator:
+is deliberately jurisdiction-agnostic — a live `FilingsProvider` branches on the ticker's
+jurisdiction to call the matching regulator. Only US is live so far. The other three were
+researched directly (not assumed) and are each blocked for a specific, different reason:
 
-| Jurisdiction | Regulator / system | Notes |
+| Jurisdiction | Regulator / system | Status |
 |---|---|---|
-| United States | [SEC EDGAR](https://www.sec.gov/edgar/sec-api-documentation) | Free; compliant `User-Agent` required. |
-| Japan | [EDINET](https://disclosure2.edinet-fsa.go.jp/) | Free; Financial Services Agency's disclosure system. Filings are in Japanese. |
-| South Korea | [DART](https://opendart.fss.or.kr/) | Free with a registered API key from the Financial Supervisory Service. Filings are in Korean. |
-| China | CNINFO / SSE / SZSE | Free public disclosure portals. Filings are in Simplified Chinese. |
-| Hong Kong | [HKEXnews](https://www.hkexnews.hk/) | Free public disclosure portal for HKEX-listed issuers. |
+| United States | [SEC EDGAR](https://www.sec.gov/edgar/sec-api-documentation) | **Live.** Free, keyless — just a compliant `User-Agent`. |
+| Japan | [EDINET](https://api.edinet-fsa.go.jp/api/auth/index.aspx?mode=1) API v2 | Free official API, but requires registering an account with **phone number verification** to get an API key — an account-creation step that has to be done by a human, not automated. Filings are in Japanese; no translation step built yet. |
+| South Korea | [DART / OpenDART](https://opendart.fss.or.kr/) | Free official API, but requires registering an account with **email verification** to get a 40-character key — same account-creation blocker as EDINET. Filings are in Korean; no translation step built yet. |
+| China | CNINFO / SSE / SZSE | **No official public API exists at all.** The only options are scraping undocumented endpoints or a paid third-party vendor — scraping would violate this project's own "never scrape in a way that violates a site's terms of service" principle, so it isn't wired up. |
+| Hong Kong | [HKEXnews](https://www.hkexnews.hk/) | Public and login-free to browse, but its search is a stateful Java web form (session/viewstate-based) — confirmed by direct inspection — not a documented API. Would require reverse-engineering a fragile, unsupported endpoint. |
 
-None of these are wired up in V1 — all filings are mock data regardless of jurisdiction. Two things
-to plan for before wiring a non-English regulator: (1) translation isn't built in, and the original-
-language text should be preserved alongside any translation for auditability; (2) each system's
-rate limits and terms of use differ from SEC EDGAR's and should be reviewed independently.
+**To unblock Japan or Korea:** register a free account yourself (EDINET needs a phone number,
+DART needs email verification — both take a few minutes), then set `EDGE_EDINET_API_KEY` /
+`EDGE_DART_API_KEY` in `.env`. The provider implementations for both aren't built yet — this
+project deliberately didn't write untested client code against API shapes that couldn't be
+verified without a real key, the same discipline used for the live SEC EDGAR provider (every
+endpoint it calls was verified against real responses before any code was written against it).
+Two things to plan for once a non-English regulator is wired up: (1) translation isn't built in,
+and the original-language text should be preserved alongside any translation for auditability;
+(2) each system's rate limits and terms of use differ from SEC EDGAR's and should be reviewed
+independently.
 
 ---
 
