@@ -86,6 +86,14 @@ def load_findings() -> list[RadarFinding]:
     return findings
 
 
+def find_for_ticker(ticker: str) -> list[RadarFinding]:
+    """Findings that tag the given ticker, newest first — the bridge Radar
+    ↔ Watchlist integration reads from (see src/ui/ticker_detail.py and the
+    "only watchlisted tickers" filter on src/ui/radar.py)."""
+    ticker = ticker.upper()
+    return [f for f in load_findings() if any(t.ticker.upper() == ticker for t in f.tickers)]
+
+
 def load_seen_hashes() -> set[str]:
     state = _read_json(STATE_PATH, {})
     return set(state.get("seen_url_hashes", []))

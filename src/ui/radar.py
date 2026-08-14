@@ -8,13 +8,14 @@ on a schedule, in CI.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 import streamlit as st
 
 from src.config.settings import Settings
+from src.database.db import get_connection
 from src.radar import store
 from src.radar.models import Niche
+from src.services import watchlist_service
+from src.ui.components import hours_ago, render_radar_finding_card
 
 RADAR_DISCLAIMER = (
     "**Radar runs autonomously** — findings below are surfaced and summarized by an AI model on a "
@@ -23,22 +24,6 @@ RADAR_DISCLAIMER = (
     "says buy/sell/hold and never gives a price target — findings are cited factual summaries only, "
     "not investment advice."
 )
-
-
-def _hours_ago(iso_ts: str) -> str:
-    try:
-        ts = datetime.fromisoformat(iso_ts)
-        if ts.tzinfo is None:
-            ts = ts.replace(tzinfo=timezone.utc)
-        delta = datetime.now(timezone.utc) - ts
-    except (ValueError, TypeError):
-        return iso_ts
-    hours = delta.total_seconds() / 3600
-    if hours < 1:
-        return "less than an hour ago"
-    if hours < 48:
-        return f"{int(hours)}h ago"
-    return f"{int(hours / 24)}d ago"
 
 
 def render(settings: Settings) -> None:
@@ -68,47 +53,44 @@ def render(settings: Settings) -> None:
     last_run = run_history[0] if run_history else None
     if last_run:
         st.caption(
-            f"Last scan: {_hours_ago(last_run.finished_at)} · "
+            f"Last scan: {hours_ago(last_run.finished_at)} · "
             f"{last_run.items_saved} new finding(s) saved · status: {last_run.status}"
         )
+
+    with get_connection(settings) as conn:
+        watchlist_tickers = {w["ticker"] for w in watchlist_service.list_watchlist(conn)}
 
     niches = [n.value for n in Niche]
     all_tickers = sorted({t.ticker for f in findings for t in f.tickers})
 
-    c1, c2 = st.columns(2)
+    c1, c2, c3 = st.columns([2, 2, 1])
     with c1:
         niche_filter = st.multiselect("Niche", niches)
     with c2:
         ticker_filter = st.multiselect("Ticker", all_tickers)
+    with c3:
+        st.write("")  # vertical alignment with the multiselects above
+        watchlist_only = st.checkbox("Watchlist only", disabled=not watchlist_tickers)
 
     rows = findings
     if niche_filter:
         rows = [f for f in rows if f.niche in niche_filter]
     if ticker_filter:
         rows = [f for f in rows if any(t.ticker in ticker_filter for t in f.tickers)]
+    if watchlist_only:
+        rows = [f for f in rows if any(t.ticker in watchlist_tickers for t in f.tickers)]
 
     st.write(f"{len(rows)} of {len(findings)} findings shown.")
+    if any(f.tickers for f in rows):
+        st.caption(
+            "\"Verified\" = cross-checked against SEC EDGAR's ticker registry (US tickers only for "
+            "now). \"Unverified\" means not confirmed either way, not necessarily wrong."
+        )
 
     for f in rows:
-        ticker_str = (
-            ", ".join(
-                f"{t.ticker} ({t.jurisdiction}, {'verified' if t.verified else 'unverified'})" for t in f.tickers
-            )
-            if f.tickers else "No ticker identified"
-        )
-        with st.container(border=True):
-            st.markdown(f"**{f.headline}**")
-            st.caption(f"{f.niche} · {f.source_name} · {_hours_ago(f.retrieved_at)}")
-            st.write(f.summary)
-            st.write(f"**Tickers:** {ticker_str}")
-            if f.tickers:
-                st.caption(
-                    "\"Verified\" = cross-checked against SEC EDGAR's ticker registry (US tickers only "
-                    "for now). \"Unverified\" means not confirmed either way, not necessarily wrong."
-                )
-            st.write(f"[Read source]({f.source_url})")
-            if f.relevance_reason:
-                st.caption(f"Why flagged: {f.relevance_reason}")
+        render_radar_finding_card(f)
+        if any(t.ticker in watchlist_tickers for t in f.tickers):
+            st.caption("On your Watchlist — also visible from that ticker's Detail page.")
 
     if run_history:
         st.divider()

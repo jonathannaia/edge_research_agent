@@ -1,6 +1,7 @@
 """Shared Streamlit UI building blocks used across pages."""
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 import streamlit as st
@@ -200,3 +201,39 @@ def render_brief_sections(sections: dict[str, Any]) -> None:
     if scorecard:
         st.markdown("### Full Scorecard")
         render_scorecard(scorecard)
+
+
+def hours_ago(iso_ts: str) -> str:
+    """Human-readable relative time, used by both the Radar page and the
+    Radar-mentions tab on Ticker Detail so the two stay visually consistent."""
+    try:
+        ts = datetime.fromisoformat(iso_ts)
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        delta = datetime.now(timezone.utc) - ts
+    except (ValueError, TypeError):
+        return iso_ts
+    hours = delta.total_seconds() / 3600
+    if hours < 1:
+        return "less than an hour ago"
+    if hours < 48:
+        return f"{int(hours)}h ago"
+    return f"{int(hours / 24)}d ago"
+
+
+def render_radar_finding_card(f) -> None:
+    """One Radar finding, as a bordered card. Shared by the Radar page and
+    the Ticker Detail "Radar Mentions" tab (Radar <-> Watchlist integration)
+    so a finding looks identical wherever it's surfaced."""
+    ticker_str = (
+        ", ".join(f"{t.ticker} ({t.jurisdiction}, {'verified' if t.verified else 'unverified'})" for t in f.tickers)
+        if f.tickers else "No ticker identified"
+    )
+    with st.container(border=True):
+        st.markdown(f"**{f.headline}**")
+        st.caption(f"{f.niche} · {f.source_name} · {hours_ago(f.retrieved_at)}")
+        st.write(f.summary)
+        st.write(f"**Tickers:** {ticker_str}")
+        st.write(f"[Read source]({f.source_url})")
+        if f.relevance_reason:
+            st.caption(f"Why flagged: {f.relevance_reason}")

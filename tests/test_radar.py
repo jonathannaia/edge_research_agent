@@ -148,6 +148,36 @@ def test_load_findings_tolerates_unknown_extra_key(tmp_path, monkeypatch):
     assert findings[0].headline == "Test"
 
 
+def test_find_for_ticker_matches_case_insensitively(tmp_path, monkeypatch):
+    monkeypatch.setattr(store, "FINDINGS_PATH", tmp_path / "radar_findings.json")
+    monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
+
+    matching = RadarFinding(
+        niche=Niche.AI_BUILDOUT.value, headline="NVDA story", summary="Summary.",
+        source_url="https://example.com/nvda", source_name="Feed", source_type="Press Release",
+        published_at="", retrieved_at="2026-08-01T00:00:00+00:00",
+        tickers=[TickerTag(ticker="nvda", company_name="NVIDIA", jurisdiction="United States")],
+    )
+    other = RadarFinding(
+        niche=Niche.SPACE.value, headline="Unrelated story", summary="Summary.",
+        source_url="https://example.com/other", source_name="Feed", source_type="Press Release",
+        published_at="", retrieved_at="2026-08-01T00:00:00+00:00",
+        tickers=[TickerTag(ticker="RKLB", company_name="Rocket Lab", jurisdiction="United States")],
+    )
+    run_record = ScanRunRecord(
+        started_at="x", finished_at="y", status="ok", feeds_checked=1, items_seen=2,
+        items_after_freshness_filter=2, items_after_keyword_filter=2, items_sent_to_llm=2,
+        items_saved=2, items_rejected_by_guardrail=0,
+    )
+    store.save_scan_results([matching, other], run_record)
+
+    result = store.find_for_ticker("NVDA")
+    assert len(result) == 1
+    assert result[0].headline == "NVDA story"
+
+    assert store.find_for_ticker("nonexistent") == []
+
+
 # --- scan orchestration: guardrail rejection path (LLM mocked) ---
 
 def _fake_feed():

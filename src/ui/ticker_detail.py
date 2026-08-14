@@ -7,8 +7,9 @@ import streamlit as st
 from src.config.settings import Settings
 from src.database.db import get_connection
 from src.guardrails.language_filters import warn_no_advice_language
+from src.radar import store as radar_store
 from src.services import audit_service, notes_service, thesis_service, ticker_service, watchlist_service
-from src.ui.components import render_brief_sections, render_mock_badge
+from src.ui.components import render_brief_sections, render_mock_badge, render_radar_finding_card
 
 
 def render(settings: Settings) -> None:
@@ -39,7 +40,9 @@ def render(settings: Settings) -> None:
             c3.metric("Evidence status", w["evidence_status"])
             c4.metric("Date added", w["date_added"][:10] if w["date_added"] else "—")
 
-        tabs = st.tabs(["Thesis Record", "Research Briefs", "Change Log", "Notes"])
+        radar_findings = radar_store.find_for_ticker(ticker)
+        radar_tab_label = f"Radar Mentions ({len(radar_findings)})" if radar_findings else "Radar Mentions"
+        tabs = st.tabs(["Thesis Record", "Research Briefs", "Change Log", "Notes", radar_tab_label])
 
         with tabs[0]:
             if not thesis:
@@ -135,3 +138,14 @@ def render(settings: Settings) -> None:
                 st.markdown(f"**{n['created_at'][:16]}**{tag_suffix}")
                 st.write(n["note_text"])
                 st.divider()
+
+        with tabs[4]:
+            st.caption(
+                "Autonomous findings from Radar that tag this ticker — separate from your manual "
+                "research above. Radar runs unattended with no human review; read the source before "
+                "acting on anything. See the Radar page for the full feed across all tracked niches."
+            )
+            if not radar_findings:
+                st.info("No Radar findings mention this ticker yet.")
+            for f in radar_findings:
+                render_radar_finding_card(f)
