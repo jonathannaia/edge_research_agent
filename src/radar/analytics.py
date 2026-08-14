@@ -46,6 +46,24 @@ def mentions_per_day(findings: list[RadarFinding], days: int) -> dict[str, int]:
     return buckets
 
 
+def is_scan_overdue(last_run_finished_at: str | None, expected_interval_hours: float = 2, grace_multiplier: float = 3) -> bool:
+    """True if it's been more than `grace_multiplier` x the expected cron
+    interval since the last recorded run — a signal the scheduled workflow
+    has silently stopped firing (broken secret, deleted/disabled workflow,
+    GitHub Actions outage) rather than genuinely finding nothing new. Ops
+    monitoring for an unattended job with no other alerting."""
+    if not last_run_finished_at:
+        return False  # no runs at all yet is a different, already-handled state
+    try:
+        ts = datetime.fromisoformat(last_run_finished_at)
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        return False
+    age_hours = (datetime.now(timezone.utc) - ts).total_seconds() / 3600
+    return age_hours > expected_interval_hours * grace_multiplier
+
+
 def top_tickers(findings: list[RadarFinding], limit: int = 15) -> list[dict]:
     """Most-mentioned tickers, most-mentioned first. Each row: ticker,
     company_name/jurisdiction from its most recent tag, mention count, and

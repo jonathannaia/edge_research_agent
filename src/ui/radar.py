@@ -12,7 +12,7 @@ import streamlit as st
 
 from src.config.settings import Settings
 from src.database.db import get_connection
-from src.radar import store
+from src.radar import analytics, store
 from src.radar.models import Niche
 from src.services import watchlist_service
 from src.ui.components import hours_ago, render_radar_finding_card
@@ -38,6 +38,15 @@ def render(settings: Settings) -> None:
 
     findings = store.load_findings()
     run_history = store.load_run_history()
+    last_run = run_history[0] if run_history else None
+
+    if last_run and analytics.is_scan_overdue(last_run.finished_at):
+        st.error(
+            f"The scheduled scan hasn't completed a run in {hours_ago(last_run.finished_at)} "
+            "(expected roughly every 2 hours). This usually means the GitHub Actions workflow is "
+            "failing or was disabled — check the Actions tab on GitHub for `radar_scan.yml`. Common "
+            "causes: an expired/revoked `ANTHROPIC_API_KEY` secret, or the workflow got paused."
+        )
 
     if not findings:
         st.info(
@@ -50,7 +59,6 @@ def render(settings: Settings) -> None:
                 _render_run_history(run_history)
         return
 
-    last_run = run_history[0] if run_history else None
     if last_run:
         st.caption(
             f"Last scan: {hours_ago(last_run.finished_at)} · "

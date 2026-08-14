@@ -57,6 +57,24 @@ def test_top_tickers_ranks_by_mention_count():
     assert top[1]["count"] == 1
 
 
+def test_is_scan_overdue_false_for_recent_run():
+    recent = (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()
+    assert analytics.is_scan_overdue(recent) is False
+
+
+def test_is_scan_overdue_true_when_far_past_expected_interval():
+    stale = (datetime.now(timezone.utc) - timedelta(hours=10)).isoformat()
+    assert analytics.is_scan_overdue(stale, expected_interval_hours=2, grace_multiplier=3) is True
+
+
+def test_is_scan_overdue_false_with_no_prior_run():
+    assert analytics.is_scan_overdue(None) is False
+
+
+def test_is_scan_overdue_false_for_unparseable_timestamp():
+    assert analytics.is_scan_overdue("not-a-date") is False
+
+
 def test_top_tickers_respects_limit():
     findings = [
         _finding(Niche.MACRO.value, i, [TickerTag(ticker=f"T{i}", company_name="X", jurisdiction="United States")])
