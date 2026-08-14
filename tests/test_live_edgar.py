@@ -161,6 +161,22 @@ def test_verify_ticker_tags_never_verifies_non_us_jurisdiction():
     assert result[0].verified is False
 
 
+def test_verify_ticker_tags_deduplicates_same_ticker_and_jurisdiction():
+    from src.radar.models import TickerTag
+    from src.radar.ticker_registry import verify_ticker_tags
+
+    tags = [
+        TickerTag(ticker="NVDA", company_name="NVIDIA", jurisdiction="United States"),
+        TickerTag(ticker="nvda", company_name="NVIDIA Corp", jurisdiction="United States"),  # case variant, still a dupe
+    ]
+    with patch("src.radar.ticker_registry.edgar_client.get_all_tickers", return_value={"NVDA": 1045810}):
+        result = verify_ticker_tags(tags)
+
+    assert len(result) == 1
+    assert result[0].ticker == "NVDA"
+    assert result[0].verified is True
+
+
 def test_verify_ticker_tags_never_drops_a_tag_on_registry_failure():
     from src.radar.models import TickerTag
     from src.radar.ticker_registry import edgar_client, verify_ticker_tags

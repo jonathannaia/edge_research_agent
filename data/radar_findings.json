@@ -70,12 +70,6 @@
         "company_name": "Nvidia Corporation",
         "jurisdiction": "United States",
         "verified": true
-      },
-      {
-        "ticker": "NVDA",
-        "company_name": "Nvidia",
-        "jurisdiction": "United States",
-        "verified": true
       }
     ],
     "relevance_reason": "Directly addresses Nvidia's major AI infrastructure financing initiative and power constraints for AI buildout.",

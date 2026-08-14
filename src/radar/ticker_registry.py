@@ -28,12 +28,18 @@ def is_verified_us_ticker(ticker: str) -> bool:
 
 
 def verify_ticker_tags(tags: list[TickerTag]) -> list[TickerTag]:
-    """Returns the same tags with `verified` set. Never drops a tag —
-    Radar surfaces unverified tags labeled as such rather than silently
-    hiding a ticker the LLM may still have gotten right."""
+    """Verifies each tag and de-duplicates by (ticker, jurisdiction),
+    preserving first-seen order — the LLM occasionally tags the same
+    company twice in one response. Never drops a tag it hasn't already
+    seen: Radar surfaces unverified tags labeled as such rather than
+    silently hiding a ticker the LLM may still have gotten right."""
+    deduped: list[TickerTag] = []
+    seen: set[tuple[str, str]] = set()
     for tag in tags:
-        if tag.jurisdiction == US_JURISDICTION:
-            tag.verified = is_verified_us_ticker(tag.ticker)
-        else:
-            tag.verified = False
-    return tags
+        key = (tag.ticker.upper(), tag.jurisdiction)
+        if key in seen:
+            continue
+        seen.add(key)
+        tag.verified = is_verified_us_ticker(tag.ticker) if tag.jurisdiction == US_JURISDICTION else False
+        deduped.append(tag)
+    return deduped
