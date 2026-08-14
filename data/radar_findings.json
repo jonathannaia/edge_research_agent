@@ -1,5 +1,38 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "Chip Industry Week In Review",
+    "summary": "A weekly industry review covering semiconductor developments including Lam Research and ASE expansions, data center shifts, Nvidia's new plans, and various chip architecture and technology advances.",
+    "source_url": "https://semiengineering.com/chip-industry-week-in-review-151/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 07:01:48 +0000",
+    "retrieved_at": "2026-08-14T20:23:03+00:00",
+    "tickers": [
+      {
+        "ticker": "LRCX",
+        "company_name": "Lam Research",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "ASX",
+        "company_name": "ASE Technology",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Multiple semiconductor and chip supply chain developments directly relevant to AI buildout infrastructure, including data center shifts and Nvidia announcements.",
+    "url_hash": "2454fc509008458d",
+    "id": "2454fc509008458d"
+  },
+  {
     "niche": "Space",
     "headline": "Space Force awards five companies $60 million for multi-vendor satellite network tests",
     "summary": "The Space Force awarded $60 million to five companies—Amazon, Lockheed Martin, Northrop Grumman, Rocket Lab, and York Space—to prototype and test connections to SpaceX's data network backbone.",
@@ -12,27 +45,32 @@
       {
         "ticker": "AMZN",
         "company_name": "Amazon",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       },
       {
         "ticker": "LMT",
         "company_name": "Lockheed Martin",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       },
       {
         "ticker": "NOC",
         "company_name": "Northrop Grumman",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       },
       {
         "ticker": "RKLB",
         "company_name": "Rocket Lab",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       },
       {
         "ticker": "AUSS",
         "company_name": "York Space",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Space Force contract for satellite network testing directly involves multiple space industry companies.",
@@ -80,7 +118,8 @@
       {
         "ticker": "ENDUROSAT",
         "company_name": "EnduroSat",
-        "jurisdiction": "Other"
+        "jurisdiction": "Other",
+        "verified": false
       }
     ],
     "relevance_reason": "Bulgaria's government is advancing a space innovation hub project with a satellite manufacturer, directly relevant to space infrastructure development.",
@@ -100,7 +139,8 @@
       {
         "ticker": "LUNR",
         "company_name": "Intuitive Machines",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Directly concerns satellite manufacturing and procurement, a core space industry activity.",
@@ -120,7 +160,8 @@
       {
         "ticker": "BLUE",
         "company_name": "Blue Origin (via Bezos Expeditions/private)",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Blue Origin's expansion of launch infrastructure for space missions is directly within the Space scope.",
@@ -154,12 +195,14 @@
       {
         "ticker": "SPIR",
         "company_name": "Spire Global",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       },
       {
         "ticker": "PMIQ",
         "company_name": "PlanetiQ",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Space companies winning satellite-based contracts for atmospheric data collection is directly within the Space scope.",
@@ -179,7 +222,8 @@
       {
         "ticker": "AITY",
         "company_name": "Agility Robotics",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Article discusses robotics companies' paths to public markets, including a specific SPAC deal involving Agility, directly relevant to humanoids/robotics automation scope.",
@@ -199,7 +243,8 @@
       {
         "ticker": "7012",
         "company_name": "Kawasaki Heavy Industries",
-        "jurisdiction": "Japan"
+        "jurisdiction": "Japan",
+        "verified": false
       }
     ],
     "relevance_reason": "The article is a weekly robotics video roundup featuring multiple humanoid and robotics automation projects, directly aligned with the Humanoids scope.",
@@ -219,7 +264,8 @@
       {
         "ticker": "NVDA",
         "company_name": "NVIDIA",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Involves NVIDIA and hyperscaler infrastructure investment in AI education and talent development center",
@@ -239,7 +285,8 @@
       {
         "ticker": "SO",
         "company_name": "Southern Company",
-        "jurisdiction": "United States"
+        "jurisdiction": "United States",
+        "verified": false
       }
     ],
     "relevance_reason": "Directly relevant to AI Buildout scope, reports on data center power usage and infrastructure expansion.",
@@ -301,7 +348,8 @@
       {
         "ticker": "NAVER",
         "company_name": "Naver Corporation",
-        "jurisdiction": "South Korea"
+        "jurisdiction": "South Korea",
+        "verified": false
       }
     ],
     "relevance_reason": "Direct investment in data center infrastructure powered by renewable energy, a key component of AI buildout capital expenditure and power solutions.",
