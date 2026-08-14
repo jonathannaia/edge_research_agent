@@ -36,6 +36,16 @@ class Jurisdiction(str, Enum):
     OTHER = "Other"
 
 
+JURISDICTION_REGULATOR: dict[str, str] = {
+    Jurisdiction.UNITED_STATES.value: "SEC EDGAR",
+    Jurisdiction.JAPAN.value: "EDINET",
+    Jurisdiction.SOUTH_KOREA.value: "DART",
+    Jurisdiction.CHINA.value: "CNINFO / SSE / SZSE",
+    Jurisdiction.HONG_KONG.value: "HKEXnews",
+    Jurisdiction.OTHER.value: "Other / unspecified",
+}
+
+
 class SourceType(str, Enum):
     """Ordered roughly by authority; see guardrails.source_hierarchy for the
     canonical numeric ranking used in conflict resolution. "Regulatory
