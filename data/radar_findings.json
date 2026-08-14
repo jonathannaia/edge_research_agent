@@ -1,0 +1,188 @@
+[
+  {
+    "niche": "AI Buildout",
+    "headline": "Universitas Gadjah Mada, Indosat and NVIDIA Open Indonesia’s First University AI Center to Develop Local AI Talent",
+    "summary": "Indonesia launched its first university-based AI technology center through a partnership between Universitas Gadjah Mada, Indosat, NVIDIA, and the Ministry of Communication and Digital Affairs in Yogyakarta.",
+    "source_url": "https://blogs.nvidia.com/blog/ugm-indosat-nvidia-ai-technology-center/",
+    "source_name": "NVIDIA Newsroom",
+    "source_type": "Press Release",
+    "published_at": "Fri, 14 Aug 2026 17:13:05 GMT",
+    "retrieved_at": "2026-08-14T19:07:08+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "NVIDIA",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Involves NVIDIA and hyperscaler infrastructure investment in AI education and talent development center",
+    "url_hash": "b7aa33db77b78eeb",
+    "id": "b7aa33db77b78eeb"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "What Will It Take To Deploy CPO At Scale?",
+    "summary": "The article discusses the challenges required to scale deployment of co-packaged optics, including manufacturing, testing, and operational hurdles.",
+    "source_url": "https://semiengineering.com/what-will-it-take-to-deploy-cpo-at-scale/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 13 Aug 2026 07:04:42 +0000",
+    "retrieved_at": "2026-08-14T19:07:06+00:00",
+    "tickers": [],
+    "relevance_reason": "Co-packaged optics (CPO) is critical infrastructure for AI data centers and high-speed interconnects in hyperscaler networks.",
+    "url_hash": "de7036976a177b45",
+    "id": "de7036976a177b45"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Packet-Based NPUs In The LLM Era: From Compute-Bound CNNs To Memory-Bound Edge And Automotive Workloads",
+    "summary": "The article examines how edge processors are evolving to integrate large language models, vision language models, and generative AI features alongside traditional perception networks, shifting from vision-only compute-bound systems to memory-bound architectures.",
+    "source_url": "https://semiengineering.com/packet-based-npus-in-the-llm-era-from-compute-bound-cnns-to-memory-bound-edge-and-automotive-workloads/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 13 Aug 2026 07:06:43 +0000",
+    "retrieved_at": "2026-08-14T19:07:02+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses neural processing units (NPUs) and chip architecture for LLM/AI workloads, directly relevant to AI accelerator supply chain.",
+    "url_hash": "2698e10dedf60f2b",
+    "id": "2698e10dedf60f2b"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "DDR5 9600 RDIMMs: Raising The Performance Benchmark For Server Memory",
+    "summary": "The article addresses DDR5 9600 RDIMMs as a solution for improving data movement and management efficiency in data center architectures.",
+    "source_url": "https://semiengineering.com/ddr5-9600-rdimms-raising-the-performance-benchmark-for-server-memory/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 13 Aug 2026 07:08:19 +0000",
+    "retrieved_at": "2026-08-14T19:06:58+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses DDR5 9600 RDIMMs for server memory, which is directly relevant to AI infrastructure data center hardware and performance optimization.",
+    "url_hash": "e868feb79962a97b",
+    "id": "e868feb79962a97b"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Copper’s Grip On AI Scaling Is Starting To Slip",
+    "summary": "As AI clusters expand beyond rack-scale limits, optical interconnects and circuit switching are replacing copper-based connections in data center designs.",
+    "source_url": "https://semiengineering.com/coppers-grip-on-ai-scaling-is-starting-to-slip/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 13 Aug 2026 07:11:36 +0000",
+    "retrieved_at": "2026-08-14T19:06:57+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses technical infrastructure transitions for AI data center scaling, which is central to AI Buildout scope.",
+    "url_hash": "417e869b1a0ade4f",
+    "id": "417e869b1a0ade4f"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "US utility Southern Co reports 55% higher data center power usage compared to last year",
+    "summary": "Southern Company reported a 55% increase in data center power usage year-over-year and a 6GW surge in its contracted large-load pipeline.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/us-utility-southern-co-reports-55-higher-data-center-power-usage-compared-to-last-year/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 11:10:29 +0000",
+    "retrieved_at": "2026-08-14T19:06:49+00:00",
+    "tickers": [
+      {
+        "ticker": "SO",
+        "company_name": "Southern Company",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Directly relevant to AI Buildout scope, reports on data center power usage and infrastructure expansion.",
+    "url_hash": "e8305704f6fa7d0c",
+    "id": "e8305704f6fa7d0c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Ontario, Canada, unveils new data center framework to support industry investment",
+    "summary": "Ontario announced a new data center framework designed to support industry investment and provide benefits to local communities.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/ontario-canada-unveils-new-data-center-framework-to-support-industry-investment/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 12:20:28 +0000",
+    "retrieved_at": "2026-08-14T19:06:46+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses data center infrastructure policy affecting AI Buildout scope.",
+    "url_hash": "e17c7694658b6f0d",
+    "id": "e17c7694658b6f0d"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Helios targets 80-hectare data center project in Lapinlahti, Finland",
+    "summary": "Helios, a renewable energy firm, is targeting an 80-hectare data center project in Lapinlahti, Finland as part of expanding its data center portfolio.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/helios-targets-80-hectare-data-center-project-in-lapinlahti-finland/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 12:39:14 +0000",
+    "retrieved_at": "2026-08-14T19:06:44+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses a data center project, which falls within AI infrastructure buildout scope.",
+    "url_hash": "a8ed5a53b730fa99",
+    "id": "a8ed5a53b730fa99"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "CVC DIF acquires German data center firm Firstcolo",
+    "summary": "CVC DIF has acquired Firstcolo, a German data center provider with two operating facilities in Frankfurt and another facility in development.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/cvc-dif-acquires-german-data-center-firm-firstcolo/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 13:20:33 +0000",
+    "retrieved_at": "2026-08-14T19:06:41+00:00",
+    "tickers": [],
+    "relevance_reason": "acquisition of a data center company is directly relevant to AI infrastructure buildout",
+    "url_hash": "162657e948c3f865",
+    "id": "162657e948c3f865"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Naver invests in US offshore wave powered data center company Panthalassa",
+    "summary": "Naver has invested in Panthalassa, a US company developing wave-powered data centers, with commercial deployment targeted for 2027.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/naver-invests-in-us-offshore-wave-powered-data-center-company-panthalassa/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 13:28:56 +0000",
+    "retrieved_at": "2026-08-14T19:06:40+00:00",
+    "tickers": [
+      {
+        "ticker": "NAVER",
+        "company_name": "Naver Corporation",
+        "jurisdiction": "South Korea"
+      }
+    ],
+    "relevance_reason": "Direct investment in data center infrastructure powered by renewable energy, a key component of AI buildout capital expenditure and power solutions.",
+    "url_hash": "7851e5630bc510e7",
+    "id": "7851e5630bc510e7"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Data center spanning up to 50,000 sqm gets approval for construction in west London, the UK",
+    "summary": "A data center spanning up to 50,000 square meters received construction approval in west London, with specifications of 64MW electricity consumption and 48MW IT load capacity.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/data-center-spanning-up-to-50000-sqm-gets-approval-for-construction-in-west-london-the-uk/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 15:04:12 +0000",
+    "retrieved_at": "2026-08-14T19:06:33+00:00",
+    "tickers": [],
+    "relevance_reason": "Data center construction directly supports AI infrastructure buildout requirements.",
+    "url_hash": "8317af11e09aeb99",
+    "id": "8317af11e09aeb99"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Malaysia to launch palm oil-based immersion cooling fluid for data centers",
+    "summary": "Malaysia is launching a palm oil-based immersion cooling fluid for use in data centers. The development raises environmental concerns related to palm oil production.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/malaysia-to-launch-palm-oil-based-immersion-cooling-fluid-for-data-centers/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 15:45:35 +0000",
+    "retrieved_at": "2026-08-14T19:06:32+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses cooling technology for data center infrastructure, a core AI Buildout component.",
+    "url_hash": "d1d35ee34d5b17a8",
+    "id": "d1d35ee34d5b17a8"
+  }
+]
