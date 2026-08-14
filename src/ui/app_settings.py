@@ -75,6 +75,6 @@ def render(settings: Settings) -> None:
     st.divider()
     st.subheader("Disclaimer")
     st.warning(
-        "Edge Research Agent is a personal research organizer. It does not execute trades, move money, "
+        "EevaResearch AI is a personal research organizer. It does not execute trades, move money, "
         "or provide personalized investment advice. All investment decisions are yours alone."
     )

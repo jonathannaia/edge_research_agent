@@ -31,7 +31,7 @@ def _env_int(name: str, default: int) -> int:
 
 @dataclass(frozen=True)
 class Settings:
-    app_name: str = "Edge Research Agent"
+    app_name: str = "EevaResearch AI"
     app_version: str = "0.1.0"
 
     data_mode: str = field(default_factory=lambda: os.getenv("EDGE_DATA_MODE", "mock").strip().lower())
@@ -50,7 +50,7 @@ class Settings:
     max_watchlist_size: int = 25
 
     sec_user_agent: str = field(
-        default_factory=lambda: os.getenv("EDGE_SEC_USER_AGENT", "Edge Research Agent (unconfigured@example.com)")
+        default_factory=lambda: os.getenv("EDGE_SEC_USER_AGENT", "EevaResearch AI (unconfigured@example.com)")
     )
 
     def freshness_status(self, age_days: int) -> str:

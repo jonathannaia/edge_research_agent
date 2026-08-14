@@ -1,4 +1,4 @@
-# Edge Research Agent
+# EevaResearch AI
 
 A personal, evidence-first equity research tool for identifying and monitoring emerging business
 inflections in underfollowed public companies — with a focus on AI infrastructure and adjacent

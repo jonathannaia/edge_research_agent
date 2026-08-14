@@ -71,7 +71,7 @@ BOTTOM_LINE_BADGES = {
 }
 
 APP_DISCLAIMER = (
-    "**Edge Research Agent** organizes and cites evidence to help you research potential business "
+    "**EevaResearch AI** organizes and cites evidence to help you research potential business "
     "inflections. It does **not** execute trades, move money, or give personalized investment advice. "
     "It never says buy/sell/hold or gives a price target — only evidence-based bull/bear/mixed setups. "
     "You make all final investment decisions."

@@ -1,4 +1,4 @@
-"""Edge Research Agent — Streamlit entry point.
+"""EevaResearch AI — Streamlit entry point.
 
 Run with: streamlit run app.py
 """
@@ -23,7 +23,7 @@ from src.ui import (
 )
 from src.ui.components import inject_button_glow, render_top_disclaimer
 
-st.set_page_config(page_title="Edge Research Agent", page_icon=None, layout="wide")
+st.set_page_config(page_title="EevaResearch AI", page_icon=None, layout="wide")
 inject_button_glow()
 
 
@@ -53,7 +53,7 @@ if "_requested_page" in st.session_state:
     st.session_state["nav_page"] = st.session_state.pop("_requested_page")
 
 with st.sidebar:
-    st.title("Edge Research Agent")
+    st.title("EevaResearch AI")
     st.caption(f"v{settings.app_version} · Data mode: **{settings.data_mode}**")
     page_name = st.radio("Navigate", list(PAGES.keys()), label_visibility="collapsed", key="nav_page")
     st.divider()
