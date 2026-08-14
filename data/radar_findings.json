@@ -1,5 +1,212 @@
 [
   {
+    "niche": "Space",
+    "headline": "Space Force awards five companies $60 million for multi-vendor satellite network tests",
+    "summary": "The Space Force awarded $60 million to five companies—Amazon, Lockheed Martin, Northrop Grumman, Rocket Lab, and York Space—to prototype and test connections to SpaceX's data network backbone.",
+    "source_url": "https://spacenews.com/space-force-awards-five-companies-60-million-for-multi-vendor-satellite-network-tests/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 13 Aug 2026 22:00:00 +0000",
+    "retrieved_at": "2026-08-14T19:57:31+00:00",
+    "tickers": [
+      {
+        "ticker": "AMZN",
+        "company_name": "Amazon",
+        "jurisdiction": "United States"
+      },
+      {
+        "ticker": "LMT",
+        "company_name": "Lockheed Martin",
+        "jurisdiction": "United States"
+      },
+      {
+        "ticker": "NOC",
+        "company_name": "Northrop Grumman",
+        "jurisdiction": "United States"
+      },
+      {
+        "ticker": "RKLB",
+        "company_name": "Rocket Lab",
+        "jurisdiction": "United States"
+      },
+      {
+        "ticker": "AUSS",
+        "company_name": "York Space",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Space Force contract for satellite network testing directly involves multiple space industry companies.",
+    "url_hash": "2d84da0c7b29cb7a",
+    "id": "2d84da0c7b29cb7a"
+  },
+  {
+    "niche": "Space",
+    "headline": "CesiumAstro buys semiconductor specialist to boost constellation plans",
+    "summary": "CesiumAstro is acquiring semiconductor specialist Jariet Technologies to develop in-house capabilities for its planned communications satellite constellation.",
+    "source_url": "https://spacenews.com/cesiumastro-buys-semiconductor-specialist-to-boost-constellation-plans/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 02:24:02 +0000",
+    "retrieved_at": "2026-08-14T19:57:29+00:00",
+    "tickers": [],
+    "relevance_reason": "CesiumAstro is acquiring a semiconductor specialist to support its satellite communications constellation plans, which falls directly under the Space scope.",
+    "url_hash": "770c6c0bdff2fde1",
+    "id": "770c6c0bdff2fde1"
+  },
+  {
+    "niche": "Space",
+    "headline": "In-Orbit Services Market to Generate $3 Billion in Revenue Over the Next Decade",
+    "summary": "Novaspace's latest report projects that emerging in-orbit services will generate approximately $3 billion in cumulative service revenues over the next decade.",
+    "source_url": "https://spacenews.com/in-orbit-services-market-to-generate-3-billion-in-revenue-over-the-next-decade/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 09:00:00 +0000",
+    "retrieved_at": "2026-08-14T19:57:28+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses in-orbit services market projections and revenue forecasts, which is directly relevant to the Space scope.",
+    "url_hash": "c3a8e993b8450be0",
+    "id": "c3a8e993b8450be0"
+  },
+  {
+    "niche": "Space",
+    "headline": "Bulgaria advances project to launch new space, defense innovation hub",
+    "summary": "Bulgaria's government approved a draft memorandum of understanding with local satellite manufacturer EnduroSat to collaborate on developing a new space and defense innovation hub at Dobroslavtsi Air Base.",
+    "source_url": "https://spacenews.com/bulgaria-advances-project-to-launch-new-space-defense-innovation-hub/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 09:00:00 +0000",
+    "retrieved_at": "2026-08-14T19:57:26+00:00",
+    "tickers": [
+      {
+        "ticker": "ENDUROSAT",
+        "company_name": "EnduroSat",
+        "jurisdiction": "Other"
+      }
+    ],
+    "relevance_reason": "Bulgaria's government is advancing a space innovation hub project with a satellite manufacturer, directly relevant to space infrastructure development.",
+    "url_hash": "857c7ec6aa7f855f",
+    "id": "857c7ec6aa7f855f"
+  },
+  {
+    "niche": "Space",
+    "headline": "Intuitive Machines wins contract for three GEO satellites",
+    "summary": "Intuitive Machines won a $600 million contract to build three geostationary orbit communications satellites for an undisclosed customer.",
+    "source_url": "https://spacenews.com/intuitive-machines-wins-contract-for-three-geo-satellites/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 11:29:03 +0000",
+    "retrieved_at": "2026-08-14T19:57:25+00:00",
+    "tickers": [
+      {
+        "ticker": "LUNR",
+        "company_name": "Intuitive Machines",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Directly concerns satellite manufacturing and procurement, a core space industry activity.",
+    "url_hash": "c0a4aec88bc4f8f3",
+    "id": "c0a4aec88bc4f8f3"
+  },
+  {
+    "niche": "Space",
+    "headline": "Blue Origin outlines plans for second Cape Canaveral launch pad",
+    "summary": "Blue Origin has disclosed plans to rebuild and expand its Florida launch site at Cape Canaveral, including adding a second pad for a larger version of its New Glenn rocket.",
+    "source_url": "https://spacenews.com/blue-origin-outlines-plans-for-second-cape-canaveral-launch-pad/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 12:08:33 +0000",
+    "retrieved_at": "2026-08-14T19:57:23+00:00",
+    "tickers": [
+      {
+        "ticker": "BLUE",
+        "company_name": "Blue Origin (via Bezos Expeditions/private)",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Blue Origin's expansion of launch infrastructure for space missions is directly within the Space scope.",
+    "url_hash": "5f58cfa807d1bcf5",
+    "id": "5f58cfa807d1bcf5"
+  },
+  {
+    "niche": "Space",
+    "headline": "Cheaper launch has moved the spacecraft bottleneck. Mass is out, surface area is in.",
+    "summary": "The article explains how cheaper launch services have reduced mass as a limiting factor in spacecraft design, shifting the bottleneck to surface area constraints instead.",
+    "source_url": "https://spacenews.com/cheaper-launch-has-moved-the-spacecraft-bottleneck-mass-is-out-surface-area-is-in/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 13:00:00 +0000",
+    "retrieved_at": "2026-08-14T19:57:20+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses how cost reductions in launch services have fundamentally shifted spacecraft design constraints, a substantive topic for the space industry.",
+    "url_hash": "1550e3203ce25e0c",
+    "id": "1550e3203ce25e0c"
+  },
+  {
+    "niche": "Space",
+    "headline": "Spire and PlanetiQ win NOAA radio-occultation contracts",
+    "summary": "NOAA awarded contracts to Spire Global and PlanetiQ to provide radio occultation data for weather and space weather forecasting using satellite-based observations.",
+    "source_url": "https://spacenews.com/spire-and-planetiq-win-noaa-radio-occultation-contracts/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 16:33:58 +0000",
+    "retrieved_at": "2026-08-14T19:57:19+00:00",
+    "tickers": [
+      {
+        "ticker": "SPIR",
+        "company_name": "Spire Global",
+        "jurisdiction": "United States"
+      },
+      {
+        "ticker": "PMIQ",
+        "company_name": "PlanetiQ",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Space companies winning satellite-based contracts for atmospheric data collection is directly within the Space scope.",
+    "url_hash": "f824b6deeaa51adc",
+    "id": "f824b6deeaa51adc"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Robots on Wall Street: Non-traditional paths to public markets for robotics companies",
+    "summary": "Agility pursued a SPAC merger to go public, exemplifying different routes available to robotics companies seeking public listings including SPACs, reverse mergers, and traditional IPOs.",
+    "source_url": "https://www.therobotreport.com/robots-on-wall-street-non-traditional-paths-public-markets-robotics-companies/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 12:30:40 +0000",
+    "retrieved_at": "2026-08-14T19:57:11+00:00",
+    "tickers": [
+      {
+        "ticker": "AITY",
+        "company_name": "Agility Robotics",
+        "jurisdiction": "United States"
+      }
+    ],
+    "relevance_reason": "Article discusses robotics companies' paths to public markets, including a specific SPAC deal involving Agility, directly relevant to humanoids/robotics automation scope.",
+    "url_hash": "b649ecbb404ab290",
+    "id": "b649ecbb404ab290"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Video Friday: Lift Happens",
+    "summary": "IEEE Spectrum's Video Friday presents a weekly collection of robotics videos including coverage of DARPA's Lift Challenge, drone delivery systems, construction robots from Monumental, and humanoid robots such as DEEP Robotics' DR02 model navigating stairs.",
+    "source_url": "https://spectrum.ieee.org/video-friday-darpa-heavy-lift-challenge",
+    "source_name": "IEEE Spectrum — Robotics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 17:00:01 +0000",
+    "retrieved_at": "2026-08-14T19:57:08+00:00",
+    "tickers": [
+      {
+        "ticker": "7012",
+        "company_name": "Kawasaki Heavy Industries",
+        "jurisdiction": "Japan"
+      }
+    ],
+    "relevance_reason": "The article is a weekly robotics video roundup featuring multiple humanoid and robotics automation projects, directly aligned with the Humanoids scope.",
+    "url_hash": "941ebc6928e6fec8",
+    "id": "941ebc6928e6fec8"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Universitas Gadjah Mada, Indosat and NVIDIA Open Indonesia’s First University AI Center to Develop Local AI Talent",
     "summary": "Indonesia launched its first university-based AI technology center through a partnership between Universitas Gadjah Mada, Indosat, NVIDIA, and the Ministry of Communication and Digital Affairs in Yogyakarta.",
