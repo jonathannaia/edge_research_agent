@@ -11,6 +11,12 @@ from src.utils.export import brief_to_html, brief_to_markdown
 
 
 def render(settings: Settings) -> None:
+    st.caption(
+        "Generate a dated, cited research brief for a ticker: fundamentals, filing highlights, "
+        "management commentary, insider activity, a bull/bear read, and a full scorecard — every "
+        "material claim cited to a source. Saves automatically and updates that ticker's watchlist "
+        "entry (score, evidence status) when done."
+    )
     with get_connection(settings) as conn:
         existing = [t["ticker"] for t in ticker_service.list_tickers(conn)]
 

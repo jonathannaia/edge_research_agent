@@ -73,6 +73,11 @@ def _add_ticker_form(conn, settings: Settings) -> None:
 
 
 def render(settings: Settings) -> None:
+    st.caption(
+        "Add and manage the companies you're tracking here — tier, thesis, and confirmation/"
+        "invalidation metrics. To actually pull evidence and generate a scored, cited research "
+        "brief for one of these tickers, go to **New Research Brief**."
+    )
     with get_connection(settings) as conn:
         _add_ticker_form(conn, settings)
 

@@ -7,9 +7,7 @@ from __future__ import annotations
 import streamlit as st
 
 from src.config.settings import get_settings
-from src.database.db import get_connection, init_db
-from src.database.seed import seed_demo_data
-from src.services import ticker_service
+from src.database.db import init_db
 from src.ui import (
     alerts as ui_alerts,
     app_settings as ui_app_settings,
@@ -30,12 +28,7 @@ st.set_page_config(page_title="Edge Research Agent", page_icon=None, layout="wid
 
 @st.cache_resource
 def _bootstrap() -> None:
-    settings = get_settings()
-    init_db(settings)
-    with get_connection(settings) as conn:
-        has_tickers = len(ticker_service.list_tickers(conn)) > 0
-    if not has_tickers:
-        seed_demo_data()
+    init_db(get_settings())
 
 
 _bootstrap()
@@ -54,6 +47,9 @@ PAGES = {
     "Research Rules / Guardrails": ui_guardrails,
     "App Settings": ui_app_settings,
 }
+
+if "_requested_page" in st.session_state:
+    st.session_state["nav_page"] = st.session_state.pop("_requested_page")
 
 with st.sidebar:
     st.title("Edge Research Agent")

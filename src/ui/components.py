@@ -43,7 +43,16 @@ def render_top_disclaimer() -> None:
 
 
 def navigate_to(page_name: str, ticker: str | None = None) -> None:
-    st.session_state["nav_page"] = page_name
+    """Requests a page change from inside a page's own render() function.
+
+    Streamlit forbids writing to a widget-bound session_state key (here,
+    the sidebar radio's "nav_page") after that widget has already been
+    instantiated in the current script run — which a button click always
+    is, since the sidebar renders before the page body. So this stages the
+    request in a separate key; app.py applies it to "nav_page" at the top
+    of the *next* run, before the radio widget is created.
+    """
+    st.session_state["_requested_page"] = page_name
     if ticker:
         st.session_state["selected_ticker"] = ticker
     st.rerun()

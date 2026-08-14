@@ -49,6 +49,19 @@ def render(settings: Settings) -> None:
         st.write(f"Data mode: `{settings.data_mode}`")
 
         st.divider()
+        st.subheader("Demo data")
+        st.caption(
+            "Loads three example tickers (COHR, AAOI, AXTI) with mock data and a generated research "
+            "brief each, so you can see a populated watchlist before adding your own tickers. Skips "
+            "any of the three that already exist — safe to click more than once."
+        )
+        if st.button("Load demo tickers"):
+            from src.database.seed import seed_demo_data
+
+            seed_demo_data()
+            st.success("Demo tickers loaded — check the Dashboard or Watchlist page.")
+
+        st.divider()
         st.subheader("Export local data backup")
         st.caption("Exports every table as JSON — your full research history, for backup or migration. Stays local.")
         if st.button("Prepare backup export"):
