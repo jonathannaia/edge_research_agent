@@ -12,18 +12,13 @@ this.
 from __future__ import annotations
 
 import json
-import ssl
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
-try:
-    import certifi
-
-    _SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
-except ImportError:  # pragma: no cover - certifi is a listed dependency
-    _SSL_CONTEXT = None
+from src.utils.ssl_context import SSL_CONTEXT
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 _CACHE_DIR = PROJECT_ROOT / ".cache"
@@ -46,7 +41,7 @@ def _get(url: str, user_agent: str) -> dict:
 
     req = urllib.request.Request(url, headers={"User-Agent": user_agent})
     try:
-        with urllib.request.urlopen(req, timeout=15, context=_SSL_CONTEXT) as resp:
+        with urllib.request.urlopen(req, timeout=15, context=SSL_CONTEXT) as resp:
             raw = resp.read()
         _last_request_at = time.monotonic()
     except (urllib.error.URLError, urllib.error.HTTPError) as exc:
@@ -96,6 +91,18 @@ def get_submissions(cik: int, user_agent: str) -> dict:
 
 def get_company_facts(cik: int, user_agent: str) -> dict:
     return _get(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{str(cik).zfill(10)}.json", user_agent)
+
+
+def full_text_search(query: str, user_agent: str, forms: str = "8-K", start_date: str = "", end_date: str = "") -> dict:
+    """SEC EDGAR full-text search (efts.sec.gov) — free, keyless. Used by
+    src/radar/feeds.py to surface real regulatory filings matching a query,
+    rather than relying only on third-party RSS/news coverage of them.
+    start_date/end_date are ISO dates (YYYY-MM-DD); omit for "any time"."""
+    params = {"q": query, "forms": forms}
+    if start_date and end_date:
+        params.update({"dateRange": "custom", "startdt": start_date, "enddt": end_date})
+    query_string = urllib.parse.urlencode(params)
+    return _get(f"https://efts.sec.gov/LATEST/search-index?{query_string}", user_agent)
 
 
 def filing_document_url(cik: int, accession_number: str, primary_document: str) -> str:
