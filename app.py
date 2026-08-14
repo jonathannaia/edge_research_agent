@@ -21,9 +21,10 @@ from src.ui import (
     ticker_detail as ui_ticker_detail,
     watchlist as ui_watchlist,
 )
-from src.ui.components import render_top_disclaimer
+from src.ui.components import inject_button_glow, render_top_disclaimer
 
 st.set_page_config(page_title="Edge Research Agent", page_icon=None, layout="wide")
+inject_button_glow()
 
 
 @st.cache_resource

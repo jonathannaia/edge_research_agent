@@ -1,19 +1,19 @@
 [theme]
 base = "dark"
 
-primaryColor = "#F5C518"
+primaryColor = "#58A6FF"
 backgroundColor = "#0A0A0A"
 secondaryBackgroundColor = "#161616"
 textColor = "#F2F2F2"
 
-linkColor = "#F5C518"
+linkColor = "#58A6FF"
 linkUnderline = false
 
 borderColor = "#2A2A2A"
 dataframeBorderColor = "#2A2A2A"
 dataframeHeaderBackgroundColor = "#161616"
 
-codeTextColor = "#F5C518"
+codeTextColor = "#58A6FF"
 codeBackgroundColor = "#161616"
 
 font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"

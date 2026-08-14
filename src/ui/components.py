@@ -8,6 +8,46 @@ import streamlit as st
 from src.utils.export import SECTION_TITLES, fact_line
 from src.utils.formatting import freshness_badge
 
+# Substring-matches on `kind`/`data-testid` (not exact matches) because
+# Streamlit gives form-submit buttons kind="primaryFormSubmit" /
+# "secondaryFormSubmit" rather than plain "primary"/"secondary" — this
+# catches every actual action button (including inside st.form) while
+# still excluding chrome buttons like header/icon/toolbar controls.
+_BUTTON_GLOW_CSS = """
+<style>
+button[kind*="primary"], button[kind*="secondary"],
+button[data-testid*="stBaseButton-primary"], button[data-testid*="stBaseButton-secondary"],
+button[data-testid*="baseButton-primary"], button[data-testid*="baseButton-secondary"] {
+    transition: box-shadow 0.25s ease, transform 0.15s ease;
+}
+
+button[kind*="primary"], button[data-testid*="stBaseButton-primary"],
+button[data-testid*="baseButton-primary"] {
+    box-shadow: 0 0 14px rgba(88, 166, 255, 0.45);
+}
+button[kind*="primary"]:hover, button[data-testid*="stBaseButton-primary"]:hover,
+button[data-testid*="baseButton-primary"]:hover {
+    box-shadow: 0 0 22px rgba(88, 166, 255, 0.7);
+    transform: translateY(-1px);
+}
+
+button[kind*="secondary"], button[data-testid*="stBaseButton-secondary"],
+button[data-testid*="baseButton-secondary"] {
+    box-shadow: 0 0 8px rgba(88, 166, 255, 0.15);
+}
+button[kind*="secondary"]:hover, button[data-testid*="stBaseButton-secondary"]:hover,
+button[data-testid*="baseButton-secondary"]:hover {
+    box-shadow: 0 0 14px rgba(88, 166, 255, 0.3);
+    transform: translateY(-1px);
+}
+</style>
+"""
+
+
+def inject_button_glow() -> None:
+    st.markdown(_BUTTON_GLOW_CSS, unsafe_allow_html=True)
+
+
 TIER_BADGES = {
     "Active Research": "Active Research",
     "Watch Closely": "Watch Closely",
