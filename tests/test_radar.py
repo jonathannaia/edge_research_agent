@@ -110,6 +110,44 @@ def test_store_bounds_findings_to_max(tmp_path, monkeypatch):
     assert len(store.load_findings()) == 2
 
 
+def test_load_run_history_tolerates_old_schema_missing_new_field(tmp_path, monkeypatch):
+    """Regression test: adding a field to ScanRunRecord must not crash on
+    already-persisted rows written before that field existed — this is
+    exactly what broke the second live GitHub Actions run."""
+    monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
+    old_shaped_row = {
+        "started_at": "x", "finished_at": "y", "status": "ok", "feeds_checked": 1,
+        "items_seen": 1, "items_after_keyword_filter": 1, "items_sent_to_llm": 1,
+        "items_saved": 1, "items_rejected_by_guardrail": 0,
+        # no "items_after_freshness_filter" and no "errors" — simulates data
+        # written before both existed
+    }
+    store._write_json(store.STATE_PATH, {"seen_url_hashes": [], "run_history": [old_shaped_row]})
+
+    history = store.load_run_history()
+    assert len(history) == 1
+    assert history[0].items_after_freshness_filter == 0
+    assert history[0].errors == []
+
+
+def test_load_findings_tolerates_unknown_extra_key(tmp_path, monkeypatch):
+    """A newer scanner version writing an extra field must not break an
+    older/other reader — unknown keys are dropped, not fatal."""
+    monkeypatch.setattr(store, "FINDINGS_PATH", tmp_path / "radar_findings.json")
+    row = {
+        "niche": Niche.MACRO.value, "headline": "Test", "summary": "Summary.",
+        "source_url": "https://example.com/x", "source_name": "Feed", "source_type": "Press Release",
+        "published_at": "", "retrieved_at": "2026-08-01T00:00:00+00:00", "tickers": [],
+        "id": "abc", "url_hash": "abc",
+        "some_future_field_not_yet_defined": "should be ignored",
+    }
+    store._write_json(store.FINDINGS_PATH, [row])
+
+    findings = store.load_findings()
+    assert len(findings) == 1
+    assert findings[0].headline == "Test"
+
+
 # --- scan orchestration: guardrail rejection path (LLM mocked) ---
 
 def _fake_feed():

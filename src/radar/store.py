@@ -17,6 +17,7 @@ infrastructure (no hosted DB, no extra account signup).
 """
 from __future__ import annotations
 
+import dataclasses
 import hashlib
 import json
 from dataclasses import asdict
@@ -53,13 +54,35 @@ def _write_json(path: Path, payload) -> None:
         f.write("\n")
 
 
+def _construct(cls, d: dict):
+    """Builds a dataclass instance from a persisted dict, tolerant of schema
+    drift in both directions: unknown keys in `d` are dropped, and fields
+    missing from `d` (e.g. a field added to the dataclass after this row was
+    written to disk) fall back to the dataclass's own default. Without this,
+    adding any new field to a Radar model breaks loading every row written
+    before that change — which is exactly what happened when
+    items_after_freshness_filter was added (see git history)."""
+    known_fields = {f.name: f for f in dataclasses.fields(cls)}
+    kwargs = {k: v for k, v in d.items() if k in known_fields}
+    for name, f in known_fields.items():
+        if name in kwargs:
+            continue
+        if f.default is not dataclasses.MISSING:
+            kwargs[name] = f.default
+        elif f.default_factory is not dataclasses.MISSING:  # type: ignore[misc]
+            kwargs[name] = f.default_factory()
+        else:
+            kwargs[name] = 0 if f.type == "int" else ""
+    return cls(**kwargs)
+
+
 def load_findings() -> list[RadarFinding]:
     raw = _read_json(FINDINGS_PATH, [])
     findings = []
     for item in raw:
-        tickers = [TickerTag(**t) for t in item.get("tickers", [])]
+        tickers = [_construct(TickerTag, t) for t in item.get("tickers", [])]
         item = {**item, "tickers": tickers}
-        findings.append(RadarFinding(**item))
+        findings.append(_construct(RadarFinding, item))
     return findings
 
 
@@ -70,7 +93,7 @@ def load_seen_hashes() -> set[str]:
 
 def load_run_history() -> list[ScanRunRecord]:
     state = _read_json(STATE_PATH, {})
-    return [ScanRunRecord(**r) for r in state.get("run_history", [])]
+    return [_construct(ScanRunRecord, r) for r in state.get("run_history", [])]
 
 
 def save_scan_results(
