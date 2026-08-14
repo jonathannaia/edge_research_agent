@@ -16,6 +16,7 @@ from src.ui import (
     data_provider_settings as ui_data_providers,
     guardrails_page as ui_guardrails,
     new_brief as ui_new_brief,
+    radar as ui_radar,
     scoring_settings as ui_scoring_settings,
     sources as ui_sources,
     ticker_detail as ui_ticker_detail,
@@ -47,15 +48,37 @@ PAGES = {
     "Data Provider Settings": ui_data_providers,
     "Research Rules / Guardrails": ui_guardrails,
     "App Settings": ui_app_settings,
+    "Radar": ui_radar,
 }
+
+# Two independent categories, per the user's split: everything you drive
+# yourself (Watchlist/Research/etc.) vs. Radar, which runs unattended on a
+# schedule. Keeping them as separate sidebar sections makes that boundary
+# visible instead of burying Radar in one long page list.
+SECTIONS = {
+    "Manual Research": [
+        "Dashboard", "Watchlist", "Ticker Detail", "New Research Brief", "Compare Snapshots",
+        "Alerts / Review Queue", "Sources", "Scoring Settings", "Data Provider Settings",
+        "Research Rules / Guardrails", "App Settings",
+    ],
+    "Radar (Autonomous)": ["Radar"],
+}
+PAGE_SECTION = {page: section for section, pages in SECTIONS.items() for page in pages}
 
 if "_requested_page" in st.session_state:
     st.session_state["nav_page"] = st.session_state.pop("_requested_page")
 
+current_page = st.session_state.get("nav_page", "Dashboard")
+current_section = PAGE_SECTION.get(current_page, next(iter(SECTIONS)))
+
 with st.sidebar:
     st.title("EevaResearch AI")
     st.caption(f"v{settings.app_version} · Data mode: **{settings.data_mode}**")
-    page_name = st.radio("Navigate", list(PAGES.keys()), label_visibility="collapsed", key="nav_page")
+    section_name = st.radio("Section", list(SECTIONS.keys()), index=list(SECTIONS.keys()).index(current_section), key="nav_section")
+    section_pages = SECTIONS[section_name]
+    if st.session_state.get("nav_page") not in section_pages:
+        st.session_state["nav_page"] = section_pages[0]
+    page_name = st.radio("Page", section_pages, label_visibility="collapsed", key="nav_page")
     st.divider()
     render_top_disclaimer()
 

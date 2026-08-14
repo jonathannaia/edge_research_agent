@@ -1,0 +1,41 @@
+name: Radar scan
+
+on:
+  schedule:
+    # Every 2 hours. GitHub Actions cron is UTC and best-effort (can run a
+    # few minutes late under load) — that's fine for a ~12-scans/day cadence.
+    - cron: "0 */2 * * *"
+  workflow_dispatch: {}  # lets you trigger a run manually from the Actions tab
+
+permissions:
+  contents: write  # needed to commit updated data/radar_*.json back to the repo
+
+concurrency:
+  group: radar-scan
+  cancel-in-progress: false  # never cancel a run that might be mid-commit
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Radar scan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m scripts.run_radar_scan
+
+      - name: Commit updated findings
+        run: |
+          git config user.name "eeva-radar-bot"
+          git config user.email "actions@github.com"
+          git add data/radar_findings.json data/radar_state.json
+          git diff --cached --quiet || git commit -m "Radar scan: update findings [skip ci]"
+          git push

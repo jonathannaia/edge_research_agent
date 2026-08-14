@@ -13,6 +13,13 @@ Runs entirely locally: Python + Streamlit + SQLite. Ships in **mock mode** by de
 tickers (COHR, AAOI, AXTI) with clearly labeled synthetic data — so the whole app is usable with
 zero API keys before you connect anything real.
 
+Two independent parts, kept deliberately separate:
+1. **Manual Research** (sections 1–4 below) — you drive it: add tickers, generate briefs, review.
+   Zero LLM calls, zero ongoing cost.
+2. **Radar** (section 5) — a fully autonomous scanner, scoped to four fixed niches (AI Buildout,
+   Humanoids, Space, Macro/Rates/Policy), that runs on a schedule with no human approval per
+   finding. Costs a small, bounded amount per month once you turn it on (see section 5).
+
 ---
 
 ## 1. Quick start
@@ -74,7 +81,12 @@ src/
                            detection), alert, notes, audit, settings
   utils/                   export.py (Markdown/HTML brief export), formatting.py
   ui/                       One module per Streamlit page, plus components.py for shared widgets
-tests/                     pytest suite (see section 5)
+  radar/                   Autonomous scanner — separate feature, see section 5. feeds.py (RSS
+                           sources), keyword_filter.py (free pre-filter), llm_tagger.py (Claude
+                           Haiku 4.5 tagging), store.py (JSON persistence), scan.py (orchestration)
+scripts/run_radar_scan.py  CLI entrypoint the GitHub Actions workflow calls
+.github/workflows/         radar_scan.yml — the scheduled job that runs Radar
+tests/                     pytest suite (see section 6)
 sample_data/               Mock fixtures for COHR, AAOI, AXTI (clearly marked fictional)
 ```
 
@@ -189,7 +201,90 @@ rate limits and terms of use differ from SEC EDGAR's and should be reviewed inde
 
 ---
 
-## 5. Tests
+## 5. Radar — the autonomous scanner
+
+Radar is a **separate feature** from everything above: it's a fully autonomous, always-on scanner
+that watches free news/press sources for four fixed niches — **AI Buildout, Humanoids, Space, and
+Macro/Rates/Policy** — tags any tickers involved (US and international), writes a short cited
+summary, and surfaces it in the app with **no human approval in the loop**. It runs on its own
+schedule and never touches your Watchlist, theses, or research briefs, and nothing you do in the
+manual workflow affects it either.
+
+It is held to the same guardrails as the rest of the app:
+- **Cited by construction** — every finding links to its source article; there's no free-floating
+  claim, because the finding *is* a summary of that one article.
+- **No advice language, hard-enforced** — every LLM-generated summary is run through
+  `guardrails.language_filters.enforce_no_advice_language()` before it's ever saved; anything that
+  fails is discarded and logged, not shown.
+- **Fully auditable** — every scan run (feeds checked, items seen, items sent to the LLM, items
+  saved, items rejected by the guardrail, any errors) is recorded in `data/radar_state.json` and
+  visible in the "Scan run history" expander at the bottom of the Radar page.
+- **Cost-bounded** — a hard cap (`EDGE_RADAR_MAX_ITEMS_PER_RUN`, default 25) on how many candidate
+  items get an LLM call per run; a free, zero-cost keyword pre-filter runs first so only plausibly
+  relevant items reach that cap.
+
+### Architecture — why no new database
+
+Radar's scanner runs in **GitHub Actions** (free on a public repo) on a schedule
+(`.github/workflows/radar_scan.yml`, every 2 hours by default), completely separate from the
+Streamlit process. Rather than standing up a hosted database to bridge the two, the scan job simply
+**writes `data/radar_findings.json` and `data/radar_state.json` and commits them back to the repo**.
+Streamlit Cloud re-pulls the repo on redeploy/reboot, so the app always reads the latest committed
+findings straight off disk — zero new infrastructure, zero extra accounts beyond the ones you
+already have.
+
+```
+GitHub Actions (cron)              Streamlit app
+  fetch RSS feeds        ─┐
+  keyword pre-filter      │        reads data/radar_findings.json
+  Claude Haiku 4.5 tag ───┼──git──▶ and data/radar_state.json
+  guardrail check          │        straight off disk — no DB, no API call
+  commit + push findings ─┘
+```
+
+### Setup
+
+1. **Get an Anthropic API key** if you don't already have one, from the Anthropic Console.
+2. In your GitHub repo: **Settings → Secrets and variables → Actions → New repository secret**,
+   name it `ANTHROPIC_API_KEY`, and paste the key. This is the *only* secret Radar needs — every
+   data source it reads (RSS feeds) is free and keyless.
+3. The workflow is already committed and will start firing on its schedule automatically. To test
+   it immediately instead of waiting up to 2 hours: **Actions tab → Radar scan → Run workflow**.
+4. Open the app's **Radar** section (separate from Manual Research in the sidebar) to see results
+   once a run has completed.
+
+Nothing above touches your local `.env` — `ANTHROPIC_API_KEY` there is only needed if you want to
+run `python -m scripts.run_radar_scan` locally yourself.
+
+### Cost
+
+RSS feeds and GitHub Actions are free. The only recurring cost is Claude Haiku 4.5 calls
+(`$1.00 / $5.00 per 1M input/output tokens`) — at the default cadence (every 2 hours, capped at 25
+tagging calls per run) this runs in the ballpark of **$15–30/month**, and scales down automatically
+on quiet news days since the keyword pre-filter and per-run cap both reduce how much gets sent to
+the model. Lower `EDGE_RADAR_MAX_ITEMS_PER_RUN` or widen the cron interval in
+`.github/workflows/radar_scan.yml` to spend less.
+
+### Adding or changing sources
+
+Every feed Radar reads is listed explicitly in `src/radar/feeds.py` — there's no open-ended
+crawling or link-following. Add a `Feed(name, url, niche, source_type)` entry to add a source;
+niche must be one of the four values in `src/radar/models.py::Niche`. A broken feed is logged as an
+error in that run's audit record and skipped — it never fails the whole scan.
+
+### Limitations
+
+- Findings are based on RSS title/snippet only — Radar does not fetch or read full article bodies
+  (keeps it simple and avoids scraping/ToS concerns), so summaries are necessarily brief.
+- Ticker tagging is the model's best-effort judgment from short text; it's instructed to omit a
+  ticker rather than guess, but always verify against the linked source before relying on it.
+- The `data/radar_findings.json` file is capped at the 500 most recent findings and
+  `data/radar_state.json`'s run history at 200 runs — older entries roll off automatically so the
+  repo doesn't grow unbounded.
+
+---
+
+## 6. Tests
 
 ```bash
 python -m pytest -q
@@ -202,7 +297,7 @@ snapshot change-detection bucketing (confirming/disconfirming/neutral/new-unknow
 
 ---
 
-## 6. Known limitations
+## 7. Known limitations
 
 - **Legal/compliance**: SEC EDGAR access requires a compliant `User-Agent` and reasonable request
   rates — read EDGAR's fair-access policy before wiring a live filings provider. Never scrape a
@@ -212,23 +307,28 @@ snapshot change-detection bucketing (confirming/disconfirming/neutral/new-unknow
   multi-user auth. Fine for personal local use, not for a shared deployment as-is.
 - **Data quality**: mock mode is synthetic by construction; live mode is only as good as the
   providers you connect. The evidence-quality score is a partial mitigation, not a guarantee.
-- **Cost**: V1 makes zero LLM calls and no browser automation. Live-mode data-provider calls are
-  bounded by `EDGE_MAX_SOURCES_PER_BRIEF` / `EDGE_MAX_EXCERPTS_PER_SOURCE`, but a paid data vendor
-  will still bill per call — check your plan's limits before pointing this at a large watchlist.
+- **Cost**: the manual research pipeline makes zero LLM calls and no browser automation; only Radar
+  (section 5) calls an LLM, and its cost is bounded as described there. Live-mode data-provider
+  calls in the manual pipeline are bounded by `EDGE_MAX_SOURCES_PER_BRIEF` /
+  `EDGE_MAX_EXCERPTS_PER_SOURCE`, but a paid data vendor will still bill per call — check your
+  plan's limits before pointing this at a large watchlist.
 - **Alerts** are local-only and only run when you click the button in-app — there is no background
-  scheduler and no external notification channel in V1.
+  scheduler and no external notification channel for the manual pipeline (Radar has its own
+  schedule — see section 5).
 
 ---
 
-## 7. Roadmap
+## 8. Roadmap
 
 - **V1 (this repo)**: local watchlist, thesis records, single-ticker research briefs, transparent
   editable scorecard, snapshot-based change detection, local alerts/review queue, Markdown/HTML
-  export, mock data providers, full audit log.
+  export, mock data providers, full audit log, and Radar — a separate autonomous scanner for AI
+  buildout / humanoids / space / macro news with ticker tagging.
 - **V2**: live compliant data providers (SEC EDGAR first), richer source ingestion (manual PDF/
   transcript paste with excerpt tagging), local desktop notifications, optional narrowly-scoped
   LLM narrative polish (rewrite-only, over already-cited text, with the same guardrails re-checked
-  post-hoc).
+  post-hoc), and expanding Radar's sources beyond RSS (e.g. a financial-news API) once cost/value
+  is validated against the free-tier version.
 - **V3**: optional hosted deployment (multi-user auth, concurrent-write storage), collaborative
   research (shared watchlists/notes), deeper change detection (NLP-assisted management-language
   tone tracking across calls), and custom integrations.
