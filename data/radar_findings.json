@@ -1,6 +1,180 @@
 [
   {
     "niche": "Space",
+    "headline": "Will the new moon race turn Earth's nearest neighbor into a dumping ground?",
+    "summary": "Experts are calling for regulatory rules to prevent space companies from dumping spent rockets on the moon's surface as lunar activity increases.",
+    "source_url": "https://www.space.com/astronomy/moon/will-the-new-moon-race-turn-earths-nearest-neighbor-into-a-dumping-ground",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 18:00:00 +0000",
+    "retrieved_at": "2026-08-15T06:22:20+00:00",
+    "tickers": [],
+    "relevance_reason": "article addresses lunar space activities and infrastructure management concerns relevant to space sector",
+    "url_hash": "10b1ad1129616a9a",
+    "id": "10b1ad1129616a9a"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Meta’s ‘open’ AI, and a $250M deal gone very wrong",
+    "summary": "Meta released Glimmer, an open-weight AI model that users can download and run on their own hardware, alongside a letter from Mark Zuckerberg advocating for democratized AI access in contrast to the company's more powerful, API-locked Muse Spark model.",
+    "source_url": "https://techcrunch.com/podcast/metas-open-ai-and-a-250m-deal-gone-very-wrong/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 14:00:00 +0000",
+    "retrieved_at": "2026-08-15T04:21:39+00:00",
+    "tickers": [
+      {
+        "ticker": "META",
+        "company_name": "Meta Platforms, Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Meta's release of open-weight AI model directly relates to AI buildout and infrastructure decisions regarding model accessibility and deployment options.",
+    "url_hash": "45f40813ef00ace0",
+    "id": "45f40813ef00ace0"
+  },
+  {
+    "niche": "Space",
+    "headline": "SpaceX rocket's moon crash highlights 'a tangible operational risk' of lunar settlement",
+    "summary": "A SpaceX rocket body crashed into the moon, highlighting operational risks associated with increased lunar activity as humanity expands settlement efforts on the lunar surface.",
+    "source_url": "https://www.space.com/astronomy/moon/spacex-rockets-moon-crash-highlights-a-tangible-operational-risk-of-lunar-settlement",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 10:00:00 +0000",
+    "retrieved_at": "2026-08-15T00:42:16+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla, Inc. (SpaceX parent)",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "SPACEX",
+        "company_name": "Space Exploration Technologies Corp.",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Article discusses a SpaceX rocket impact on the moon in the context of lunar settlement operational risks, directly addressing space launch and lunar infrastructure concerns.",
+    "url_hash": "3f5693b003e12fe8",
+    "id": "3f5693b003e12fe8"
+  },
+  {
+    "niche": "Space",
+    "headline": "India-US space ties deepen as NASA invites ISRO to join moon base program",
+    "summary": "NASA has invited the Indian Space Research Organisation to collaborate on its Moon Base program, which aims to establish a permanent human outpost near the lunar south pole.",
+    "source_url": "https://www.space.com/astronomy/moon/india-us-space-ties-deepen-as-nasa-invites-isro-to-join-moon-base-program",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 12:00:00 +0000",
+    "retrieved_at": "2026-08-15T00:42:14+00:00",
+    "tickers": [],
+    "relevance_reason": "NASA's invitation to ISRO to collaborate on a lunar outpost program is substantive space infrastructure development.",
+    "url_hash": "c91c473307e25edb",
+    "id": "c91c473307e25edb"
+  },
+  {
+    "niche": "Space",
+    "headline": "U.S. Space Force adds second surveillance sensor to Japanese constellation",
+    "summary": "The U.S. Space Force completed a bilateral program by adding a second surveillance sensor to a Japanese navigation satellite constellation with the August 10 launch of QZS-7.",
+    "source_url": "https://spacenews.com/u-s-space-force-adds-second-surveillance-sensor-to-japanese-constellation/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 22:26:27 +0000",
+    "retrieved_at": "2026-08-15T00:42:02+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses space launch and satellite constellation operations involving U.S. military and Japanese space assets.",
+    "url_hash": "5427c7d527706d25",
+    "id": "5427c7d527706d25"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "How Protolabs turns CAD files into parts in under 24 hours",
+    "summary": "Protolabs CTO Marc Kermisch explains how the company uses AI, simulation, and design-for-manufacturing techniques to convert CAD files into production parts in under 24 hours.",
+    "source_url": "https://www.therobotreport.com/how-protolabs-turns-cad-files-into-parts-under-24-hours/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 22:14:19 +0000",
+    "retrieved_at": "2026-08-15T00:41:54+00:00",
+    "tickers": [
+      {
+        "ticker": "PRLB",
+        "company_name": "Protolabs",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Article discusses manufacturing technology from Protolabs that enables rapid production of parts, which is relevant to humanoid robotics production and supply chain.",
+    "url_hash": "064b1ff0861f28e3",
+    "id": "064b1ff0861f28e3"
+  },
+  {
+    "niche": "Space",
+    "headline": "US Space Force gives Rocket Lab $397 million to build threat-tracking 'Flatellites'",
+    "summary": "The U.S. Space Force awarded Rocket Lab $397 million to manufacture a fleet of satellites called 'Flatellites' designed to detect and track airborne threats from space.",
+    "source_url": "https://www.space.com/space-exploration/satellites/us-space-force-gives-rocket-lab-usd397-million-to-build-threat-tracking-flatellites",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 17:00:00 +0000",
+    "retrieved_at": "2026-08-14T22:14:02+00:00",
+    "tickers": [
+      {
+        "ticker": "RKLB",
+        "company_name": "Rocket Lab USA Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly concerns space launch and satellite manufacturing funded by U.S. Space Force.",
+    "url_hash": "56abb1add00f7d18",
+    "id": "56abb1add00f7d18"
+  },
+  {
+    "niche": "Space",
+    "headline": "Policy experts: Europe stuck between \"rock and a hard place\" on launch",
+    "summary": "Policy experts characterize Europe as facing difficult trade-offs regarding launch capabilities, with rocket reuse economics cited as a key consideration in the debate.",
+    "source_url": "https://arstechnica.com/space/2026/08/policy-experts-europe-stuck-between-rock-and-a-hard-place-on-launch/",
+    "source_name": "Ars Technica — Space",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 16:29:21 +0000",
+    "retrieved_at": "2026-08-14T22:13:54+00:00",
+    "tickers": [],
+    "relevance_reason": "directly addresses European launch policy and rocket economics in the space sector",
+    "url_hash": "8348f69b2d9f1420",
+    "id": "8348f69b2d9f1420"
+  },
+  {
+    "niche": "Space",
+    "headline": "Wallops gears up for an increase in launches",
+    "summary": "Wallops Island is preparing for a projected surge in launches in coming years, with companies and officials advocating for infrastructure improvements.",
+    "source_url": "https://spacenews.com/wallops-gears-up-for-an-increase-in-launches/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 22:02:28 +0000",
+    "retrieved_at": "2026-08-14T22:13:53+00:00",
+    "tickers": [],
+    "relevance_reason": "Article concerns infrastructure improvements at Wallops Island in anticipation of increased space launches, directly relevant to the Space scope.",
+    "url_hash": "5e91cb16c0723c77",
+    "id": "5e91cb16c0723c77"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Data center planned for suburb in Warsaw, Poland, sparks protests",
+    "summary": "A data center project planned for a suburb in Warsaw, Poland has sparked resident protests over concerns about potential water shortages from the facility.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/data-center-planned-for-suburb-in-warsaw-poland-sparks-protests/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 16:00:34 +0000",
+    "retrieved_at": "2026-08-14T22:13:33+00:00",
+    "tickers": [],
+    "relevance_reason": "Data center construction is directly relevant to the AI Buildout scope.",
+    "url_hash": "829c8760fd86edf6",
+    "id": "829c8760fd86edf6"
+  },
+  {
+    "niche": "Space",
     "headline": "Rocket Report: Rocket Lab shows off its flexibility; Blue Origin's two-pad plan",
     "summary": "Rocket Lab demonstrates operational flexibility while Blue Origin plans a two-pad launch facility, amid discussion of constrained launch capacity in the space industry.",
     "source_url": "https://arstechnica.com/space/2026/08/rocket-report-rocket-lab-shows-off-its-flexibility-blue-origins-two-pad-plan/",
