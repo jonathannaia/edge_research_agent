@@ -11,7 +11,7 @@ from src.providers.live_edgar import (
     LiveFilingsProvider,
     LiveFundamentalsProvider,
 )
-from src.providers.registry import _FilingsWithFallback, _FundamentalsWithFallback
+from src.providers.registry import _RoutedFilingsProvider, _RoutedFundamentalsProvider
 from src.providers.mock_providers import MockFilingsProvider, MockFundamentalsProvider
 
 FAKE_SUBMISSIONS = {
@@ -106,25 +106,44 @@ def test_live_fundamentals_raises_when_no_revenue_data():
                 provider.get_fundamentals("TEST")
 
 
-# --- registry.py fallback wrappers ---
+# --- registry.py jurisdiction routing + fallback ---
 
 def test_filings_fallback_to_mock_on_edgar_unavailable():
-    live = LiveFilingsProvider(Settings())
-    fallback = _FilingsWithFallback(live, MockFilingsProvider())
-    with patch("src.providers.live_edgar.edgar_client.get_cik_for_ticker", return_value=None):
-        filings = fallback.get_recent_filings("COHR")  # has a bundled mock fixture
+    fallback = _RoutedFilingsProvider(Settings())
+    with patch("src.providers.registry._ticker_jurisdiction", return_value="United States"):
+        with patch("src.providers.live_edgar.edgar_client.get_cik_for_ticker", return_value=None):
+            filings = fallback.get_recent_filings("COHR")  # has a bundled mock fixture
 
     assert len(filings) > 0
     assert all(f.is_mock is True for f in filings)
 
 
 def test_fundamentals_fallback_to_mock_on_edgar_error():
-    live = LiveFundamentalsProvider(Settings())
-    fallback = _FundamentalsWithFallback(live, MockFundamentalsProvider())
-    with patch("src.providers.live_edgar.edgar_client.get_cik_for_ticker", side_effect=EdgarError("network down")):
-        snapshot = fallback.get_fundamentals("COHR")
+    fallback = _RoutedFundamentalsProvider(Settings())
+    with patch("src.providers.registry._ticker_jurisdiction", return_value="United States"):
+        with patch("src.providers.live_edgar.edgar_client.get_cik_for_ticker", side_effect=EdgarError("network down")):
+            snapshot = fallback.get_fundamentals("COHR")
 
     assert snapshot.is_mock is True
+
+
+def test_filings_routes_korean_ticker_to_dart_and_falls_back_on_failure():
+    fallback = _RoutedFilingsProvider(Settings())
+    with patch("src.providers.registry._ticker_jurisdiction", return_value="South Korea"):
+        with patch("src.providers.live_dart.dart_client.get_corp_code", return_value=None):
+            filings = fallback.get_recent_filings("COHR")  # ticker irrelevant, jurisdiction is mocked
+
+    assert len(filings) > 0
+    assert all(f.is_mock is True for f in filings)
+
+
+def test_filings_other_jurisdiction_goes_straight_to_mock():
+    fallback = _RoutedFilingsProvider(Settings())
+    with patch("src.providers.registry._ticker_jurisdiction", return_value="China"):
+        filings = fallback.get_recent_filings("COHR")
+
+    assert len(filings) > 0
+    assert all(f.is_mock is True for f in filings)
 
 
 # --- ticker_registry (Radar ticker verification) ---
