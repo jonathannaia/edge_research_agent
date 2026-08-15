@@ -68,11 +68,15 @@ def main() -> int:
                 for year_offset, reprt_code in [(0, "11014"), (0, "11012"), (0, "11013"), (-1, "11011")]:
                     import datetime as _dt
                     yr = str(_dt.date.today().year + year_offset)
-                    resp = dart_client.get_json(
-                        "fnlttSinglAcntAll.json",
-                        {"crtfc_key": settings.dart_api_key, "corp_code": corp_code, "bsns_year": yr,
-                         "reprt_code": reprt_code, "fs_div": "CFS"},
-                    )
+                    try:
+                        resp = dart_client.get_json(
+                            "fnlttSinglAcntAll.json",
+                            {"crtfc_key": settings.dart_api_key, "corp_code": corp_code, "bsns_year": yr,
+                             "reprt_code": reprt_code, "fs_div": "CFS"},
+                        )
+                    except dart_client.DartError as e:
+                        print(f"  bsns_year={yr} reprt_code={reprt_code}: {e}")
+                        continue  # matches live_dart.py's own fallback-chain behavior
                     row = _find_account(resp.get("list", []), _REVENUE_NAMES, sj_div="IS")
                     if row:
                         print(f"  bsns_year={yr} reprt_code={reprt_code}: {row}")
