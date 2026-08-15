@@ -1,1 +1,106 @@
-{}
+{
+  "NVDA": {
+    "ticker": "NVDA",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:27:50+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "NVDA",
+      "last_price": 225.16,
+      "fifty_two_week_low": 164.07,
+      "fifty_two_week_high": 236.54,
+      "pct_change_3m": -0.002967,
+      "pct_change_1y": 0.23700700000000002,
+      "avg_volume_30d": 148031230.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "NVDA",
+      "market_cap": 5422978000000.0,
+      "ev_to_revenue": 21.3744,
+      "ev_to_ebitda": 32.7357,
+      "price_to_sales": 21.3932,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "NVDA",
+        "insider_name": "STEVENS MARK A",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 319385.0,
+        "value_usd": 66973501.45,
+        "filing_date": "2026-06-23",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000119903926000007/xslF345X06/wk-form4_1782247316.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "NVDA",
+        "insider_name": "STEVENS MARK A",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 565615.0,
+        "value_usd": 119026436.88,
+        "filing_date": "2026-06-23",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000119903926000007/xslF345X06/wk-form4_1782247316.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "NVDA",
+        "title": "NVDA 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm",
+        "published_date": "2026-07-02",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-02 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "NVDA",
+        "title": "NVDA 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm",
+        "published_date": "2026-06-18",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-18 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "NVDA",
+        "title": "NVDA 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/nvda-20260520.htm",
+        "published_date": "2026-05-20",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-20 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "NVDA",
+        "title": "NVDA 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000028/nvda-20260507.htm",
+        "published_date": "2026-05-08",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-08 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "NVDA",
+        "title": "NVDA 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000026/nvda-20260424.htm",
+        "published_date": "2026-04-27",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-27 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  }
+}
