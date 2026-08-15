@@ -8,6 +8,8 @@ PROVIDER_DOMAINS = [
     # (Domain, Typical live source, Env var(s), Status)
     ("Fundamentals (US)", "SEC EDGAR XBRL company facts API (free).", "EDGE_SEC_USER_AGENT", "LIVE"),
     ("Filings (US)", "SEC EDGAR submissions API (free, requires a compliant User-Agent).", "EDGE_SEC_USER_AGENT", "LIVE"),
+    ("Fundamentals (South Korea)", "DART financial statement API (free key required).", "EDGE_DART_API_KEY", "LIVE"),
+    ("Filings (South Korea)", "DART disclosure list API (free key required).", "EDGE_DART_API_KEY", "LIVE"),
     ("Earnings transcripts", "A transcript vendor (e.g. a paid API) or manually pasted excerpts via the Sources page.", "—", "Mock only"),
     ("Insider transactions", "SEC EDGAR Form 4 filings (free).", "EDGE_SEC_USER_AGENT", "Mock only"),
     ("Ownership data", "SEC 13F aggregation or a data vendor.", "—", "Mock only"),
@@ -24,18 +26,20 @@ JURISDICTION_REGULATORS = [
         "LIVE (see src/providers/live_edgar.py)",
     ),
     (
+        "South Korea", "DART (OpenDART)",
+        "Free official API, key required (register at opendart.fss.or.kr). Tickers are DART's "
+        "6-digit exchange stock codes (e.g. '005930' for Samsung Electronics), not letter "
+        "symbols. Filings are in Korean — no translation step built yet. Verified against real "
+        "data; year-over-year revenue growth is a known gap (returns 0.0% rather than a "
+        "fabricated number in some cases — see live_dart.py).",
+        "LIVE, given EDGE_DART_API_KEY (see src/providers/live_dart.py)",
+    ),
+    (
         "Japan", "EDINET",
         "Free official API (v2). Requires registering an account at "
         "api.edinet-fsa.go.jp with phone number verification to get an API key. "
         "Filings are in Japanese — no translation step built yet.",
         "Blocked on account signup (needs your phone number — can't be done on your behalf)",
-    ),
-    (
-        "South Korea", "DART (OpenDART)",
-        "Free official API. Requires registering an account at opendart.fss.or.kr "
-        "with email verification to get a 40-char API key. Filings are in Korean — "
-        "no translation step built yet.",
-        "Blocked on account signup (needs your email verification — can't be done on your behalf)",
     ),
     (
         "China", "CNINFO / SSE / SZSE",
@@ -57,15 +61,19 @@ def render(settings: Settings) -> None:
     st.metric("Current data mode", settings.data_mode)
     if settings.data_mode == "live":
         st.success(
-            "Live mode is on. US fundamentals and filings pull real data from SEC EDGAR "
-            "(`src/providers/live_edgar.py`). Every other domain below is still mock, and a ticker "
-            "EDGAR has no data for falls back to mock automatically — always check the `is_mock` "
-            "badge on what you're looking at, never assume live mode means everything is real."
+            "Live mode is on. US fundamentals/filings pull real data from SEC EDGAR "
+            "(`src/providers/live_edgar.py`), and South Korea fundamentals/filings pull real data "
+            "from DART if `EDGE_DART_API_KEY` is set (`src/providers/live_dart.py`) — routed "
+            "automatically by each ticker's jurisdiction. Every other domain/jurisdiction below is "
+            "still mock, and a ticker the live source has no data for falls back to mock "
+            "automatically — always check the `is_mock` badge on what you're looking at, never "
+            "assume live mode means everything is real."
         )
     else:
         st.write(
-            "Set `EDGE_DATA_MODE=live` in `.env` to turn on live SEC EDGAR fundamentals and filings for "
-            "US tickers — no API key needed, just a compliant `EDGE_SEC_USER_AGENT`. Every other domain "
+            "Set `EDGE_DATA_MODE=live` in `.env` to turn on live fundamentals/filings for US tickers "
+            "(SEC EDGAR, no key needed — just a compliant `EDGE_SEC_USER_AGENT`) and South Korea "
+            "tickers (DART, requires the free `EDGE_DART_API_KEY`). Every other domain/jurisdiction "
             "below is still mock-only; implement its interface in `src/providers/` and wire it into "
             "`src/providers/registry.py` to go live, one domain at a time."
         )
@@ -81,8 +89,8 @@ def render(settings: Settings) -> None:
         "Each ticker carries a `jurisdiction` field (set when you add it on the Watchlist page) that "
         "identifies its primary regulator. `SourceType.Regulatory Filing` is deliberately generic — "
         "it covers all of these — so a live `FilingsProvider` implementation branches on the ticker's "
-        "jurisdiction to call the right regulator's API. Only US filings are live so far; the other "
-        "three are genuinely blocked right now, each for a different documented reason (see Status "
+        "jurisdiction to call the right regulator's API. US and South Korea filings are live; the "
+        "rest are genuinely blocked right now, each for a different documented reason (see Status "
         "below) — not just unimplemented."
     )
     st.dataframe(

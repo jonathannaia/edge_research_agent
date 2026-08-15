@@ -181,37 +181,43 @@ downstream (scoring, guardrails, UI) needs to change.
 | Earnings calendar | `EarningsCalendarProvider` | A market data vendor or company IR page | |
 | News/press releases | `NewsProvider` | A news API, or official company RSS/press feeds | Never scrape a site in a way that violates its terms of service. |
 
-Set `EDGE_DATA_MODE=live` in `.env` to turn on live fundamentals and filings for **US tickers** —
-`src/providers/live_edgar.py` implements both against SEC EDGAR's free, keyless APIs, with a
-per-ticker fallback to mock (still correctly labeled) if EDGAR has no data for a given ticker.
-`registry.py` is the single place that decides mock vs. live per domain; every other domain
-(price, transcripts, insiders, ownership, earnings calendar, news) is still mock-only.
+Set `EDGE_DATA_MODE=live` in `.env` to turn on live fundamentals and filings for **US and South
+Korea tickers** — `src/providers/live_edgar.py` and `src/providers/live_dart.py` implement both
+against SEC EDGAR's free, keyless APIs and Korea's DART API (requires a free registered key)
+respectively, with a per-ticker fallback to mock (still correctly labeled) if the live source has
+no data for a given ticker. `registry.py` routes each call by the ticker's jurisdiction; every
+other domain (price, transcripts, insiders, ownership, earnings calendar, news) is still mock-only,
+and Japan/China/Hong Kong filings are still mock too (see below).
+
+**Korean tickers are DART's 6-digit exchange stock codes** (e.g. `005930` for Samsung
+Electronics), not letter symbols — that's what to enter as the ticker when adding a South
+Korea-jurisdiction watchlist entry.
 
 ### Filings beyond the US
 
 Every ticker carries a `jurisdiction` field (set via the dropdown on the Watchlist page: United
 States, Japan, South Korea, China, Hong Kong, or Other). `SourceType`'s regulatory-filing category
 is deliberately jurisdiction-agnostic — a live `FilingsProvider` branches on the ticker's
-jurisdiction to call the matching regulator. Only US is live so far. The other three were
-researched directly (not assumed) and are each blocked for a specific, different reason:
+jurisdiction to call the matching regulator. US and South Korea are live; the rest were researched
+directly (not assumed) and are each blocked for a specific, different reason:
 
 | Jurisdiction | Regulator / system | Status |
 |---|---|---|
 | United States | [SEC EDGAR](https://www.sec.gov/edgar/sec-api-documentation) | **Live.** Free, keyless — just a compliant `User-Agent`. |
+| South Korea | [DART / OpenDART](https://opendart.fss.or.kr/) | **Live**, given a free registered key (`EDGE_DART_API_KEY`). Verified against real data (Samsung Electronics) — filings and fundamentals (revenue, margins, cash, debt) all confirmed correct; year-over-year revenue growth is a known gap (comes back 0.0% rather than a fabricated number — see `src/providers/live_dart.py`'s module docstring). Filings are in Korean; no translation step built yet. |
 | Japan | [EDINET](https://api.edinet-fsa.go.jp/api/auth/index.aspx?mode=1) API v2 | Free official API, but requires registering an account with **phone number verification** to get an API key — an account-creation step that has to be done by a human, not automated. Filings are in Japanese; no translation step built yet. |
-| South Korea | [DART / OpenDART](https://opendart.fss.or.kr/) | Free official API, but requires registering an account with **email verification** to get a 40-character key — same account-creation blocker as EDINET. Filings are in Korean; no translation step built yet. |
 | China | CNINFO / SSE / SZSE | **No official public API exists at all.** The only options are scraping undocumented endpoints or a paid third-party vendor — scraping would violate this project's own "never scrape in a way that violates a site's terms of service" principle, so it isn't wired up. |
 | Hong Kong | [HKEXnews](https://www.hkexnews.hk/) | Public and login-free to browse, but its search is a stateful Java web form (session/viewstate-based) — confirmed by direct inspection — not a documented API. Would require reverse-engineering a fragile, unsupported endpoint. |
 
-**To unblock Japan or Korea:** register a free account yourself (EDINET needs a phone number,
-DART needs email verification — both take a few minutes), then set `EDGE_EDINET_API_KEY` /
-`EDGE_DART_API_KEY` in `.env`. The provider implementations for both aren't built yet — this
-project deliberately didn't write untested client code against API shapes that couldn't be
-verified without a real key, the same discipline used for the live SEC EDGAR provider (every
-endpoint it calls was verified against real responses before any code was written against it).
-Two things to plan for once a non-English regulator is wired up: (1) translation isn't built in,
-and the original-language text should be preserved alongside any translation for auditability;
-(2) each system's rate limits and terms of use differ from SEC EDGAR's and should be reviewed
+**To unblock Japan:** register a free account yourself (needs a phone number for verification —
+a few minutes), then set `EDGE_EDINET_API_KEY` in `.env`. Not built yet, for the same reason DART
+wasn't built blind: this project doesn't write untested client code against API shapes it can't
+verify against real responses — DART only got built once a real key existed to verify it against
+(see `scripts/dart_smoke_test.py`, a manual GitHub Actions workflow used to confirm it against
+live data without ever exposing the raw key). Two things to plan for once a non-English regulator
+is wired up: (1) translation isn't built in, and the original-language text should be preserved
+alongside any translation for auditability; (2) each system's rate limits and terms of use differ
+from SEC EDGAR's and should be reviewed
 independently.
 
 ---
