@@ -1,5 +1,26 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "Meta’s ‘open’ AI, and a $250M deal gone very wrong",
+    "summary": "Meta released Glimmer, an open-weight AI model that users can download and run on their own hardware, alongside a letter from Mark Zuckerberg advocating for democratized AI access in contrast to the company's more powerful, API-locked Muse Spark model.",
+    "source_url": "https://techcrunch.com/podcast/metas-open-ai-and-a-250m-deal-gone-very-wrong/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 14:00:00 +0000",
+    "retrieved_at": "2026-08-15T04:21:39+00:00",
+    "tickers": [
+      {
+        "ticker": "META",
+        "company_name": "Meta Platforms, Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Meta's release of open-weight AI model directly relates to AI buildout and infrastructure decisions regarding model accessibility and deployment options.",
+    "url_hash": "45f40813ef00ace0",
+    "id": "45f40813ef00ace0"
+  },
+  {
     "niche": "Space",
     "headline": "SpaceX rocket's moon crash highlights 'a tangible operational risk' of lunar settlement",
     "summary": "A SpaceX rocket body crashed into the moon, highlighting operational risks associated with increased lunar activity as humanity expands settlement efforts on the lunar surface.",
