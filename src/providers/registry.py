@@ -8,9 +8,12 @@ EDGE_DATA_MODE=live currently activates:
     README "Filings beyond the US"). Korean tickers are DART's 6-digit
     exchange stock codes (e.g. "005930" for Samsung Electronics), not
     letter symbols. No live insider-transaction equivalent for Korea yet.
-  - Everything else (transcripts, ownership, price, earnings calendar,
-    news; and filings/fundamentals for every other jurisdiction) is still
-    mock — see README's Data Provider Integration Guide.
+  - Live Finnhub price/valuation for US-listed tickers, IF
+    EDGE_FINNHUB_API_KEY is set (free tier — confirmed no Korean/
+    international coverage, US only).
+  - Everything else (transcripts, ownership, earnings calendar; and
+    filings/fundamentals/insiders/news/price for every other jurisdiction)
+    is still mock — see README's Data Provider Integration Guide.
 
 Both live filings/fundamentals providers fall back to mock per-ticker (not
 per-app) on any failure — unlisted ticker, network error, missing DART key,
@@ -26,6 +29,8 @@ access to on their own.
 from __future__ import annotations
 
 from src.config.settings import Settings, get_settings
+from typing import Optional
+
 from src.providers.base import (
     FilingHighlight,
     FilingsProvider,
@@ -35,10 +40,14 @@ from src.providers.base import (
     InsiderTransaction,
     NewsItem,
     NewsProvider,
+    PriceContext,
+    PriceProvider,
     ProviderBundle,
+    ValuationContext,
 )
 from src.providers.dart_client import DartError
 from src.providers.edgar_client import EdgarError
+from src.providers.finnhub_client import FinnhubError
 from src.providers.live_dart import (
     DartUnavailableError,
     LiveDartFilingsProvider,
@@ -51,6 +60,7 @@ from src.providers.live_edgar import (
     LiveInsiderProvider,
     LiveNewsProvider,
 )
+from src.providers.live_price import LivePriceProvider, PriceUnavailableError
 from src.providers.mock_providers import (
     MockEarningsCalendarProvider,
     MockFilingsProvider,
@@ -170,6 +180,39 @@ class _RoutedNewsProvider(NewsProvider):
         return self._mock.get_recent_news(ticker, limit)
 
 
+class _RoutedPriceProvider(PriceProvider):
+    """US only — Finnhub's free tier doesn't cover international exchanges
+    (confirmed, including KRX/Korea). Falls back to mock on any failure,
+    same pattern as the other routed providers."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+        self._mock = MockPriceProvider()
+        self._finnhub = LivePriceProvider(settings)
+
+    def get_price_context(self, ticker: str) -> Optional[PriceContext]:
+        jurisdiction = _ticker_jurisdiction(self._settings, ticker)
+        try:
+            if jurisdiction == UNITED_STATES:
+                ctx = self._finnhub.get_price_context(ticker)
+                if ctx:
+                    return ctx
+        except (PriceUnavailableError, FinnhubError):
+            pass
+        return self._mock.get_price_context(ticker)
+
+    def get_valuation_context(self, ticker: str) -> Optional[ValuationContext]:
+        jurisdiction = _ticker_jurisdiction(self._settings, ticker)
+        try:
+            if jurisdiction == UNITED_STATES:
+                ctx = self._finnhub.get_valuation_context(ticker)
+                if ctx:
+                    return ctx
+        except (PriceUnavailableError, FinnhubError):
+            pass
+        return self._mock.get_valuation_context(ticker)
+
+
 def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
     settings = settings or get_settings()
 
@@ -178,11 +221,13 @@ def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
         fundamentals: FundamentalsProvider = _RoutedFundamentalsProvider(settings)
         insiders: InsiderProvider = _RoutedInsiderProvider(settings)
         news: NewsProvider = _RoutedNewsProvider(settings)
+        price: PriceProvider = _RoutedPriceProvider(settings)
     else:
         filings = MockFilingsProvider()
         fundamentals = MockFundamentalsProvider()
         insiders = MockInsiderProvider()
         news = MockNewsProvider()
+        price = MockPriceProvider()
 
     return ProviderBundle(
         fundamentals=fundamentals,
@@ -190,7 +235,7 @@ def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
         transcripts=MockTranscriptProvider(),
         insiders=insiders,
         ownership=MockOwnershipProvider(),
-        price=MockPriceProvider(),
+        price=price,
         earnings_calendar=MockEarningsCalendarProvider(),
         news=news,
     )

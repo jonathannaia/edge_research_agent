@@ -13,7 +13,7 @@ PROVIDER_DOMAINS = [
     ("Earnings transcripts", "A transcript vendor (e.g. a paid API) or manually pasted excerpts via the Sources page.", "—", "Mock only"),
     ("Insider transactions (US)", "SEC EDGAR Form 4 filings, parsed for real buy/sell transactions (free).", "EDGE_SEC_USER_AGENT", "LIVE"),
     ("Ownership data", "SEC 13F aggregation or a data vendor.", "—", "Mock only"),
-    ("Price & volume", "A market data vendor (free tier or paid).", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
+    ("Price & valuation (US)", "Finnhub free tier (real-time quote + basic financials/valuation metrics).", "EDGE_FINNHUB_API_KEY", "LIVE"),
     ("Earnings calendar", "A market data vendor or company IR page.", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
     ("News & press releases (US)", "SEC EDGAR 8-K filings for newsworthy item types (earnings, executive changes, material agreements) — filing-derived, not a general news aggregator.", "EDGE_SEC_USER_AGENT", "LIVE"),
 ]
@@ -60,13 +60,14 @@ def render(settings: Settings) -> None:
     st.metric("Current data mode", settings.data_mode)
     if settings.data_mode == "live":
         st.success(
-            "Live mode is on. US fundamentals/filings pull real data from SEC EDGAR "
-            "(`src/providers/live_edgar.py`), and South Korea fundamentals/filings pull real data "
-            "from DART if `EDGE_DART_API_KEY` is set (`src/providers/live_dart.py`) — routed "
-            "automatically by each ticker's jurisdiction. Every other domain/jurisdiction below is "
-            "still mock, and a ticker the live source has no data for falls back to mock "
-            "automatically — always check the `is_mock` badge on what you're looking at, never "
-            "assume live mode means everything is real."
+            "Live mode is on. US fundamentals/filings/insider transactions/news pull real data from "
+            "SEC EDGAR (`src/providers/live_edgar.py`); South Korea fundamentals/filings pull real "
+            "data from DART if `EDGE_DART_API_KEY` is set (`src/providers/live_dart.py`); US price/"
+            "valuation pulls real data from Finnhub if `EDGE_FINNHUB_API_KEY` is set "
+            "(`src/providers/live_price.py`) — all routed automatically by each ticker's "
+            "jurisdiction. Every other domain/jurisdiction below is still mock, and a ticker the "
+            "live source has no data for falls back to mock automatically — always check the "
+            "`is_mock` badge on what you're looking at, never assume live mode means everything is real."
         )
     else:
         st.write(

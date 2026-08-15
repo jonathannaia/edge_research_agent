@@ -177,7 +177,7 @@ downstream (scoring, guardrails, UI) needs to change.
 | Insider transactions | `InsiderProvider` | SEC EDGAR Form 4 filings | **Live (US only).** Free, same access rules as filings — parses each Form 4's real XML body, keeping only genuine open-market buy/sell transactions (not grants/exercises/gifts). |
 | Ownership | `OwnershipProvider` | 13F aggregation or a data vendor | 13F data is quarterly and lagged by design. |
 | Transcripts | `TranscriptProvider` | A transcript vendor, or manually paste excerpts via the Sources page | No good free/compliant bulk source; manual entry is a legitimate V1 workflow. |
-| Price/volume | `PriceProvider` | A market data vendor (free tier or paid) | Needed for the technical/valuation context sections. |
+| Price/volume | `PriceProvider` | A market data vendor (free tier or paid) | **Live (US only).** Finnhub free tier — real-time quote plus basic financials/valuation metrics. Peer-group comparison (`peer_median_ev_to_revenue`) is left unset, not fabricated — Finnhub's free tier doesn't provide it. |
 | Earnings calendar | `EarningsCalendarProvider` | A market data vendor or company IR page | |
 | News/press releases | `NewsProvider` | A news API, or official company RSS/press feeds | **Live (US only), filing-derived.** SEC EDGAR 8-Ks with newsworthy item types (earnings, executive changes, material agreements) — not a general news aggregator; never scrape a site in a way that violates its terms of service. |
 
