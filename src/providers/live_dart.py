@@ -7,19 +7,24 @@ request parameters, and response field names below were confirmed against
 DART's official API documentation (opendart.fss.or.kr/guide) before this
 was written — not guessed. This was then verified live (scripts/
 dart_smoke_test.py against real Samsung Electronics data), which caught
-one real bug the docs alone didn't make obvious: bgn_de/end_de default to
-*today* when omitted from the filings list call, not "all time" — omitting
-them returned "no data found" for a company that files constantly. Fixed
-by always passing an explicit 1-year window. Fundamentals matched
-correctly against real data on the first attempt (revenue, gross margin,
-operating margin, cash, and total debt all came back sensible for a real
-company) — the Korean account-name candidates below are confirmed
-correct, not just plausible-looking guesses. One still-open, lower-stakes
-gap: revenue_yoy_growth came back 0.0% in that same live run even though
-Samsung's revenue isn't flat, meaning frmtrm_amount didn't match as
-expected for that particular report type — left as a known limitation
-(the code correctly falls back to 0.0 rather than fabricating a number)
-rather than guessing at a fix without visibility into the raw response.
+two real bugs the docs alone didn't make obvious:
+
+1. bgn_de/end_de default to *today* when omitted from the filings list
+   call, not "all time" — omitting them returned "no data found" for a
+   company that files constantly. Fixed by always passing an explicit
+   1-year window.
+2. Annual reports use "frmtrm_amount" for the prior-year comparison
+   figure, but quarterly/semi-annual reports don't have that key at all —
+   they use "frmtrm_q_amount" instead (see _prior_amount()'s docstring).
+   Using the wrong key silently produced 0.0% growth for every non-annual
+   Korean filing rather than an error, so it wasn't obvious without
+   inspecting a real raw response.
+
+Both are fixed and reverified against live data. Fundamentals otherwise
+matched correctly on the first attempt (revenue, gross margin, operating
+margin, cash, and total debt all came back sensible for a real company) —
+the Korean account-name candidates below are confirmed correct against
+real data, not just plausible-looking guesses.
 
 Korean "tickers" are DART's 6-digit exchange stock codes (e.g. "005930"
 for Samsung Electronics), not letter symbols — that's what to enter as the
@@ -148,6 +153,24 @@ def _amount(row: dict | None, key: str = "thstrm_amount") -> float:
         return 0.0
 
 
+def _prior_amount(row: dict | None) -> float:
+    """The same-period-prior-year comparison figure. Confirmed against a
+    real DART response (a semi-annual report) that this is NOT always
+    "frmtrm_amount": annual reports (reprt_code=11011) use that key, but
+    quarterly/semi-annual reports (11012/11013/11014) don't have it at
+    all — they use "frmtrm_q_amount" for the same-quarter-last-year figure
+    instead. Those reports also carry a "frmtrm_add_amount" (prior
+    cumulative year-to-date), which looks similar but is a different
+    metric than "thstrm_amount" (this period only) and must not be used
+    here — that mismatch was the actual cause of yoy_growth silently
+    coming back as 0.0% for every non-annual Korean filing."""
+    if not row:
+        return 0.0
+    if row.get("frmtrm_amount") is not None:
+        return _amount(row, "frmtrm_amount")
+    return _amount(row, "frmtrm_q_amount")
+
+
 class LiveDartFundamentalsProvider(FundamentalsProvider):
     def __init__(self, settings: Settings):
         self._settings = settings
@@ -181,12 +204,12 @@ class LiveDartFundamentalsProvider(FundamentalsProvider):
             raise DartUnavailableError(f"No revenue line item found in DART financials for {ticker}.")
 
         revenue = _amount(revenue_row)
-        prior_revenue = _amount(revenue_row, "frmtrm_amount")
+        prior_revenue = _prior_amount(revenue_row)
         revenue_yoy_growth = (revenue - prior_revenue) / prior_revenue if prior_revenue else 0.0
 
         gross_profit_row = _find_account(rows, _GROSS_PROFIT_NAMES, sj_div="IS")
         gross_margin = (_amount(gross_profit_row) / revenue) if gross_profit_row and revenue else 0.0
-        prior_gross_profit = _amount(gross_profit_row, "frmtrm_amount") if gross_profit_row else 0.0
+        prior_gross_profit = _prior_amount(gross_profit_row)
         gross_margin_prior_year = (prior_gross_profit / prior_revenue) if prior_gross_profit and prior_revenue else gross_margin
 
         op_income_row = _find_account(rows, _OPERATING_INCOME_NAMES, sj_div="IS")

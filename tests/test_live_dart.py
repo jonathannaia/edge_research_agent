@@ -169,6 +169,39 @@ def test_live_dart_fundamentals_raises_when_no_revenue_row():
                 provider.get_fundamentals("005930")
 
 
+def test_live_dart_fundamentals_computes_growth_for_semi_annual_report():
+    """Regression test using the exact row shape from a real live DART
+    response (Samsung Electronics, semi-annual report): no "frmtrm_amount"
+    key at all, only "frmtrm_q_amount" (same-quarter-last-year, the
+    correct comparison) and "frmtrm_add_amount" (prior cumulative YTD — a
+    different metric, must NOT be used). Using the wrong key previously
+    made yoy_growth silently come back as 0.0% for every non-annual
+    Korean filing."""
+    settings = Settings(dart_api_key="fake-key")
+    provider = LiveDartFundamentalsProvider(settings)
+    real_semi_annual_response = {
+        "status": "000",
+        "list": [
+            {
+                "sj_div": "IS", "account_nm": "매출액",
+                "thstrm_amount": "171499470000000",
+                "thstrm_add_amount": "305372914000000",
+                "frmtrm_q_amount": "74566317000000",
+                "frmtrm_add_amount": "153706820000000",
+            },
+        ],
+    }
+    with patch("src.providers.live_dart.dart_client.get_corp_code", return_value="00126380"):
+        with patch("src.providers.live_dart.dart_client.get_json", return_value=real_semi_annual_response):
+            snapshot = provider.get_fundamentals("005930")
+
+    assert snapshot.revenue == 171_499_470_000_000
+    # Must compare against frmtrm_q_amount (74.57T), never frmtrm_add_amount (153.7T)
+    expected_growth = (171_499_470_000_000 - 74_566_317_000_000) / 74_566_317_000_000
+    assert snapshot.revenue_yoy_growth == pytest.approx(expected_growth)
+    assert snapshot.revenue_yoy_growth > 1.0  # this real case is >100% YoY growth
+
+
 def test_live_dart_fundamentals_falls_back_through_report_chain():
     """The first three report-code attempts return no data; the fourth
     (prior-year annual) succeeds — proves the fallback chain actually
