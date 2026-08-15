@@ -42,6 +42,21 @@
   ],
   "run_history": [
     {
+      "started_at": "2026-08-15T10:13:42+00:00",
+      "finished_at": "2026-08-15T10:14:15+00:00",
+      "status": "partial_error",
+      "feeds_checked": 16,
+      "items_seen": 432,
+      "items_after_freshness_filter": 59,
+      "items_after_keyword_filter": 19,
+      "items_sent_to_llm": 19,
+      "items_saved": 0,
+      "items_rejected_by_guardrail": 0,
+      "errors": [
+        "SEC EDGAR Full-Text Search — 8-K capex filings: Request to https://efts.sec.gov/LATEST/search-index?q=data+center+capital+expenditure&forms=8-K&dateRange=custom&startdt=2026-08-13&enddt=2026-08-15 failed: HTTP Error 500: Internal Server Error"
+      ]
+    },
+    {
       "started_at": "2026-08-15T08:16:48+00:00",
       "finished_at": "2026-08-15T08:17:21+00:00",
       "status": "partial_error",
