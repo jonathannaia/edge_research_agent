@@ -30,8 +30,7 @@ JURISDICTION_REGULATORS = [
         "Free official API, key required (register at opendart.fss.or.kr). Tickers are DART's "
         "6-digit exchange stock codes (e.g. '005930' for Samsung Electronics), not letter "
         "symbols. Filings are in Korean — no translation step built yet. Verified against real "
-        "data; year-over-year revenue growth is a known gap (returns 0.0% rather than a "
-        "fabricated number in some cases — see live_dart.py).",
+        "data, including year-over-year revenue growth for quarterly/semi-annual reports.",
         "LIVE, given EDGE_DART_API_KEY (see src/providers/live_dart.py)",
     ),
     (
