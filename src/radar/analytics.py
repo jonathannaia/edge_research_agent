@@ -64,6 +64,23 @@ def is_scan_overdue(last_run_finished_at: str | None, expected_interval_hours: f
     return age_hours > expected_interval_hours * grace_multiplier
 
 
+def find_cross_theme_findings(findings: list[RadarFinding], ticker_themes: dict[str, str]) -> list[dict]:
+    """Findings that tag tickers from 2+ different themes within the SAME
+    cited article — the only "cross-theme connection" this makes, since it
+    requires zero inference: the article itself already, factually,
+    discusses companies from multiple themes together. This deliberately
+    does NOT try to correlate separate articles by date/keyword and assert
+    they're related — that would be an unverified inference the rest of
+    this app's guardrails don't allow (see README "Radar" section on why
+    cross-theme dependencies are evidence-linked only, not inferential)."""
+    results = []
+    for f in findings:
+        themes_in_finding = sorted({ticker_themes[t.ticker] for t in f.tickers if t.ticker in ticker_themes})
+        if len(themes_in_finding) >= 2:
+            results.append({"finding": f, "themes": themes_in_finding})
+    return results
+
+
 def top_tickers(findings: list[RadarFinding], limit: int = 15) -> list[dict]:
     """Most-mentioned tickers, most-mentioned first. Each row: ticker,
     company_name/jurisdiction from its most recent tag, mention count, and

@@ -64,3 +64,13 @@ def get_quote(symbol: str, api_key: str) -> dict:
 
 def get_basic_financials(symbol: str, api_key: str) -> dict:
     return _get("stock/metric", {"symbol": symbol.upper(), "metric": "all"}, api_key)
+
+
+def get_recommendation_trends(symbol: str, api_key: str) -> list[dict]:
+    """Aggregate analyst buy/hold/sell counts by month — free tier.
+    Verified against a real response (AAPL) before being used: a list of
+    {symbol, period, strongBuy, buy, hold, sell, strongSell} dicts, newest
+    period first. Individual price targets are a separate, premium-only
+    endpoint and are NOT available here — not requested."""
+    data = _get("stock/recommendation", {"symbol": symbol.upper()}, api_key)
+    return data if isinstance(data, list) else []

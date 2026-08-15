@@ -14,11 +14,13 @@ def test_load_tracked_tickers_returns_empty_list_when_file_missing(tmp_path, mon
     assert snapshots.load_tracked_tickers() == []
 
 
-def test_load_tracked_tickers_reads_real_schema(tmp_path, monkeypatch):
+def test_load_tracked_tickers_reads_themed_schema(tmp_path, monkeypatch):
     path = tmp_path / "tracked_tickers.json"
-    path.write_text('{"_readme": "explainer text", "tickers": ["nvda", "RKLB"]}')
+    path.write_text(
+        '{"_readme": "x", "themes": {"Memory": ["mu", "SNDK"], "Space": ["RKLB"]}}'
+    )
     monkeypatch.setattr(snapshots, "TRACKED_TICKERS_PATH", path)
-    assert snapshots.load_tracked_tickers() == ["NVDA", "RKLB"]
+    assert snapshots.load_tracked_tickers() == ["MU", "RKLB", "SNDK"]
 
 
 def test_load_tracked_tickers_tolerates_malformed_file(tmp_path, monkeypatch):
@@ -26,6 +28,19 @@ def test_load_tracked_tickers_tolerates_malformed_file(tmp_path, monkeypatch):
     path.write_text("not valid json {{{")
     monkeypatch.setattr(snapshots, "TRACKED_TICKERS_PATH", path)
     assert snapshots.load_tracked_tickers() == []
+
+
+def test_load_ticker_themes_maps_ticker_to_theme_name(tmp_path, monkeypatch):
+    path = tmp_path / "tracked_tickers.json"
+    path.write_text(
+        '{"_readme": "x", "themes": {"Memory": ["MU", "SNDK"], "Space": ["RKLB"], "Humanoid Robotics": []}}'
+    )
+    monkeypatch.setattr(snapshots, "TRACKED_TICKERS_PATH", path)
+    themes = snapshots.load_ticker_themes()
+    assert themes["MU"] == "Memory"
+    assert themes["SNDK"] == "Memory"
+    assert themes["RKLB"] == "Space"
+    assert "Humanoid Robotics" not in themes.values()  # empty theme contributes no mappings
 
 
 def _fake_price_ctx(ticker):
@@ -60,11 +75,15 @@ def test_refresh_snapshots_writes_all_domains(tmp_path, monkeypatch):
         source_type="Press Release", snippet="test", tag="neutral", is_mock=False,
     )
 
+    fake_recommendation = {"symbol": "NVDA", "period": "2026-08-01", "strongBuy": 10, "buy": 20, "hold": 5, "sell": 1, "strongSell": 0}
+
     with patch("src.radar.snapshots.LivePriceProvider.get_price_context", return_value=_fake_price_ctx("NVDA")):
         with patch("src.radar.snapshots.LivePriceProvider.get_valuation_context", return_value=_fake_valuation_ctx("NVDA")):
             with patch("src.radar.snapshots.LiveInsiderProvider.get_insider_transactions", return_value=[fake_txn]):
                 with patch("src.radar.snapshots.LiveNewsProvider.get_recent_news", return_value=[fake_news]):
-                    summary = snapshots.refresh_snapshots(["NVDA"], settings)
+                    with patch("src.radar.snapshots.finnhub_client.get_quote", return_value={"c": 100.0, "dp": 1.5}):
+                        with patch("src.radar.snapshots.finnhub_client.get_recommendation_trends", return_value=[fake_recommendation]):
+                            summary = snapshots.refresh_snapshots(["NVDA"], settings)
 
     assert summary["tickers_refreshed"] == 1
     assert summary["tickers_failed"] == 0
@@ -75,6 +94,31 @@ def test_refresh_snapshots_writes_all_domains(tmp_path, monkeypatch):
     assert saved["NVDA"]["valuation"]["market_cap"] == 1_000_000_000.0
     assert len(saved["NVDA"]["insider_transactions"]) == 1
     assert len(saved["NVDA"]["news"]) == 1
+    assert saved["NVDA"]["pct_change_1d"] == 1.5
+    assert saved["NVDA"]["unusual_move"] is False
+    assert saved["NVDA"]["analyst_recommendations"] == fake_recommendation
+
+
+def test_refresh_snapshots_flags_notable_and_watch_trigger_moves(tmp_path, monkeypatch):
+    monkeypatch.setattr(snapshots, "SNAPSHOTS_PATH", tmp_path / "ticker_snapshots.json")
+    settings = Settings(finnhub_api_key="fake-key")
+
+    with patch("src.radar.snapshots.LivePriceProvider.get_price_context", side_effect=PriceUnavailableError("x")):
+        with patch("src.radar.snapshots.LivePriceProvider.get_valuation_context", side_effect=PriceUnavailableError("x")):
+            with patch("src.radar.snapshots.LiveInsiderProvider.get_insider_transactions", return_value=[]):
+                with patch("src.radar.snapshots.LiveNewsProvider.get_recent_news", return_value=[]):
+                    with patch("src.radar.snapshots.finnhub_client.get_recommendation_trends", return_value=[]):
+                        with patch("src.radar.snapshots.finnhub_client.get_quote", return_value={"c": 50.0, "dp": 4.2}):
+                            snapshots.refresh_snapshots(["NOTABLE"], settings)
+                        with patch("src.radar.snapshots.finnhub_client.get_quote", return_value={"c": 50.0, "dp": -8.1}):
+                            snapshots.refresh_snapshots(["TRIGGER"], settings)
+                        with patch("src.radar.snapshots.finnhub_client.get_quote", return_value={"c": 50.0, "dp": 0.4}):
+                            snapshots.refresh_snapshots(["QUIET"], settings)
+
+    saved = snapshots.load_snapshots()
+    assert saved["NOTABLE"]["unusual_move"] is True and saved["NOTABLE"]["watch_trigger_move"] is False
+    assert saved["TRIGGER"]["unusual_move"] is True and saved["TRIGGER"]["watch_trigger_move"] is True
+    assert saved["QUIET"]["unusual_move"] is False and saved["QUIET"]["watch_trigger_move"] is False
 
 
 def test_refresh_snapshots_one_domain_failing_doesnt_block_others(tmp_path, monkeypatch):
@@ -106,9 +150,11 @@ def test_refresh_snapshots_respects_max_tickers_bound(tmp_path, monkeypatch):
         with patch("src.radar.snapshots.LivePriceProvider.get_valuation_context", side_effect=PriceUnavailableError("x")):
             with patch("src.radar.snapshots.LiveInsiderProvider.get_insider_transactions", return_value=[]):
                 with patch("src.radar.snapshots.LiveNewsProvider.get_recent_news", return_value=[]):
-                    summary = snapshots.refresh_snapshots(
-                        ["A", "B", "C", "D", "E"], settings, max_tickers=2
-                    )
+                    with patch("src.radar.snapshots.finnhub_client.get_quote", return_value={"c": 0, "dp": None}):
+                        with patch("src.radar.snapshots.finnhub_client.get_recommendation_trends", return_value=[]):
+                            summary = snapshots.refresh_snapshots(
+                                ["A", "B", "C", "D", "E"], settings, max_tickers=2
+                            )
 
     assert summary["tickers_considered"] == 5
     assert summary["tickers_attempted"] == 2

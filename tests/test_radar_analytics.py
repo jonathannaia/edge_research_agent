@@ -81,3 +81,43 @@ def test_top_tickers_respects_limit():
         for i in range(20)
     ]
     assert len(analytics.top_tickers(findings, limit=5)) == 5
+
+
+def _tag(ticker):
+    return TickerTag(ticker=ticker, company_name=ticker, jurisdiction="United States")
+
+
+def test_find_cross_theme_findings_requires_two_different_themes_in_same_finding():
+    themes = {"MU": "Memory", "COHR": "Photonics", "MP": "Rare Earths"}
+
+    single_theme = _finding(Niche.AI_BUILDOUT.value, 1, [_tag("MU")])
+    cross_theme = _finding(Niche.AI_BUILDOUT.value, 2, [_tag("MU"), _tag("COHR")])
+    three_theme = _finding(Niche.AI_BUILDOUT.value, 3, [_tag("MU"), _tag("COHR"), _tag("MP")])
+    untracked_ticker = _finding(Niche.AI_BUILDOUT.value, 4, [_tag("ZZZZ")])
+
+    results = analytics.find_cross_theme_findings(
+        [single_theme, cross_theme, three_theme, untracked_ticker], themes
+    )
+
+    assert len(results) == 2
+    result_findings = [r["finding"] for r in results]
+    assert cross_theme in result_findings
+    assert three_theme in result_findings
+    assert single_theme not in result_findings
+    assert untracked_ticker not in result_findings
+
+
+def test_find_cross_theme_findings_reports_which_themes():
+    themes = {"MU": "Memory", "COHR": "Photonics"}
+    finding = _finding(Niche.AI_BUILDOUT.value, 1, [_tag("MU"), _tag("COHR")])
+
+    results = analytics.find_cross_theme_findings([finding], themes)
+
+    assert results[0]["themes"] == ["Memory", "Photonics"]
+
+
+def test_find_cross_theme_findings_two_tickers_same_theme_does_not_count():
+    themes = {"MU": "Memory", "SNDK": "Memory"}
+    finding = _finding(Niche.AI_BUILDOUT.value, 1, [_tag("MU"), _tag("SNDK")])
+
+    assert analytics.find_cross_theme_findings([finding], themes) == []

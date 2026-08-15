@@ -11,6 +11,7 @@ from src.database.db import init_db
 from src.ui import (
     alerts as ui_alerts,
     app_settings as ui_app_settings,
+    capital_rotation as ui_capital_rotation,
     compare_snapshots as ui_compare,
     dashboard as ui_dashboard,
     data_provider_settings as ui_data_providers,
@@ -51,6 +52,7 @@ PAGES = {
     "App Settings": ui_app_settings,
     "Radar": ui_radar,
     "Radar Trends": ui_radar_trends,
+    "Capital Rotation": ui_capital_rotation,
 }
 
 # Two independent categories, per the user's split: everything you drive
@@ -63,7 +65,7 @@ SECTIONS = {
         "Alerts / Review Queue", "Sources", "Scoring Settings", "Data Provider Settings",
         "Research Rules / Guardrails", "App Settings",
     ],
-    "Radar (Autonomous)": ["Radar", "Radar Trends"],
+    "Radar (Autonomous)": ["Radar", "Radar Trends", "Capital Rotation"],
 }
 PAGE_SECTION = {page: section for section, pages in SECTIONS.items() for page in pages}
 
