@@ -1,0 +1,58 @@
+[
+  {
+    "question": "What is happening in AI networking and photonics?",
+    "what_happened": "Demo placeholder summary — in a real answer this section would state, in plain factual terms, what has recently changed in AI networking and photonics, each sentence tied to a source.",
+    "why_it_matters": "Demo placeholder — this section would explain why the change matters for the theme's investment landscape.",
+    "underappreciated": "Demo placeholder — this section would surface a less-obvious angle the market may be underweighting.",
+    "risks": "Demo placeholder — this section would list concrete risks and thesis-breakers, not generic caveats.",
+    "what_to_watch": "Demo placeholder — this section would list specific upcoming events or data points worth monitoring.",
+    "sources": [
+      {"id": "chat-ev-001", "title": "Demo source — networking/photonics placeholder", "source_name": "EevaResearch Demo Data", "source_type": "Demo Dataset", "published_at": "2026-08-15T06:00:00+00:00", "retrieved_at": "2026-08-15T06:00:00+00:00", "excerpt": "Placeholder excerpt.", "claim_type": "Interpretation", "is_demo": true, "theme_slug": "photonics"}
+    ],
+    "confidence": "Moderate", "freshness": "Fresh", "claim_type": "Interpretation", "is_demo": true
+  },
+  {
+    "question": "Compare three optical interconnect suppliers.",
+    "what_happened": "Phase 1 template response: ticker-level supplier comparisons require the curated ticker universe, which is intentionally not loaded yet (planned for Phase 3). This card exists to demonstrate the answer-card layout, not to compare real or fictional companies.",
+    "why_it_matters": "Demo placeholder — once real tickers are loaded, this section would explain competitive positioning differences.",
+    "underappreciated": "Demo placeholder — not populated in this phase.",
+    "risks": "Demo placeholder — not populated in this phase.",
+    "what_to_watch": "See Methodology for the Phase 3 curated ticker-universe plan.",
+    "sources": [],
+    "confidence": "Weak", "freshness": "Fresh", "claim_type": "Uncertainty", "is_demo": true
+  },
+  {
+    "question": "What are the main catalysts for the memory cycle?",
+    "what_happened": "Demo placeholder summary of memory-cycle catalysts — see the Catalysts section on the Memory theme page for the structured (also demo) catalyst list this answer would draw from.",
+    "why_it_matters": "Demo placeholder — this section would connect catalysts to the theme's current cycle position.",
+    "underappreciated": "Demo placeholder — not populated with a real angle in this phase.",
+    "risks": "Demo placeholder — not populated in this phase.",
+    "what_to_watch": "Demo placeholder — would list the nearest-dated catalysts specifically.",
+    "sources": [
+      {"id": "chat-ev-002", "title": "Demo source — memory cycle placeholder", "source_name": "EevaResearch Demo Data", "source_type": "Demo Dataset", "published_at": "2026-08-06T09:00:00+00:00", "retrieved_at": "2026-08-06T09:00:00+00:00", "excerpt": "Placeholder excerpt.", "claim_type": "Interpretation", "is_demo": true, "theme_slug": "memory"}
+    ],
+    "confidence": "Moderate", "freshness": "Aging", "claim_type": "Interpretation", "is_demo": true
+  },
+  {
+    "question": "Which parts of the humanoid supply chain would benefit from volume scaling?",
+    "what_happened": "Demo placeholder summary of humanoid supply-chain scaling dynamics by subcategory (actuators, sensors, batteries, integrators).",
+    "why_it_matters": "Demo placeholder — would connect scaling economics to which subcategories see margin/cost benefits first.",
+    "underappreciated": "Demo placeholder — not populated with a real angle in this phase.",
+    "risks": "Demo placeholder — not populated in this phase.",
+    "what_to_watch": "Demo placeholder — would list specific production-volume milestones to track.",
+    "sources": [
+      {"id": "chat-ev-003", "title": "Demo source — humanoid supply chain placeholder", "source_name": "EevaResearch Demo Data", "source_type": "Demo Dataset", "published_at": "2026-07-28T09:00:00+00:00", "retrieved_at": "2026-07-28T09:00:00+00:00", "excerpt": "Placeholder excerpt.", "claim_type": "Inference", "is_demo": true, "theme_slug": "humanoids"}
+    ],
+    "confidence": "Weak", "freshness": "Stale", "claim_type": "Inference", "is_demo": true
+  },
+  {
+    "question": "Where is capital rotating across the five themes?",
+    "what_happened": "Demo placeholder summary — see Capital Rotation for the (also demo) relative-performance table this answer would draw from.",
+    "why_it_matters": "Demo placeholder — would explain what a rotation between themes implies for positioning.",
+    "underappreciated": "Demo placeholder — not populated with a real angle in this phase.",
+    "risks": "Demo placeholder — rotation reads can reverse quickly; treat any single-period read cautiously.",
+    "what_to_watch": "Demo placeholder — would list the specific breadth/leadership changes to monitor next.",
+    "sources": [],
+    "confidence": "Moderate", "freshness": "Fresh", "claim_type": "Interpretation", "is_demo": true
+  }
+]
