@@ -179,7 +179,7 @@ downstream (scoring, guardrails, UI) needs to change.
 | Transcripts | `TranscriptProvider` | A transcript vendor, or manually paste excerpts via the Sources page | No good free/compliant bulk source; manual entry is a legitimate V1 workflow. |
 | Price/volume | `PriceProvider` | A market data vendor (free tier or paid) | Needed for the technical/valuation context sections. |
 | Earnings calendar | `EarningsCalendarProvider` | A market data vendor or company IR page | |
-| News/press releases | `NewsProvider` | A news API, or official company RSS/press feeds | Never scrape a site in a way that violates its terms of service. |
+| News/press releases | `NewsProvider` | A news API, or official company RSS/press feeds | **Live (US only), filing-derived.** SEC EDGAR 8-Ks with newsworthy item types (earnings, executive changes, material agreements) — not a general news aggregator; never scrape a site in a way that violates its terms of service. |
 
 Set `EDGE_DATA_MODE=live` in `.env` to turn on live fundamentals and filings for **US and South
 Korea tickers** — `src/providers/live_edgar.py` and `src/providers/live_dart.py` implement both

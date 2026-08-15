@@ -41,6 +41,8 @@ from src.providers.base import (
     FundamentalsSnapshot,
     InsiderProvider,
     InsiderTransaction,
+    NewsItem,
+    NewsProvider,
 )
 
 FILING_FORMS_OF_INTEREST = {"10-K", "10-Q", "8-K"}
@@ -292,6 +294,75 @@ class LiveInsiderProvider(InsiderProvider):
                 continue
             results.extend(_parse_form4_transactions(xml_text, ticker, dates[i], display_url))
         return results[:limit]
+
+
+# Standard SEC Form 8-K item numbers, restricted to the ones that
+# typically accompany genuine company news (earnings, material events,
+# executive changes) rather than routine/procedural items (e.g. "5.07"
+# vote results, "9.01" bare exhibit listings with no independent news
+# value of their own).
+_NEWS_WORTHY_8K_ITEMS = {
+    "1.01": "Entry into a Material Definitive Agreement",
+    "2.01": "Completion of Acquisition or Disposition of Assets",
+    "2.02": "Results of Operations and Financial Condition",
+    "2.05": "Costs Associated with Exit or Disposal Activities",
+    "5.02": "Departure/Election of Directors or Officers",
+    "7.01": "Regulation FD Disclosure",
+    "8.01": "Other Events",
+}
+
+
+class LiveNewsProvider(NewsProvider):
+    """Treats newsworthy SEC 8-K item types (earnings results, material
+    agreements, executive changes, etc.) as "news" — reuses the same
+    submissions feed already verified for LiveFilingsProvider rather than
+    a separate, unverified endpoint. This only covers company news that
+    was also SEC-filed; it is not a general press/news aggregator (no free,
+    ToS-compliant general news API is wired up — see README)."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+
+    def get_recent_news(self, ticker: str, limit: int = 5) -> list[NewsItem]:
+        ua = self._settings.sec_user_agent
+        cik = _cik_or_raise(ticker, ua)
+        submissions = edgar_client.get_submissions(cik, ua)
+        recent = submissions.get("filings", {}).get("recent", {})
+
+        forms = recent.get("form", [])
+        dates = recent.get("filingDate", [])
+        accessions = recent.get("accessionNumber", [])
+        docs = recent.get("primaryDocument", [])
+        items_field = recent.get("items", [])
+
+        results: list[NewsItem] = []
+        for i, form in enumerate(forms):
+            if form != "8-K":
+                continue
+            item_codes = [c.strip() for c in (items_field[i] if i < len(items_field) else "").split(",") if c.strip()]
+            matched_labels = [_NEWS_WORTHY_8K_ITEMS[c] for c in item_codes if c in _NEWS_WORTHY_8K_ITEMS]
+            if not matched_labels:
+                continue
+            url = edgar_client.filing_document_url(cik, accessions[i], docs[i])
+            results.append(
+                NewsItem(
+                    ticker=ticker.upper(),
+                    title=f"{ticker.upper()} 8-K: {'; '.join(matched_labels)}",
+                    url_or_identifier=url,
+                    published_date=dates[i],
+                    source_type="Press Release",
+                    snippet=(
+                        f"SEC Form 8-K filed {dates[i]} under item(s) {', '.join(item_codes)} "
+                        f"({'; '.join(matched_labels)}). This is filing metadata, not extracted "
+                        "press-release text — open the source to read the actual content."
+                    ),
+                    tag="neutral",
+                    is_mock=False,
+                )
+            )
+            if len(results) >= limit:
+                break
+        return results
 
 
 class LiveFundamentalsProvider(FundamentalsProvider):

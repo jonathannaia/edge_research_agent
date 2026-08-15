@@ -33,6 +33,8 @@ from src.providers.base import (
     FundamentalsSnapshot,
     InsiderProvider,
     InsiderTransaction,
+    NewsItem,
+    NewsProvider,
     ProviderBundle,
 )
 from src.providers.dart_client import DartError
@@ -47,6 +49,7 @@ from src.providers.live_edgar import (
     LiveFilingsProvider,
     LiveFundamentalsProvider,
     LiveInsiderProvider,
+    LiveNewsProvider,
 )
 from src.providers.mock_providers import (
     MockEarningsCalendarProvider,
@@ -146,6 +149,27 @@ class _RoutedInsiderProvider(InsiderProvider):
         return self._mock.get_insider_transactions(ticker, limit)
 
 
+class _RoutedNewsProvider(NewsProvider):
+    """US only for now — 8-K-derived news via SEC EDGAR. Falls back to mock
+    on any failure, same pattern as the other routed providers."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+        self._mock = MockNewsProvider()
+        self._edgar = LiveNewsProvider(settings)
+
+    def get_recent_news(self, ticker: str, limit: int = 5) -> list[NewsItem]:
+        jurisdiction = _ticker_jurisdiction(self._settings, ticker)
+        try:
+            if jurisdiction == UNITED_STATES:
+                news = self._edgar.get_recent_news(ticker, limit)
+                if news:
+                    return news
+        except (EdgarUnavailableError, EdgarError):
+            pass
+        return self._mock.get_recent_news(ticker, limit)
+
+
 def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
     settings = settings or get_settings()
 
@@ -153,10 +177,12 @@ def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
         filings: FilingsProvider = _RoutedFilingsProvider(settings)
         fundamentals: FundamentalsProvider = _RoutedFundamentalsProvider(settings)
         insiders: InsiderProvider = _RoutedInsiderProvider(settings)
+        news: NewsProvider = _RoutedNewsProvider(settings)
     else:
         filings = MockFilingsProvider()
         fundamentals = MockFundamentalsProvider()
         insiders = MockInsiderProvider()
+        news = MockNewsProvider()
 
     return ProviderBundle(
         fundamentals=fundamentals,
@@ -166,5 +192,5 @@ def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
         ownership=MockOwnershipProvider(),
         price=MockPriceProvider(),
         earnings_calendar=MockEarningsCalendarProvider(),
-        news=MockNewsProvider(),
+        news=news,
     )

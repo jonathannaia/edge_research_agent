@@ -15,7 +15,7 @@ PROVIDER_DOMAINS = [
     ("Ownership data", "SEC 13F aggregation or a data vendor.", "—", "Mock only"),
     ("Price & volume", "A market data vendor (free tier or paid).", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
     ("Earnings calendar", "A market data vendor or company IR page.", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
-    ("News & press releases", "A news API or official company RSS/press feeds.", "EDGE_NEWS_API_KEY", "Mock only"),
+    ("News & press releases (US)", "SEC EDGAR 8-K filings for newsworthy item types (earnings, executive changes, material agreements) — filing-derived, not a general news aggregator.", "EDGE_SEC_USER_AGENT", "LIVE"),
 ]
 
 JURISDICTION_REGULATORS = [
