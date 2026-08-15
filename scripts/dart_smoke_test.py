@@ -14,10 +14,14 @@ from __future__ import annotations
 import sys
 
 from src.config.settings import Settings
+from src.providers import dart_client
 from src.providers.live_dart import (
+    _REVENUE_NAMES,
     DartUnavailableError,
     LiveDartFilingsProvider,
     LiveDartFundamentalsProvider,
+    _corp_code_or_raise,
+    _find_account,
 )
 
 # Samsung Electronics — a large, certainly-listed company, good for a
@@ -57,6 +61,24 @@ def main() -> int:
         if snap.revenue <= 0:
             ok = False
             print("WARNING: revenue is zero/negative for a major company — check account name matching.")
+        if snap.revenue_yoy_growth == 0.0:
+            print("NOTE: yoy_growth is exactly 0.0% — printing the raw revenue row's fields for debugging:")
+            try:
+                corp_code = _corp_code_or_raise(TEST_TICKER, settings.dart_api_key)
+                for year_offset, reprt_code in [(0, "11014"), (0, "11012"), (0, "11013"), (-1, "11011")]:
+                    import datetime as _dt
+                    yr = str(_dt.date.today().year + year_offset)
+                    resp = dart_client.get_json(
+                        "fnlttSinglAcntAll.json",
+                        {"crtfc_key": settings.dart_api_key, "corp_code": corp_code, "bsns_year": yr,
+                         "reprt_code": reprt_code, "fs_div": "CFS"},
+                    )
+                    row = _find_account(resp.get("list", []), _REVENUE_NAMES, sj_div="IS")
+                    if row:
+                        print(f"  bsns_year={yr} reprt_code={reprt_code}: {row}")
+                        break
+            except Exception as diag_exc:  # diagnostics only — never let this crash the smoke test
+                print(f"  (diagnostic lookup failed: {diag_exc})")
     except DartUnavailableError as exc:
         ok = False
         print(f"FAILED: {exc}")

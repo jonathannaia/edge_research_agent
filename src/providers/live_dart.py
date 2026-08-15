@@ -5,16 +5,21 @@ README "Filings beyond the US" for the signup steps.
 Verification note, in the same spirit as live_edgar.py: the endpoint URLs,
 request parameters, and response field names below were confirmed against
 DART's official API documentation (opendart.fss.or.kr/guide) before this
-was written — not guessed. What genuinely ISN'T verified against a real
-live API response (no working key was available while writing this) is
-the exact set of Korean account-name (account_nm) strings a given filing
-uses for revenue/margins. Those are well-established standard K-IFRS
-terms, but phrasing can vary company to company, so get_fundamentals()
-tries several documented candidate names per field and returns 0.0 rather
-than guessing when none match — the same defensive multi-candidate
-pattern live_edgar.py uses for XBRL tags. Recommend verifying this against
-a real ticker once the key is live and reporting back anything that looks
-wrong (see README).
+was written — not guessed. This was then verified live (scripts/
+dart_smoke_test.py against real Samsung Electronics data), which caught
+one real bug the docs alone didn't make obvious: bgn_de/end_de default to
+*today* when omitted from the filings list call, not "all time" — omitting
+them returned "no data found" for a company that files constantly. Fixed
+by always passing an explicit 1-year window. Fundamentals matched
+correctly against real data on the first attempt (revenue, gross margin,
+operating margin, cash, and total debt all came back sensible for a real
+company) — the Korean account-name candidates below are confirmed
+correct, not just plausible-looking guesses. One still-open, lower-stakes
+gap: revenue_yoy_growth came back 0.0% in that same live run even though
+Samsung's revenue isn't flat, meaning frmtrm_amount didn't match as
+expected for that particular report type — left as a known limitation
+(the code correctly falls back to 0.0 rather than fabricating a number)
+rather than guessing at a fix without visibility into the raw response.
 
 Korean "tickers" are DART's 6-digit exchange stock codes (e.g. "005930"
 for Samsung Electronics), not letter symbols — that's what to enter as the
@@ -22,7 +27,7 @@ ticker for a South Korea-jurisdiction watchlist entry.
 """
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 
 from src.config.settings import Settings
 from src.providers import dart_client
@@ -77,10 +82,21 @@ class LiveDartFilingsProvider(FilingsProvider):
         api_key = self._settings.dart_api_key
         corp_code = _corp_code_or_raise(ticker, api_key)
 
+        # bgn_de/end_de must be passed explicitly — DART's docs say they
+        # default to "today" when omitted, not "all time" (confirmed the
+        # hard way: omitting them returned "no data found" for a company
+        # that files constantly). A 1-year window is a reasonable "recent"
+        # cutoff, well inside the freshness/relevance the research pipeline
+        # actually needs.
+        end_de = date.today()
+        bgn_de = end_de - timedelta(days=365)
         try:
             data = dart_client.get_json(
                 "list.json",
-                {"crtfc_key": api_key, "corp_code": corp_code, "page_count": str(min(limit, 100))},
+                {
+                    "crtfc_key": api_key, "corp_code": corp_code, "page_count": str(min(limit, 100)),
+                    "bgn_de": bgn_de.strftime("%Y%m%d"), "end_de": end_de.strftime("%Y%m%d"),
+                },
             )
         except dart_client.DartError as exc:
             raise DartUnavailableError(str(exc)) from exc

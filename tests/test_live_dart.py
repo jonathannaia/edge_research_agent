@@ -108,6 +108,31 @@ def test_live_dart_filings_raises_without_api_key():
         provider.get_recent_filings("005930")
 
 
+def test_live_dart_filings_passes_explicit_date_range(tmp_path, monkeypatch):
+    """Regression test: DART's list.json defaults bgn_de/end_de to *today*
+    when omitted, not "all time" — a real live run against Samsung
+    Electronics returned "no data found" until this was fixed. Confirms
+    both params are always sent."""
+    from src.providers import dart_client
+    monkeypatch.setattr(dart_client, "_CORP_CODE_CACHE", tmp_path / "dart_corp_codes.json")
+
+    settings = Settings(dart_api_key="fake-key")
+    provider = LiveDartFilingsProvider(settings)
+    captured_params = {}
+
+    def fake_get_json(path, params):
+        captured_params.update(params)
+        return FAKE_LIST_RESPONSE
+
+    with patch("src.providers.live_dart.dart_client.get_corp_code", return_value="00126380"):
+        with patch("src.providers.live_dart.dart_client.get_json", side_effect=fake_get_json):
+            provider.get_recent_filings("005930")
+
+    assert "bgn_de" in captured_params and captured_params["bgn_de"]
+    assert "end_de" in captured_params and captured_params["end_de"]
+    assert len(captured_params["bgn_de"]) == 8  # YYYYMMDD
+
+
 def test_live_dart_filings_raises_when_ticker_not_found():
     settings = Settings(dart_api_key="fake-key")
     provider = LiveDartFilingsProvider(settings)
