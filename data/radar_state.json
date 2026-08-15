@@ -42,6 +42,21 @@
   ],
   "run_history": [
     {
+      "started_at": "2026-08-15T08:16:48+00:00",
+      "finished_at": "2026-08-15T08:17:21+00:00",
+      "status": "partial_error",
+      "feeds_checked": 16,
+      "items_seen": 430,
+      "items_after_freshness_filter": 56,
+      "items_after_keyword_filter": 15,
+      "items_sent_to_llm": 15,
+      "items_saved": 0,
+      "items_rejected_by_guardrail": 0,
+      "errors": [
+        "NASA News Releases: unparseable feed (<unknown>:7:2: mismatched tag)"
+      ]
+    },
+    {
       "started_at": "2026-08-15T06:21:44+00:00",
       "finished_at": "2026-08-15T06:22:25+00:00",
       "status": "ok",
