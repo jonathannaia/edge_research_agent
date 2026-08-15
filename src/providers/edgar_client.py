@@ -33,7 +33,7 @@ class EdgarError(RuntimeError):
     pass
 
 
-def _get(url: str, user_agent: str) -> dict:
+def _get_raw(url: str, user_agent: str) -> bytes:
     global _last_request_at
     elapsed = time.monotonic() - _last_request_at
     if elapsed < _MIN_REQUEST_INTERVAL_SECONDS:
@@ -46,11 +46,23 @@ def _get(url: str, user_agent: str) -> dict:
         _last_request_at = time.monotonic()
     except (urllib.error.URLError, urllib.error.HTTPError) as exc:
         raise EdgarError(f"Request to {url} failed: {exc}") from exc
+    return raw
 
+
+def _get(url: str, user_agent: str) -> dict:
+    raw = _get_raw(url, user_agent)
     try:
         return json.loads(raw)
     except json.JSONDecodeError as exc:
         raise EdgarError(f"SEC EDGAR returned non-JSON for {url}: {exc}") from exc
+
+
+def get_document_text(url: str, user_agent: str) -> str:
+    """Fetches a filing document (e.g. a Form 4's XML body) as text, not
+    JSON — used to read inside a specific filing rather than just its
+    metadata. Same throttling/User-Agent discipline as every other call."""
+    raw = _get_raw(url, user_agent)
+    return raw.decode("utf-8", errors="replace")
 
 
 def _load_ticker_map(user_agent: str) -> dict[str, int]:

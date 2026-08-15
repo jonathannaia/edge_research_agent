@@ -1,15 +1,16 @@
 """Provider selection. Swap mock -> live here, one domain at a time.
 
 EDGE_DATA_MODE=live currently activates:
-  - Live SEC EDGAR filings/fundamentals for US-listed tickers (free, keyless).
+  - Live SEC EDGAR filings/fundamentals/insider transactions (Form 4) for
+    US-listed tickers (free, keyless).
   - Live DART filings/fundamentals for South Korea-listed tickers, IF
     EDGE_DART_API_KEY is set (DART requires a free registered key — see
     README "Filings beyond the US"). Korean tickers are DART's 6-digit
     exchange stock codes (e.g. "005930" for Samsung Electronics), not
-    letter symbols.
-  - Everything else (transcripts, insiders, ownership, price, earnings
-    calendar, news; and filings/fundamentals for every other jurisdiction)
-    is still mock — see README's Data Provider Integration Guide.
+    letter symbols. No live insider-transaction equivalent for Korea yet.
+  - Everything else (transcripts, ownership, price, earnings calendar,
+    news; and filings/fundamentals for every other jurisdiction) is still
+    mock — see README's Data Provider Integration Guide.
 
 Both live filings/fundamentals providers fall back to mock per-ticker (not
 per-app) on any failure — unlisted ticker, network error, missing DART key,
@@ -30,6 +31,8 @@ from src.providers.base import (
     FilingsProvider,
     FundamentalsProvider,
     FundamentalsSnapshot,
+    InsiderProvider,
+    InsiderTransaction,
     ProviderBundle,
 )
 from src.providers.dart_client import DartError
@@ -43,6 +46,7 @@ from src.providers.live_edgar import (
     EdgarUnavailableError,
     LiveFilingsProvider,
     LiveFundamentalsProvider,
+    LiveInsiderProvider,
 )
 from src.providers.mock_providers import (
     MockEarningsCalendarProvider,
@@ -120,21 +124,45 @@ class _RoutedFundamentalsProvider(FundamentalsProvider):
         return self._mock.get_fundamentals(ticker)
 
 
+class _RoutedInsiderProvider(InsiderProvider):
+    """US only for now — no live South Korea insider-disclosure equivalent
+    is wired up yet. Falls back to mock on any failure, same pattern as
+    filings/fundamentals."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+        self._mock = MockInsiderProvider()
+        self._edgar = LiveInsiderProvider(settings)
+
+    def get_insider_transactions(self, ticker: str, limit: int = 5) -> list[InsiderTransaction]:
+        jurisdiction = _ticker_jurisdiction(self._settings, ticker)
+        try:
+            if jurisdiction == UNITED_STATES:
+                txns = self._edgar.get_insider_transactions(ticker, limit)
+                if txns:
+                    return txns
+        except (EdgarUnavailableError, EdgarError):
+            pass
+        return self._mock.get_insider_transactions(ticker, limit)
+
+
 def get_provider_bundle(settings: Settings | None = None) -> ProviderBundle:
     settings = settings or get_settings()
 
     if settings.data_mode == "live":
         filings: FilingsProvider = _RoutedFilingsProvider(settings)
         fundamentals: FundamentalsProvider = _RoutedFundamentalsProvider(settings)
+        insiders: InsiderProvider = _RoutedInsiderProvider(settings)
     else:
         filings = MockFilingsProvider()
         fundamentals = MockFundamentalsProvider()
+        insiders = MockInsiderProvider()
 
     return ProviderBundle(
         fundamentals=fundamentals,
         filings=filings,
         transcripts=MockTranscriptProvider(),
-        insiders=MockInsiderProvider(),
+        insiders=insiders,
         ownership=MockOwnershipProvider(),
         price=MockPriceProvider(),
         earnings_calendar=MockEarningsCalendarProvider(),

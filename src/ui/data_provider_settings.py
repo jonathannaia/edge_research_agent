@@ -11,7 +11,7 @@ PROVIDER_DOMAINS = [
     ("Fundamentals (South Korea)", "DART financial statement API (free key required).", "EDGE_DART_API_KEY", "LIVE"),
     ("Filings (South Korea)", "DART disclosure list API (free key required).", "EDGE_DART_API_KEY", "LIVE"),
     ("Earnings transcripts", "A transcript vendor (e.g. a paid API) or manually pasted excerpts via the Sources page.", "—", "Mock only"),
-    ("Insider transactions", "SEC EDGAR Form 4 filings (free).", "EDGE_SEC_USER_AGENT", "Mock only"),
+    ("Insider transactions (US)", "SEC EDGAR Form 4 filings, parsed for real buy/sell transactions (free).", "EDGE_SEC_USER_AGENT", "LIVE"),
     ("Ownership data", "SEC 13F aggregation or a data vendor.", "—", "Mock only"),
     ("Price & volume", "A market data vendor (free tier or paid).", "EDGE_MARKET_DATA_API_KEY", "Mock only"),
     ("Earnings calendar", "A market data vendor or company IR page.", "EDGE_MARKET_DATA_API_KEY", "Mock only"),

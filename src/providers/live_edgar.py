@@ -1,9 +1,19 @@
 """Live SEC EDGAR provider — free, keyless (just a compliant User-Agent).
 
-Covers filings and fundamentals for US-listed tickers. See registry.py for
-how this is wired in behind EDGE_DATA_MODE=live, and README section 4 for
-what other domains (price, transcripts, non-US filings) still need a
-live provider.
+Covers filings, fundamentals, and insider transactions (Form 4) for
+US-listed tickers. See registry.py for how this is wired in behind
+EDGE_DATA_MODE=live, and README section 4 for what other domains (price,
+transcripts, non-US filings) still need a live provider.
+
+Insider transactions verification note: fetching real Form 4s while
+building this caught a real bug — the submissions feed's
+`primaryDocument` path points at SEC's XSLT-rendered HTML view (an
+"xslF345X06/" subfolder, despite the .xml extension), which returns HTML,
+not parseable XML, so every insider fetch was silently returning zero
+transactions. The real machine-readable XML lives at the same filename
+one directory up. Fixed and reverified against real NVDA/AAPL/RKLB data
+(see LiveInsiderProvider) — including RKLB's actual CEO share sales and
+AAPL board member Arthur Levinson's real transactions.
 
 Honesty note on filing "highlights": this reads filing METADATA (form type,
 date, accession number, a direct SEC.gov URL) — it does not fetch and parse
@@ -18,6 +28,7 @@ a source, not that the claim is true).
 """
 from __future__ import annotations
 
+import xml.etree.ElementTree as ET
 from datetime import datetime
 from typing import Optional
 
@@ -28,9 +39,23 @@ from src.providers.base import (
     FilingsProvider,
     FundamentalsProvider,
     FundamentalsSnapshot,
+    InsiderProvider,
+    InsiderTransaction,
 )
 
 FILING_FORMS_OF_INTEREST = {"10-K", "10-Q", "8-K"}
+
+# Section 16 transaction codes (standardized, from Form 4's own schema):
+# "P" = open-market/private purchase, "S" = open-market/private sale. These
+# are the only two that represent a genuine buy/sell decision an investor
+# would read as a conviction signal — deliberately excluding grants (A),
+# option exercises (M), tax withholding (F), gifts (G), etc., which are
+# real acquisitions/dispositions but not "buy"/"sell" in that sense. Labeling
+# a compensation grant as a "Buy" would be a subtle, real hallucination-
+# adjacent risk (implying insider conviction that isn't there), even though
+# it's a defensible reading of the raw data.
+_BUY_CODE = "P"
+_SELL_CODE = "S"
 
 # XBRL us-gaap tags, in preference order, for each fundamentals field —
 # different companies/industries report under slightly different concepts,
@@ -151,6 +176,122 @@ class LiveFilingsProvider(FilingsProvider):
             if len(results) >= limit:
                 break
         return results
+
+
+def _xml_text(root: ET.Element, path: str) -> str:
+    el = root.find(path)
+    return (el.text or "").strip() if el is not None else ""
+
+
+def _insider_role(reporting_owner: ET.Element) -> str:
+    rel = reporting_owner.find("reportingOwnerRelationship")
+    if rel is None:
+        return "Insider"
+    roles = []
+    if _xml_text(rel, "isDirector") == "1":
+        roles.append("Director")
+    if _xml_text(rel, "isOfficer") == "1":
+        officer_title = _xml_text(rel, "officerTitle")
+        roles.append(officer_title if officer_title else "Officer")
+    if _xml_text(rel, "isTenPercentOwner") == "1":
+        roles.append("10% Owner")
+    if _xml_text(rel, "isOther") == "1":
+        roles.append("Other")
+    return ", ".join(roles) if roles else "Insider"
+
+
+def _parse_form4_transactions(xml_text: str, ticker: str, filing_date: str, url: str) -> list[InsiderTransaction]:
+    """Parses a Form 4's nonDerivativeTable, keeping only genuine open-
+    market purchases (P) and sales (S) — see _BUY_CODE/_SELL_CODE comment
+    for why grants/exercises/gifts/etc. are deliberately excluded."""
+    try:
+        root = ET.fromstring(xml_text)
+    except ET.ParseError:
+        return []
+
+    owner_el = root.find("reportingOwner")
+    if owner_el is None:
+        return []
+    insider_name = _xml_text(owner_el, "reportingOwnerId/rptOwnerName")
+    role = _insider_role(owner_el)
+
+    results: list[InsiderTransaction] = []
+    for txn in root.findall("nonDerivativeTable/nonDerivativeTransaction"):
+        code = _xml_text(txn, "transactionCoding/transactionCode")
+        if code not in (_BUY_CODE, _SELL_CODE):
+            continue
+        shares_raw = _xml_text(txn, "transactionAmounts/transactionShares/value")
+        price_raw = _xml_text(txn, "transactionAmounts/transactionPricePerShare/value")
+        try:
+            shares = float(shares_raw)
+            price = float(price_raw)
+        except ValueError:
+            continue
+        results.append(
+            InsiderTransaction(
+                ticker=ticker.upper(),
+                insider_name=insider_name,
+                role=role,
+                transaction_type="Buy" if code == _BUY_CODE else "Sell",
+                shares=shares,
+                value_usd=round(shares * price, 2),
+                filing_date=filing_date,
+                url_or_identifier=url,
+                is_mock=False,
+            )
+        )
+    return results
+
+
+class LiveInsiderProvider(InsiderProvider):
+    """Reads real Form 4 filings from SEC EDGAR (free, keyless) — the same
+    submissions feed LiveFilingsProvider already uses, filtered to form
+    "4" and with each filing's actual XML body parsed for transaction
+    detail, not just its metadata."""
+
+    def __init__(self, settings: Settings):
+        self._settings = settings
+
+    def get_insider_transactions(self, ticker: str, limit: int = 5) -> list[InsiderTransaction]:
+        ua = self._settings.sec_user_agent
+        cik = _cik_or_raise(ticker, ua)
+        submissions = edgar_client.get_submissions(cik, ua)
+        recent = submissions.get("filings", {}).get("recent", {})
+
+        forms = recent.get("form", [])
+        dates = recent.get("filingDate", [])
+        accessions = recent.get("accessionNumber", [])
+        docs = recent.get("primaryDocument", [])
+
+        results: list[InsiderTransaction] = []
+        # Form 4s frequently contain only non-P/S transactions (grants,
+        # exercises), so more filings than `limit` may need checking —
+        # bounded to a reasonable multiple rather than scanning unbounded.
+        max_filings_to_check = limit * 4
+        checked = 0
+        for i, form in enumerate(forms):
+            if form != "4":
+                continue
+            if checked >= max_filings_to_check or len(results) >= limit:
+                break
+            checked += 1
+            # SEC's submissions feed points primaryDocument at the
+            # XSLT-rendered HTML view (under an "xslF345X06/" subfolder,
+            # despite the .xml extension) — confirmed by fetching it
+            # directly: it returns an HTML document, not the machine-
+            # readable XML this needs to parse. The real XML lives at the
+            # same filename one directory up (no xsl subfolder). Kept the
+            # human-readable HTML link as what's shown to the user (nicer
+            # to actually read) while parsing from the raw XML.
+            display_url = edgar_client.filing_document_url(cik, accessions[i], docs[i])
+            raw_xml_filename = docs[i].rsplit("/", 1)[-1]
+            raw_xml_url = edgar_client.filing_document_url(cik, accessions[i], raw_xml_filename)
+            try:
+                xml_text = edgar_client.get_document_text(raw_xml_url, ua)
+            except edgar_client.EdgarError:
+                continue
+            results.extend(_parse_form4_transactions(xml_text, ticker, dates[i], display_url))
+        return results[:limit]
 
 
 class LiveFundamentalsProvider(FundamentalsProvider):

@@ -172,9 +172,9 @@ downstream (scoring, guardrails, UI) needs to change.
 
 | Domain | Interface | Typical live source | Notes |
 |---|---|---|---|
-| Filings | `FilingsProvider` | [SEC EDGAR full-text search & submissions API](https://www.sec.gov/edgar/sec-api-documentation) | Free. Requires a compliant `User-Agent` header identifying you (`EDGE_SEC_USER_AGENT`) and respecting SEC's fair-access rate limits. |
-| Fundamentals | `FundamentalsProvider` | SEC EDGAR "company facts" API, or a fundamentals vendor | Free via EDGAR for as-reported figures; a vendor gives cleaner normalized data. |
-| Insider transactions | `InsiderProvider` | SEC EDGAR Form 4 filings | Free, same access rules as filings. |
+| Filings | `FilingsProvider` | [SEC EDGAR full-text search & submissions API](https://www.sec.gov/edgar/sec-api-documentation) | **Live (US, South Korea).** Free. Requires a compliant `User-Agent` header identifying you (`EDGE_SEC_USER_AGENT`) and respecting SEC's fair-access rate limits. |
+| Fundamentals | `FundamentalsProvider` | SEC EDGAR "company facts" API, or a fundamentals vendor | **Live (US, South Korea).** Free via EDGAR for as-reported figures; a vendor gives cleaner normalized data. |
+| Insider transactions | `InsiderProvider` | SEC EDGAR Form 4 filings | **Live (US only).** Free, same access rules as filings — parses each Form 4's real XML body, keeping only genuine open-market buy/sell transactions (not grants/exercises/gifts). |
 | Ownership | `OwnershipProvider` | 13F aggregation or a data vendor | 13F data is quarterly and lagged by design. |
 | Transcripts | `TranscriptProvider` | A transcript vendor, or manually paste excerpts via the Sources page | No good free/compliant bulk source; manual entry is a legitimate V1 workflow. |
 | Price/volume | `PriceProvider` | A market data vendor (free tier or paid) | Needed for the technical/valuation context sections. |
