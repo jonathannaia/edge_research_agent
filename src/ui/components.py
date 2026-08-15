@@ -7,7 +7,7 @@ from typing import Any
 import streamlit as st
 
 from src.utils.export import SECTION_TITLES, fact_line
-from src.utils.formatting import freshness_badge
+from src.utils.formatting import fmt_money, fmt_pct, freshness_badge
 
 # Substring-matches on `kind`/`data-testid` (not exact matches) because
 # Streamlit gives form-submit buttons kind="primaryFormSubmit" /
@@ -219,6 +219,56 @@ def hours_ago(iso_ts: str) -> str:
     if hours < 48:
         return f"{int(hours)}h ago"
     return f"{int(hours / 24)}d ago"
+
+
+def render_ticker_snapshot(snapshot: dict) -> None:
+    """One ticker's automated price/valuation/insider/news snapshot, from
+    data/ticker_snapshots.json (see src/radar/snapshots.py) — refreshed by
+    Radar's scheduled scan, not by anything in the manual research flow."""
+    price = snapshot.get("price")
+    valuation = snapshot.get("valuation")
+    insiders = snapshot.get("insider_transactions") or []
+    news = snapshot.get("news") or []
+
+    st.caption(f"Auto-refreshed {hours_ago(snapshot.get('retrieved_at', ''))} by Radar's scheduled scan.")
+
+    if price or valuation:
+        cols = st.columns(4)
+        if price:
+            cols[0].metric("Last price", fmt_money(price["last_price"]))
+            cols[1].metric("1y change", fmt_pct(price["pct_change_1y"]))
+        if valuation:
+            cols[2].metric("Market cap", fmt_money(valuation["market_cap"]))
+            if valuation.get("ev_to_revenue") is not None:
+                cols[3].metric("EV / Revenue", f"{valuation['ev_to_revenue']:.1f}x")
+        if price:
+            st.caption(
+                f"52-week range: {fmt_money(price['fifty_two_week_low'])} – {fmt_money(price['fifty_two_week_high'])} "
+                f"· 3m change: {fmt_pct(price['pct_change_3m'])}"
+            )
+    else:
+        st.caption("No live price/valuation data (needs EDGE_FINNHUB_API_KEY set for the scan job).")
+
+    if insiders:
+        st.markdown("**Recent insider transactions (open-market buy/sell only)**")
+        st.dataframe(
+            [
+                {
+                    "Date": t["filing_date"], "Insider": t["insider_name"], "Role": t["role"],
+                    "Type": t["transaction_type"], "Shares": f"{t['shares']:,.0f}", "Value": fmt_money(t["value_usd"]),
+                }
+                for t in insiders
+            ],
+            width="stretch", hide_index=True,
+        )
+
+    if news:
+        st.markdown("**Recent filing-derived news**")
+        for n in news:
+            st.write(f"- [{n['published_date']}] {n['title']}")
+
+    if not insiders and not news:
+        st.caption("No recent insider transactions or filing-derived news found in the last scan.")
 
 
 def render_radar_finding_card(f) -> None:

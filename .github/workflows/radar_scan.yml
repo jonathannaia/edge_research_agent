@@ -36,12 +36,18 @@ jobs:
           # (and importantly, does NOT do — it's not filtered to your
           # Watchlist, since this job can't see your local database).
           EDGE_RADAR_WEBHOOK_URL: ${{ secrets.EDGE_RADAR_WEBHOOK_URL }}
+          # Optional — used by src/radar/snapshots.py for the automated
+          # price/valuation snapshot of verified/tracked tickers. Leave
+          # unset and that piece just no-ops (price/valuation stay null in
+          # data/ticker_snapshots.json); insider transactions and news
+          # (SEC EDGAR, keyless) still refresh regardless.
+          EDGE_FINNHUB_API_KEY: ${{ secrets.EDGE_FINNHUB_API_KEY }}
         run: python -m scripts.run_radar_scan
 
       - name: Commit updated findings
         run: |
           git config user.name "eeva-radar-bot"
           git config user.email "actions@github.com"
-          git add data/radar_findings.json data/radar_state.json
+          git add data/radar_findings.json data/radar_state.json data/ticker_snapshots.json
           git diff --cached --quiet || git commit -m "Radar scan: update findings [skip ci]"
           git push

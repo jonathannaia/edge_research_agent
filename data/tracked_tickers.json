@@ -1,0 +1,4 @@
+{
+  "_readme": "Tickers here get an automatic price/insider-transaction/news refresh every Radar scan (~every 2h), even if Radar's own AI Buildout/Humanoids/Space/Macro niches never happen to mention them. This exists because the scan job runs in GitHub Actions, which has no access to your local/deployed Watchlist database (gitignored, never committed) -- see README 'Radar' section. US tickers only for now (price/insider/news live domains are all US-only as of this writing). Edit the 'tickers' list yourself whenever you want a Watchlist ticker auto-tracked, then commit and push.",
+  "tickers": []
+}

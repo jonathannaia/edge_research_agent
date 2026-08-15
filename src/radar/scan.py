@@ -18,15 +18,19 @@ from __future__ import annotations
 import os
 from datetime import datetime, timezone
 
+from src.config.settings import get_settings
 from src.guardrails.language_filters import AdviceLanguageError, enforce_no_advice_language
 from src.radar import feeds as feeds_module
+from src.radar import notifier as notify
+from src.radar import snapshots as snapshot_module
 from src.radar import store
 from src.radar.freshness import is_fresh
 from src.radar.keyword_filter import is_plausibly_relevant
 from src.radar.llm_tagger import TaggingError, tag_item
 from src.radar.models import RadarFinding, ScanRunRecord
 from src.radar.ticker_registry import verify_ticker_tags
-from src.radar import notifier as notify
+
+UNITED_STATES = "United States"
 
 DEFAULT_MAX_ITEMS_PER_RUN = 25
 
@@ -147,5 +151,23 @@ def run(max_items_per_run: int | None = None) -> ScanRunRecord:
     webhook_error = notify.send_webhook_notification(new_findings)
     if webhook_error:
         print(f"Radar webhook notification failed (non-fatal): {webhook_error}")
+
+    # Automated per-ticker price/insider/news snapshots — separate from the
+    # findings feed above. Covers verified US tickers this run just tagged,
+    # plus anything in data/tracked_tickers.json (see snapshots.py module
+    # docstring for why that file exists). Best-effort: a snapshot failure
+    # never affects the findings/run-record already saved above.
+    try:
+        tagged_us_tickers = [
+            t.ticker for f in new_findings for t in f.tickers
+            if t.verified and t.jurisdiction == UNITED_STATES
+        ]
+        tracked_tickers = snapshot_module.load_tracked_tickers()
+        snapshot_summary = snapshot_module.refresh_snapshots(
+            tagged_us_tickers + tracked_tickers, get_settings()
+        )
+        print(f"Ticker snapshots: {snapshot_summary}")
+    except Exception as exc:  # snapshots are additive — never fail the whole scan over this
+        print(f"Ticker snapshot refresh failed (non-fatal): {exc}")
 
     return run_record

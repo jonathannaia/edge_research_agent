@@ -290,6 +290,30 @@ Radar isn't just a separate feed you have to remember to check:
   most-mentioned tickers over a selectable 7/14/30-day window — instead of only a flat
   reverse-chronological list.
 
+### Automated per-ticker snapshots (price, insider transactions, news)
+
+Beyond the niche-scoped findings feed, Radar's scan also refreshes a **live price/valuation/
+insider-transaction/news snapshot** for individual tickers, stored in `data/ticker_snapshots.json`
+and shown on that ticker's **Ticker Detail → Radar Mentions** tab. Two ticker sets get this
+treatment automatically:
+
+1. **Verified US tickers Radar tags itself** — no setup needed, this just happens.
+2. **Tickers listed in `data/tracked_tickers.json`** — a small, manually-maintained list for
+   Watchlist tickers you want auto-refreshed even if Radar's own four niches never happen to
+   mention them. Edit the `tickers` array yourself (commit + push) whenever you want a Watchlist
+   name added or removed. This file exists specifically because of the GitHub-Actions-can't-see-
+   your-Watchlist constraint described above — it's the deliberate middle ground between "no
+   watchlist-aware automation at all" and "give the app git-push access to export the watchlist
+   itself" (a bigger, more sensitive trust escalation that wasn't taken).
+
+US-only for now (price via Finnhub, insiders/news via SEC EDGAR — see section 4). Filings/
+fundamentals aren't duplicated into this pipeline; those are already available on-demand for any
+watchlist ticker via "Generate Research Brief," which runs inside the app itself and isn't subject
+to the same GitHub Actions visibility constraint.
+
+Bounded like everything else in Radar: `EDGE_RADAR_MAX_SNAPSHOT_TICKERS_PER_RUN` (default 15) caps
+how many tickers get refreshed per scan run.
+
 ### Optional: webhook notifications
 
 Set `EDGE_RADAR_WEBHOOK_URL` (as a GitHub Actions repo secret, same place as `ANTHROPIC_API_KEY`)

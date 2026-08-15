@@ -7,9 +7,10 @@ import streamlit as st
 from src.config.settings import Settings
 from src.database.db import get_connection
 from src.guardrails.language_filters import warn_no_advice_language
+from src.radar import snapshots as radar_snapshots
 from src.radar import store as radar_store
 from src.services import audit_service, notes_service, thesis_service, ticker_service, watchlist_service
-from src.ui.components import render_brief_sections, render_mock_badge, render_radar_finding_card
+from src.ui.components import render_brief_sections, render_mock_badge, render_radar_finding_card, render_ticker_snapshot
 
 
 def render(settings: Settings) -> None:
@@ -145,6 +146,20 @@ def render(settings: Settings) -> None:
                 "research above. Radar runs unattended with no human review; read the source before "
                 "acting on anything. See the Radar page for the full feed across all tracked niches."
             )
+
+            snapshot = radar_snapshots.load_snapshots().get(ticker.upper())
+            if snapshot:
+                st.markdown("### Auto-tracked snapshot")
+                render_ticker_snapshot(snapshot)
+                st.divider()
+            elif t["jurisdiction"] == "United States":
+                st.caption(
+                    "No auto-tracked snapshot yet — Radar only snapshots US tickers it tags itself, or "
+                    "ones listed in `data/tracked_tickers.json`. Add this ticker there to get automatic "
+                    "price/insider/news refreshes even if Radar's own niches never mention it."
+                )
+
+            st.markdown("### Radar findings mentioning this ticker")
             if not radar_findings:
                 st.info("No Radar findings mention this ticker yet.")
             for f in radar_findings:
