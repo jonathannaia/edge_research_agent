@@ -53,6 +53,7 @@ class Settings:
         default_factory=lambda: os.getenv("EDGE_SEC_USER_AGENT", "EevaResearch AI (unconfigured@example.com)")
     )
     dart_api_key: str = field(default_factory=lambda: os.getenv("EDGE_DART_API_KEY", ""))
+    finnhub_api_key: str = field(default_factory=lambda: os.getenv("EDGE_FINNHUB_API_KEY", ""))
 
     def freshness_status(self, age_days: int) -> str:
         if age_days <= self.freshness_fresh_days:
