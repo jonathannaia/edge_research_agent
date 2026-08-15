@@ -3,11 +3,28 @@ never make a real Anthropic API call (cost, determinism, CI without a key)."""
 from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 
+import pytest
+
 from src.radar import scan, store
 from src.radar.freshness import is_fresh
 from src.radar.keyword_filter import is_plausibly_relevant
 from src.radar.llm_tagger import TaggingResult
 from src.radar.models import Niche, RadarFinding, ScanRunRecord, TickerTag
+
+
+@pytest.fixture(autouse=True)
+def _mock_snapshot_refresh():
+    """scan.run() also refreshes per-ticker price/insider/news snapshots
+    (src/radar/snapshots.py), which hits real Finnhub/SEC EDGAR network
+    calls unless mocked — regardless of what's in the real, non-test
+    data/tracked_tickers.json or .env. Autoused so no test here can
+    silently start making real network calls the way one did in practice
+    once real tickers were added to that file (multi-minute test hang)."""
+    with patch(
+        "src.radar.scan.snapshot_module.refresh_snapshots",
+        return_value={"tickers_considered": 0, "tickers_attempted": 0, "tickers_refreshed": 0, "tickers_failed": 0},
+    ):
+        yield
 
 
 def _epoch_hours_ago(hours: float) -> int:
@@ -287,3 +304,30 @@ def test_scan_drops_item_with_no_publish_date(tmp_path, monkeypatch):
 
     assert record.items_after_freshness_filter == 0
     assert record.items_saved == 0
+
+
+def test_scan_calls_snapshot_refresh_without_hitting_real_network(tmp_path, monkeypatch):
+    """Regression test: scan.run() calls snapshot_module.refresh_snapshots
+    at the end of every run. Without the module-level autouse fixture
+    mocking it, this call reads the REAL data/tracked_tickers.json and
+    hits REAL Finnhub/SEC EDGAR — which is exactly what happened once real
+    tickers were added to that file (a multi-minute test hang before this
+    was caught). This test explicitly asserts the mock was invoked, so a
+    future accidental removal of the autouse fixture fails fast here
+    instead of silently reintroducing the hang."""
+    monkeypatch.setattr(store, "FINDINGS_PATH", tmp_path / "radar_findings.json")
+    monkeypatch.setattr(store, "STATE_PATH", tmp_path / "radar_state.json")
+
+    feed = _fake_feed()
+    entry = {"title": "Fed holds rates steady", "link": "https://example.com/fed-snap", "summary": "The Federal Reserve left rates unchanged.", "published": "", "published_epoch": _epoch_hours_ago(1)}
+
+    with patch("src.radar.scan.feeds_module.fetch_all", return_value=([(feed, entry)], [])):
+        with patch(
+            "src.radar.scan.tag_item",
+            return_value=TaggingResult(relevant=True, relevance_reason="x", summary="The Federal Reserve held rates steady.", tickers=[]),
+        ):
+            with patch("src.radar.scan.snapshot_module.refresh_snapshots") as mock_refresh:
+                mock_refresh.return_value = {"tickers_considered": 0, "tickers_attempted": 0, "tickers_refreshed": 0, "tickers_failed": 0}
+                scan.run(max_items_per_run=5)
+
+    mock_refresh.assert_called_once()

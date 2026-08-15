@@ -1,1 +1,3442 @@
-{}
+{
+  "AAOI": {
+    "ticker": "AAOI",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:12+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "AAOI",
+      "last_price": 150.28,
+      "fifty_two_week_low": 18.5,
+      "fifty_two_week_high": 233.67,
+      "pct_change_3m": -0.32640099999999994,
+      "pct_change_1y": 6.1527840000000005,
+      "avg_volume_30d": 12080010.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "AAOI",
+      "market_cap": 11000767000.0,
+      "ev_to_revenue": 17.9926,
+      "ev_to_ebitda": 878.9366,
+      "price_to_sales": 18.4586,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "AAOI",
+        "insider_name": "Murry Stefan J.",
+        "role": "Chief Financial Officer",
+        "transaction_type": "Sell",
+        "shares": 4000.0,
+        "value_usd": 579160.0,
+        "filing_date": "2026-08-12",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826006272/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "insider_name": "Yeh Shu-Hua (Joshua)",
+        "role": "*** See Remarks",
+        "transaction_type": "Sell",
+        "shares": 4715.0,
+        "value_usd": 596447.5,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826005947/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "insider_name": "Yeh Shu-Hua (Joshua)",
+        "role": "*** See Remarks",
+        "transaction_type": "Sell",
+        "shares": 1285.0,
+        "value_usd": 154225.7,
+        "filing_date": "2026-07-23",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826005736/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "insider_name": "Murry Stefan J.",
+        "role": "Chief Financial Officer",
+        "transaction_type": "Sell",
+        "shares": 4000.0,
+        "value_usd": 488360.0,
+        "filing_date": "2026-07-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826005532/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "insider_name": "Chang Hung-Lun (Fred)",
+        "role": "*** See Remarks",
+        "transaction_type": "Sell",
+        "shares": 40329.0,
+        "value_usd": 6880127.4,
+        "filing_date": "2026-06-18",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826004979/xslF345X06/ownership.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "AAOI",
+        "title": "AAOI 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826006055/aaoi_8k.htm",
+        "published_date": "2026-08-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-06 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "title": "AAOI 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826005221/aaoi_8k.htm",
+        "published_date": "2026-07-01",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-01 under item(s) 1.01, 2.03, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "title": "AAOI 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826004885/aaoi_8k.htm",
+        "published_date": "2026-06-16",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-16 under item(s) 1.01, 2.03, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "title": "AAOI 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000168316826004596/aaoi_8k.htm",
+        "published_date": "2026-06-05",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-05 under item(s) 5.02, 5.07, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AAOI",
+        "title": "AAOI 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1158114/000110465926061168/tm2614157d2_8k.htm",
+        "published_date": "2026-05-14",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-14 under item(s) 1.01, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "ABCL": {
+    "ticker": "ABCL",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:17+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "ABCL",
+      "last_price": 11.38,
+      "fifty_two_week_low": 2.745,
+      "fifty_two_week_high": 11.5,
+      "pct_change_3m": 1.3857439999999999,
+      "pct_change_1y": 1.5288890000000002,
+      "avg_volume_30d": 7954860.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "ABCL",
+      "market_cap": 3363527800.0,
+      "ev_to_revenue": 49.0149,
+      "ev_to_ebitda": 13.2711,
+      "price_to_sales": 50.8293,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "ABCL",
+        "insider_name": "Booth Andrew",
+        "role": "Chief Financial Officer",
+        "transaction_type": "Buy",
+        "shares": 37200.0,
+        "value_usd": 383904.0,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000183441126000008/xslF345X06/wk-form4_1786723463.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "insider_name": "Hayden Michael R",
+        "role": "Director",
+        "transaction_type": "Buy",
+        "shares": 46387.0,
+        "value_usd": 481033.19,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000162828026057007/xslF345X06/wk-form4_1786722614.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "insider_name": "Montalbano John S.",
+        "role": "Director",
+        "transaction_type": "Buy",
+        "shares": 20000.0,
+        "value_usd": 95400.0,
+        "filing_date": "2026-05-18",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000183442326000004/xslF345X06/wk-form4_1779120582.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "insider_name": "Thermopylae Holdings Ltd.",
+        "role": "10% Owner",
+        "transaction_type": "Buy",
+        "shares": 38000.0,
+        "value_usd": 130720.0,
+        "filing_date": "2026-03-02",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000183444926000004/xslF345X05/wk-form4_1772478998.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "insider_name": "Thermopylae Holdings Ltd.",
+        "role": "10% Owner",
+        "transaction_type": "Buy",
+        "shares": 177457.0,
+        "value_usd": 580284.39,
+        "filing_date": "2026-02-27",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000183444926000002/xslF345X05/wk-form4_1772227198.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "ABCL",
+        "title": "ABCL 8-K: Entry into a Material Definitive Agreement; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000119312526349353/d20959d8k.htm",
+        "published_date": "2026-08-13",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-13 under item(s) 1.01, 8.01, 9.01 (Entry into a Material Definitive Agreement; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "title": "ABCL 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000170305726000053/abcl-20260810.htm",
+        "published_date": "2026-08-10",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-10 under item(s) 7.01, 9.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "title": "ABCL 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000170305726000049/abcl-20260807.htm",
+        "published_date": "2026-08-07",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-07 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "title": "ABCL 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000170305726000044/abcl-20260805.htm",
+        "published_date": "2026-08-05",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-05 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "ABCL",
+        "title": "ABCL 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1703057/000170305726000039/abcl-20260729.htm",
+        "published_date": "2026-07-29",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-29 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "AEHR": {
+    "ticker": "AEHR",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:23+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "AEHR",
+      "last_price": 134.06,
+      "fifty_two_week_low": 16.38,
+      "fifty_two_week_high": 147.4,
+      "pct_change_3m": 0.298402,
+      "pct_change_1y": 6.1081650000000005,
+      "avg_volume_30d": 2915420.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "AEHR",
+      "market_cap": 4090933600.0,
+      "ev_to_revenue": 79.4899,
+      "ev_to_ebitda": 2173.0867,
+      "price_to_sales": 81.817,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "AEHR",
+        "insider_name": "SLAYEN HOWARD T",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 5700.0,
+        "value_usd": 758264.16,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000104047026000257/xslF345X06/primary_01.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "insider_name": "POSEDEL RHEA J",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 5973.0,
+        "value_usd": 836220.0,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000104047026000255/xslF345X06/primary_01.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "insider_name": "SALAMONE ALBERTO",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 4200.0,
+        "value_usd": 537600.0,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000104047026000253/xslF345X06/primary_01.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "insider_name": "SALAMONE ALBERTO",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 5472.0,
+        "value_usd": 697687.66,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000104047026000253/xslF345X06/primary_01.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "insider_name": "Erickson Gayn",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 1548.0,
+        "value_usd": 204749.94,
+        "filing_date": "2026-08-13",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000104047026000251/xslF345X06/primary_01.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "AEHR",
+        "title": "AEHR 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000165495426006655/aehr_8k.htm",
+        "published_date": "2026-07-14",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-14 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "title": "AEHR 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000165495426003746/aehr_8k.htm",
+        "published_date": "2026-04-20",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-20 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "title": "AEHR 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000165495426003355/aehr_8k.htm",
+        "published_date": "2026-04-08",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-08 under item(s) 1.01, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "title": "AEHR 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000165495426003310/aehr_8k.htm",
+        "published_date": "2026-04-07",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-07 under item(s) 2.02, 5.03, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AEHR",
+        "title": "AEHR 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1040470/000165495426000197/aehr_8k.htm",
+        "published_date": "2026-01-08",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-01-08 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "ARM": {
+    "ticker": "ARM",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:27+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "ARM",
+      "last_price": 279.44,
+      "fifty_two_week_low": 100.02,
+      "fifty_two_week_high": 452.7,
+      "pct_change_3m": 0.26323399999999997,
+      "pct_change_1y": 0.988189,
+      "avg_volume_30d": 9367730.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "ARM",
+      "market_cap": 290357160000.0,
+      "ev_to_revenue": 55.7254,
+      "ev_to_ebitda": 251.8143,
+      "price_to_sales": 56.3144,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "ARM",
+        "insider_name": "Bartels Laura Kathleen",
+        "role": "Chief Accounting Officer",
+        "transaction_type": "Sell",
+        "shares": 11306.0,
+        "value_usd": 4439866.2,
+        "filing_date": "2026-06-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000107/xslF345X06/wk-form4_1780607139.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ARM",
+        "insider_name": "Abbey William",
+        "role": "Chief Commercial Officer",
+        "transaction_type": "Sell",
+        "shares": 2644.0,
+        "value_usd": 1014582.12,
+        "filing_date": "2026-06-03",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000105/xslF345X06/wk-form4_1780519586.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ARM",
+        "insider_name": "Abbey William",
+        "role": "Chief Commercial Officer",
+        "transaction_type": "Sell",
+        "shares": 3922.0,
+        "value_usd": 1629669.44,
+        "filing_date": "2026-06-03",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000105/xslF345X06/wk-form4_1780519586.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ARM",
+        "insider_name": "Abbey William",
+        "role": "Chief Commercial Officer",
+        "transaction_type": "Sell",
+        "shares": 4200.0,
+        "value_usd": 1444002.0,
+        "filing_date": "2026-06-01",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000103/xslF345X06/wk-form4_1780345980.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "ARM",
+        "insider_name": "Abbey William",
+        "role": "Chief Commercial Officer",
+        "transaction_type": "Sell",
+        "shares": 2300.0,
+        "value_usd": 703386.0,
+        "filing_date": "2026-05-26",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1973239/000197323926000101/xslF345X06/wk-form4_1779832863.xml",
+        "is_mock": false
+      }
+    ],
+    "news": []
+  },
+  "AVGO": {
+    "ticker": "AVGO",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:31+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "AVGO",
+      "last_price": 392.99,
+      "fifty_two_week_low": 281.87,
+      "fifty_two_week_high": 495.0,
+      "pct_change_3m": -0.057103,
+      "pct_change_1y": 0.2627,
+      "avg_volume_30d": 24293260.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "AVGO",
+      "market_cap": 2003892600000.0,
+      "ev_to_revenue": 27.1539,
+      "ev_to_ebitda": 58.8775,
+      "price_to_sales": 26.5539,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "AVGO",
+        "insider_name": "Brazeal Mark David",
+        "role": "Chief Legal & Corp Affairs Ofc",
+        "transaction_type": "Sell",
+        "shares": 25000.0,
+        "value_usd": 10033225.0,
+        "filing_date": "2026-07-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000070/xslF345X06/wk-form4_1784075021.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "insider_name": "DELLY GAYLA J",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 1890.0,
+        "value_usd": 728368.2,
+        "filing_date": "2026-07-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000068/xslF345X06/wk-form4_1783723427.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "insider_name": "Brazeal Mark David",
+        "role": "Chief Legal & Corp Affairs Ofc",
+        "transaction_type": "Sell",
+        "shares": 25000.0,
+        "value_usd": 9479700.0,
+        "filing_date": "2026-07-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000066/xslF345X06/wk-form4_1783723055.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "insider_name": "PAGE JUSTINE",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 1602.0,
+        "value_usd": 598915.71,
+        "filing_date": "2026-07-01",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000135956126000004/xslF345X06/wk-form4_1782940899.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "insider_name": "Brazeal Mark David",
+        "role": "Chief Legal & Corp Affairs Ofc",
+        "transaction_type": "Sell",
+        "shares": 25000.0,
+        "value_usd": 9675000.0,
+        "filing_date": "2026-06-29",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000064/xslF345X06/wk-form4_1782775021.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "AVGO",
+        "title": "AVGO 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526295589/d84378d8k.htm",
+        "published_date": "2026-07-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-06 under item(s) 8.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "title": "AVGO 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526275077/d149683d8k.htm",
+        "published_date": "2026-06-18",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-18 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "title": "AVGO 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526266777/d152717d8k.htm",
+        "published_date": "2026-06-11",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-11 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "title": "AVGO 8-K: Results of Operations and Financial Condition; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-20260603.htm",
+        "published_date": "2026-06-03",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-03 under item(s) 2.02, 8.01, 9.01 (Results of Operations and Financial Condition; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AVGO",
+        "title": "AVGO 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526144028/d87999d8k.htm",
+        "published_date": "2026-04-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-06 under item(s) 8.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "AXTI": {
+    "ticker": "AXTI",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:35+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "AXTI",
+      "last_price": 81.64,
+      "fifty_two_week_low": 2.05,
+      "fifty_two_week_high": 143.16,
+      "pct_change_3m": -0.330463,
+      "pct_change_1y": 36.796296000000005,
+      "avg_volume_30d": 10941340.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "AXTI",
+      "market_cap": 4993097700.0,
+      "ev_to_revenue": 52.4225,
+      "ev_to_ebitda": 7854.687,
+      "price_to_sales": 52.0689,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "AXTI",
+        "insider_name": "CHEN JESSE",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 6172.0,
+        "value_usd": 711284.12,
+        "filing_date": "2026-06-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020895/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "insider_name": "CHANG DAVID C",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 8333.0,
+        "value_usd": 926392.11,
+        "filing_date": "2026-06-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020894/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "insider_name": "CHEN JESSE",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 9000.0,
+        "value_usd": 796932.9,
+        "filing_date": "2026-06-15",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020633/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "insider_name": "CHEN JESSE",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 13000.0,
+        "value_usd": 1245059.4,
+        "filing_date": "2026-06-15",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020633/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "insider_name": "CHEN JESSE",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 6000.0,
+        "value_usd": 564007.2,
+        "filing_date": "2026-06-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926020209/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "AXTI",
+        "title": "AXTI 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926025061/axti20260609_8k.htm",
+        "published_date": "2026-07-30",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-30 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "title": "AXTI 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926024883/axti20260715_8k.htm",
+        "published_date": "2026-07-29",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-29 under item(s) 1.01, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "title": "AXTI 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926024184/axti20260720_8k.htm",
+        "published_date": "2026-07-22",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-22 under item(s) 5.02, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "title": "AXTI 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926022557/axti20260630_8k.htm",
+        "published_date": "2026-07-02",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-02 under item(s) 1.01, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "AXTI",
+        "title": "AXTI 8-K: Departure/Election of Directors or Officers; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926021307/axti20260622_8k.htm",
+        "published_date": "2026-06-22",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-22 under item(s) 5.02, 7.01, 9.01 (Departure/Election of Directors or Officers; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "BE": {
+    "ticker": "BE",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:39+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "BE",
+      "last_price": 229.94,
+      "fifty_two_week_low": 40.56,
+      "fifty_two_week_high": 351.28,
+      "pct_change_3m": -0.206447,
+      "pct_change_1y": 4.0973180000000005,
+      "avg_volume_30d": 13334940.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "BE",
+      "market_cap": 69913430000.0,
+      "ev_to_revenue": 28.6831,
+      "ev_to_ebitda": 598.6506,
+      "price_to_sales": 28.5474,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "BE",
+        "insider_name": "CHAMBERS JOHN T",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 15000.0,
+        "value_usd": 3750000.0,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526352899/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "insider_name": "CHAMBERS JOHN T",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 15000.0,
+        "value_usd": 3083700.0,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526333129/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "insider_name": "Joshi Aman",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 8343.0,
+        "value_usd": 2505986.91,
+        "filing_date": "2026-07-02",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526295065/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "insider_name": "Joshi Aman",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 3558.0,
+        "value_usd": 1028760.12,
+        "filing_date": "2026-06-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526274678/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "insider_name": "Kurzymski Maciej",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 2259.0,
+        "value_usd": 651992.58,
+        "filing_date": "2026-06-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526274669/xslF345X06/ownership.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "BE",
+        "title": "BE 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000162828026050150/be-20260728.htm",
+        "published_date": "2026-07-28",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-28 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "title": "BE 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000162828026047734/be-20260709.htm",
+        "published_date": "2026-07-09",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-09 under item(s) 7.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "title": "BE 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526274388/d100413d8k.htm",
+        "published_date": "2026-06-17",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-17 under item(s) 5.02, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "title": "BE 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000162828026027913/be-20260428.htm",
+        "published_date": "2026-04-28",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-28 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "BE",
+        "title": "BE 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1664703/000119312526179381/d133915d8k.htm",
+        "published_date": "2026-04-27",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-27 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "CLS": {
+    "ticker": "CLS",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:43+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "CLS",
+      "last_price": 335.05,
+      "fifty_two_week_low": 240.49,
+      "fifty_two_week_high": 655.5,
+      "pct_change_3m": -0.088088,
+      "pct_change_1y": 0.712797,
+      "avg_volume_30d": 446500.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "CLS",
+      "market_cap": 54330188000.00001,
+      "ev_to_revenue": 2.5168,
+      "ev_to_ebitda": 27.7182,
+      "price_to_sales": 2.4992,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "CLS",
+        "insider_name": "MIONIS ROBERT",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 5554.0,
+        "value_usd": 2001494.98,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000119312526352263/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "insider_name": "MIONIS ROBERT",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 4941.0,
+        "value_usd": 1785875.04,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000119312526352263/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "insider_name": "MIONIS ROBERT",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 3440.0,
+        "value_usd": 1247275.2,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000119312526352263/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "insider_name": "MIONIS ROBERT",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 5270.0,
+        "value_usd": 1915750.4,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000119312526352263/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "insider_name": "MIONIS ROBERT",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 4030.0,
+        "value_usd": 1468894.7,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000119312526352263/xslF345X06/ownership.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "CLS",
+        "title": "CLS 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000110465926092676/tm2621135d2_8k.htm",
+        "published_date": "2026-08-07",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-07 under item(s) 1.01, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "title": "CLS 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000103089426000043/cls-20260727.htm",
+        "published_date": "2026-07-27",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-27 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "title": "CLS 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000103089426000038/cls-20260706.htm",
+        "published_date": "2026-07-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-06 under item(s) 5.02, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "title": "CLS 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000103089426000035/cls-20260519.htm",
+        "published_date": "2026-05-19",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-19 under item(s) 5.07, 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CLS",
+        "title": "CLS 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1030894/000110465926049818/tm2612871d1_8k.htm",
+        "published_date": "2026-04-28",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-28 under item(s) 1.01, 2.03, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "COHR": {
+    "ticker": "COHR",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:47+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "COHR",
+      "last_price": 325.83,
+      "fifty_two_week_low": 84.35,
+      "fifty_two_week_high": 440.0,
+      "pct_change_3m": -0.192911,
+      "pct_change_1y": 2.555155,
+      "avg_volume_30d": 6140980.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "COHR",
+      "market_cap": 64019060000.0,
+      "ev_to_revenue": 9.2832,
+      "ev_to_ebitda": 68.8509,
+      "price_to_sales": 8.9938,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "COHR",
+        "insider_name": "Luther Sherri R",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 1000.0,
+        "value_usd": 306680.0,
+        "filing_date": "2026-07-24",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000089914026000726/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "insider_name": "Xia Howard H.",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 500.0,
+        "value_usd": 172000.0,
+        "filing_date": "2026-05-13",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000089914026000476/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "insider_name": "Xia Howard H.",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 500.0,
+        "value_usd": 174000.0,
+        "filing_date": "2026-05-13",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000089914026000476/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "insider_name": "Xia Howard H.",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 500.0,
+        "value_usd": 179000.0,
+        "filing_date": "2026-05-13",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000089914026000476/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "insider_name": "Xia Howard H.",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 500.0,
+        "value_usd": 184000.0,
+        "filing_date": "2026-05-13",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000089914026000476/xslF345X06/form4.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "COHR",
+        "title": "COHR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000119312526346860/d128030d8k.htm",
+        "published_date": "2026-08-12",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-12 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "title": "COHR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000119312526208972/d57080d8k.htm",
+        "published_date": "2026-05-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-06 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "title": "COHR 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000119312526187297/d107137d8k.htm",
+        "published_date": "2026-04-28",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-28 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "title": "COHR 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000119312526084366/d42735d8k.htm",
+        "published_date": "2026-03-02",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-02 under item(s) 3.02, 7.01, 9.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "COHR",
+        "title": "COHR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/820318/000119312526037556/d101115d8k.htm",
+        "published_date": "2026-02-04",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-04 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "CRDO": {
+    "ticker": "CRDO",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:51+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "CRDO",
+      "last_price": 259.9,
+      "fifty_two_week_low": 86.485,
+      "fifty_two_week_high": 308.6699,
+      "pct_change_3m": 0.372518,
+      "pct_change_1y": 1.21512,
+      "avg_volume_30d": 7682740.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "CRDO",
+      "market_cap": 49601254000.0,
+      "ev_to_revenue": 36.2787,
+      "ev_to_ebitda": 100.9843,
+      "price_to_sales": 37.1513,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "CRDO",
+        "insider_name": "Lam Yat Tung",
+        "role": "Director, Chief Operating Officer",
+        "transaction_type": "Sell",
+        "shares": 5788.0,
+        "value_usd": 1215823.81,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026052758/xslF345X06/wk-form4_1785879245.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "insider_name": "Lam Yat Tung",
+        "role": "Director, Chief Operating Officer",
+        "transaction_type": "Sell",
+        "shares": 6950.0,
+        "value_usd": 1466873.95,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026052758/xslF345X06/wk-form4_1785879245.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "insider_name": "Lam Yat Tung",
+        "role": "Director, Chief Operating Officer",
+        "transaction_type": "Sell",
+        "shares": 5724.0,
+        "value_usd": 1215676.29,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026052758/xslF345X06/wk-form4_1785879245.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "insider_name": "Lam Yat Tung",
+        "role": "Director, Chief Operating Officer",
+        "transaction_type": "Sell",
+        "shares": 12300.0,
+        "value_usd": 2625514.95,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026052758/xslF345X06/wk-form4_1785879245.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "insider_name": "Lam Yat Tung",
+        "role": "Director, Chief Operating Officer",
+        "transaction_type": "Sell",
+        "shares": 5431.0,
+        "value_usd": 1165573.52,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026052758/xslF345X06/wk-form4_1785879245.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "CRDO",
+        "title": "CRDO 8-K: Results of Operations and Financial Condition; Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026039474/crdo-20260528.htm",
+        "published_date": "2026-06-01",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-01 under item(s) 2.02, 5.02, 9.01 (Results of Operations and Financial Condition; Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "title": "CRDO 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026024892/crdo-20260413.htm",
+        "published_date": "2026-04-13",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-13 under item(s) 3.02, 7.01, 9.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "title": "CRDO 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026013205/crdo-20260302.htm",
+        "published_date": "2026-03-02",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-02 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "title": "CRDO 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026006370/crdo-20260209.htm",
+        "published_date": "2026-02-09",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-09 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "CRDO",
+        "title": "CRDO 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025046890/crdo-20251023.htm",
+        "published_date": "2025-10-29",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2025-10-29 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "DRAM": {
+    "ticker": "DRAM",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:54+00:00",
+    "errors": [
+      "valuation: No market cap from Finnhub for 'DRAM'.",
+      "insiders: No SEC EDGAR CIK found for ticker 'DRAM' — not a US-listed filer, or the ticker is wrong.",
+      "news: No SEC EDGAR CIK found for ticker 'DRAM' — not a US-listed filer, or the ticker is wrong."
+    ],
+    "price": {
+      "ticker": "DRAM",
+      "last_price": 57.32,
+      "fifty_two_week_low": 26.14,
+      "fifty_two_week_high": 81.34,
+      "pct_change_3m": 0.109747,
+      "pct_change_1y": 0.0,
+      "avg_volume_30d": 47913330.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": null,
+    "insider_transactions": [],
+    "news": []
+  },
+  "INTC": {
+    "ticker": "INTC",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:36:57+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "INTC",
+      "last_price": 102.5,
+      "fifty_two_week_low": 21.9,
+      "fifty_two_week_high": 142.35,
+      "pct_change_3m": -0.147893,
+      "pct_change_1y": 3.295893,
+      "avg_volume_30d": 129955729.99999999,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "INTC",
+      "market_cap": 534159560000.00006,
+      "ev_to_revenue": 10.0263,
+      "ev_to_ebitda": 34.0858,
+      "price_to_sales": 9.366,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "INTC",
+        "insider_name": "TAN LIP BU",
+        "role": "Director, CEO",
+        "transaction_type": "Buy",
+        "shares": 105263.0,
+        "value_usd": 9999985.0,
+        "filing_date": "2026-08-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000177/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "INTC",
+        "insider_name": "Chandrasekaran Nagasubramaniyan",
+        "role": "EVP, CT & Ops Off, GM Foundry",
+        "transaction_type": "Sell",
+        "shares": 21024.0,
+        "value_usd": 2486697.7,
+        "filing_date": "2026-06-02",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000138/xslF345X06/form4.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "INTC",
+        "title": "INTC 8-K: Regulation FD Disclosure; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000119312526346806/d117670d8k.htm",
+        "published_date": "2026-08-12",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-12 under item(s) 7.01, 8.01, 9.01 (Regulation FD Disclosure; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "INTC",
+        "title": "INTC 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/intc-20260723.htm",
+        "published_date": "2026-07-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-23 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "INTC",
+        "title": "INTC 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000119312526197845/d143782d8k.htm",
+        "published_date": "2026-04-30",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-30 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "INTC",
+        "title": "INTC 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000083/intc-20260424.htm",
+        "published_date": "2026-04-24",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-24 under item(s) 5.02, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "INTC",
+        "title": "INTC 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000077/intc-20260423.htm",
+        "published_date": "2026-04-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-23 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "IREN": {
+    "ticker": "IREN",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:05+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "IREN",
+      "last_price": 44.06,
+      "fifty_two_week_low": 17.22,
+      "fifty_two_week_high": 76.87,
+      "pct_change_3m": -0.20137799999999997,
+      "pct_change_1y": 1.3092240000000002,
+      "avg_volume_30d": 46328170.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "IREN",
+      "market_cap": 15972940000.0,
+      "ev_to_revenue": 23.6691,
+      "ev_to_ebitda": 444.3101,
+      "price_to_sales": 21.3334,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "IREN",
+        "insider_name": "Guzowski Christopher",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 11958.0,
+        "value_usd": 434314.56,
+        "filing_date": "2026-07-01",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000095010326009962/xslF345X06/ownership.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "IREN",
+        "insider_name": "Roberts Daniel John",
+        "role": "Director, Co-Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 1000000.0,
+        "value_usd": 33131000.0,
+        "filing_date": "2025-09-11",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000095010325011563/xslF345X05/dp234279_4-droberts.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "IREN",
+        "insider_name": "Roberts William Gregory",
+        "role": "Director, Co-Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 1000000.0,
+        "value_usd": 33131000.0,
+        "filing_date": "2025-09-11",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000095010325011561/xslF345X05/dp234278_4-wroberts.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "IREN",
+        "title": "IREN 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000114036126032638/ef20080141_8k.htm",
+        "published_date": "2026-08-13",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-13 under item(s) 7.01, 9.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "IREN",
+        "title": "IREN 8-K: Regulation FD Disclosure; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000114036126031053/ny20079234x2_8k.htm",
+        "published_date": "2026-08-04",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-04 under item(s) 7.01, 8.01, 9.01 (Regulation FD Disclosure; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "IREN",
+        "title": "IREN 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000114036126028871/ef20078253_8k.htm",
+        "published_date": "2026-07-20",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-20 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "IREN",
+        "title": "IREN 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000114036126027202/ef20077190_8k.htm",
+        "published_date": "2026-07-01",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-01 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "IREN",
+        "title": "IREN 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1878848/000114036126023427/ef20075181_8k.htm",
+        "published_date": "2026-06-01",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-01 under item(s) 1.01, 2.03 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "LITE": {
+    "ticker": "LITE",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:12+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "LITE",
+      "last_price": 926.14,
+      "fifty_two_week_low": 111.2,
+      "fifty_two_week_high": 1085.68,
+      "pct_change_3m": -0.101158,
+      "pct_change_1y": 7.0800909999999995,
+      "avg_volume_30d": 5556510.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "LITE",
+      "market_cap": 70992110000.0,
+      "ev_to_revenue": 28.7961,
+      "ev_to_ebitda": 221.3658,
+      "price_to_sales": 23.5541,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "LITE",
+        "insider_name": "Harris Isaac Hosojiro",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 1416.0,
+        "value_usd": 1416114.7,
+        "filing_date": "2026-06-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000186650326000005/xslF345X06/form4-06042026_090638.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "insider_name": "Harris Isaac Hosojiro",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 4000.0,
+        "value_usd": 3440000.0,
+        "filing_date": "2026-06-01",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000186650326000004/xslF345X06/form4-06022026_120628.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "insider_name": "Small Ian",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 4954.0,
+        "value_usd": 4300418.78,
+        "filing_date": "2026-05-22",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000171491026000002/xslF345X06/form4-05222026_080529.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "insider_name": "Wupen Yuen",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 3210.0,
+        "value_usd": 3062179.5,
+        "filing_date": "2026-05-19",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000148955026000002/xslF345X06/form4-05202026_120544.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "insider_name": "Retort Vincent",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 3183.0,
+        "value_usd": 3036422.85,
+        "filing_date": "2026-05-19",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000164825626000004/xslF345X06/form4-05202026_120500.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "LITE",
+        "title": "LITE 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000162828026055726/lite-20260811.htm",
+        "published_date": "2026-08-11",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-11 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "title": "LITE 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000162828026051078/lite-20260727.htm",
+        "published_date": "2026-07-30",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-30 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "title": "LITE 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000162828026030530/lite-20260505.htm",
+        "published_date": "2026-05-05",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-05 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "title": "LITE 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000119312526085412/d41019d8k.htm",
+        "published_date": "2026-03-02",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-02 under item(s) 3.02, 5.03, 7.01, 9.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LITE",
+        "title": "LITE 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1633978/000162828026005005/lite-20260203.htm",
+        "published_date": "2026-02-03",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-03 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "LPTH": {
+    "ticker": "LPTH",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:18+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "LPTH",
+      "last_price": 15.17,
+      "fifty_two_week_low": 3.36,
+      "fifty_two_week_high": 18.94,
+      "pct_change_3m": 0.25165,
+      "pct_change_1y": 3.167582,
+      "avg_volume_30d": 3413740.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "LPTH",
+      "market_cap": 911133800.0,
+      "ev_to_revenue": 13.6507,
+      "ev_to_ebitda": 320.9164,
+      "price_to_sales": 14.5155,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "LPTH",
+        "insider_name": "North Run Strategic Opportunities Fund I, LP",
+        "role": "Director, 10% Owner",
+        "transaction_type": "Sell",
+        "shares": 3571400.0,
+        "value_usd": 49999600.0,
+        "filing_date": "2026-06-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926019612/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "insider_name": "North Run Strategic Opportunities Fund I, LP",
+        "role": "Director, 10% Owner",
+        "transaction_type": "Sell",
+        "shares": 55284.0,
+        "value_usd": 681098.88,
+        "filing_date": "2026-05-20",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926017946/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "insider_name": "North Run Strategic Opportunities Fund I, LP",
+        "role": "Director, 10% Owner",
+        "transaction_type": "Sell",
+        "shares": 83052.0,
+        "value_usd": 1017387.0,
+        "filing_date": "2026-05-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926017176/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "insider_name": "North Run Strategic Opportunities Fund I, LP",
+        "role": "Director, 10% Owner",
+        "transaction_type": "Sell",
+        "shares": 45000.0,
+        "value_usd": 553050.0,
+        "filing_date": "2026-05-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926017176/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "insider_name": "North Run Strategic Opportunities Fund I, LP",
+        "role": "Director, 10% Owner",
+        "transaction_type": "Sell",
+        "shares": 165000.0,
+        "value_usd": 2006400.0,
+        "filing_date": "2026-05-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926017176/xslF345X06/rdgdoc.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "LPTH",
+        "title": "LPTH 8-K: Entry into a Material Definitive Agreement; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926024234/lpth20260722_8k.htm",
+        "published_date": "2026-07-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-23 under item(s) 1.01, 7.01, 9.01 (Entry into a Material Definitive Agreement; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "title": "LPTH 8-K: Entry into a Material Definitive Agreement; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926019435/lpth20260602_8k.htm",
+        "published_date": "2026-06-03",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-03 under item(s) 1.01, 7.01, 9.01 (Entry into a Material Definitive Agreement; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "title": "LPTH 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926015581/lpth20260219_8k.htm",
+        "published_date": "2026-05-07",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-07 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "title": "LPTH 8-K: Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926006130/lpth20260227_8k.htm",
+        "published_date": "2026-02-27",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-27 under item(s) 7.01, 9.01 (Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "LPTH",
+        "title": "LPTH 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/889971/000143774926003796/lpth20260115_8k.htm",
+        "published_date": "2026-02-11",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-11 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "MP": {
+    "ticker": "MP",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:21+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "MP",
+      "last_price": 58.74,
+      "fifty_two_week_low": 37.81,
+      "fifty_two_week_high": 100.251,
+      "pct_change_3m": -0.07829900000000001,
+      "pct_change_1y": -0.232959,
+      "avg_volume_30d": 6236580.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "MP",
+      "market_cap": 9913135000.0,
+      "ev_to_revenue": 28.9371,
+      "ev_to_ebitda": 344.1682,
+      "price_to_sales": 28.5213,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "MP",
+        "insider_name": "Rosenthal Michael Stuart",
+        "role": "Chief Operating Officer",
+        "transaction_type": "Buy",
+        "shares": 10000.0,
+        "value_usd": 543000.0,
+        "filing_date": "2026-06-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000183205026000007/xslF345X06/wk-form4_1781096503.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "insider_name": "Litinsky James H.",
+        "role": "Director, Chairman and CEO",
+        "transaction_type": "Sell",
+        "shares": 11740.0,
+        "value_usd": 837179.4,
+        "filing_date": "2026-06-05",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000183174626000018/xslF345X06/wk-form4_1780704325.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "insider_name": "Litinsky James H.",
+        "role": "Director, Chairman and CEO",
+        "transaction_type": "Sell",
+        "shares": 37286.0,
+        "value_usd": 2618595.78,
+        "filing_date": "2026-06-05",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000183174626000018/xslF345X06/wk-form4_1780704325.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "insider_name": "Litinsky James H.",
+        "role": "Director, Chairman and CEO",
+        "transaction_type": "Sell",
+        "shares": 136141.0,
+        "value_usd": 9346079.65,
+        "filing_date": "2026-06-05",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000183174626000018/xslF345X06/wk-form4_1780704325.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "insider_name": "Litinsky James H.",
+        "role": "Director, Chairman and CEO",
+        "transaction_type": "Sell",
+        "shares": 23113.0,
+        "value_usd": 1526844.78,
+        "filing_date": "2026-05-29",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000183174626000016/xslF345X06/wk-form4_1780102796.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "MP",
+        "title": "MP 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000180136826000047/mp-20260806.htm",
+        "published_date": "2026-08-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-06 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "title": "MP 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000180136826000027/mp-20260507.htm",
+        "published_date": "2026-05-07",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-07 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "title": "MP 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000180136826000007/mp-20260226.htm",
+        "published_date": "2026-02-26",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-26 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "title": "MP 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000119312525287046/d39340d8k.htm",
+        "published_date": "2025-11-19",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2025-11-19 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MP",
+        "title": "MP 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1801368/000180136825000052/mp-20251106.htm",
+        "published_date": "2025-11-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2025-11-06 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "MRVL": {
+    "ticker": "MRVL",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:27+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "MRVL",
+      "last_price": 222.02,
+      "fifty_two_week_low": 61.44,
+      "fifty_two_week_high": 329.88,
+      "pct_change_3m": 0.24765399999999999,
+      "pct_change_1y": 1.8089570000000001,
+      "avg_volume_30d": 36804830.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "MRVL",
+      "market_cap": 194577780000.0,
+      "ev_to_revenue": 22.4496,
+      "ev_to_ebitda": 55.1022,
+      "price_to_sales": 22.3214,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "MRVL",
+        "insider_name": "Koopmans Chris",
+        "role": "President and COO",
+        "transaction_type": "Sell",
+        "shares": 10000.0,
+        "value_usd": 1805000.0,
+        "filing_date": "2026-08-03",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000162828026051905/xslF345X06/wk-form4_1785789180.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "insider_name": "Bharathi Sandeep",
+        "role": "President, Data Center Group",
+        "transaction_type": "Sell",
+        "shares": 9013.0,
+        "value_usd": 1795750.12,
+        "filing_date": "2026-07-16",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000162828026048556/xslF345X06/wk-form4_1784252922.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "insider_name": "MURPHY MATTHEW J",
+        "role": "Director, Chairman of the Board and CEO",
+        "transaction_type": "Sell",
+        "shares": 7500.0,
+        "value_usd": 1571400.0,
+        "filing_date": "2026-07-16",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000162828026048541/xslF345X06/wk-form4_1784241307.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "insider_name": "Koopmans Chris",
+        "role": "President and COO",
+        "transaction_type": "Sell",
+        "shares": 10000.0,
+        "value_usd": 2819200.0,
+        "filing_date": "2026-07-01",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000162828026046627/xslF345X06/wk-form4_1782942422.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "insider_name": "Durn Daniel",
+        "role": "Chief Financial Officer",
+        "transaction_type": "Sell",
+        "shares": 2250.0,
+        "value_usd": 632272.5,
+        "filing_date": "2026-06-23",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000162828026044905/xslF345X06/wk-form4_1782246098.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "MRVL",
+        "title": "MRVL 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000119312526299843/d82462d8k.htm",
+        "published_date": "2026-07-09",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-09 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "title": "MRVL 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000162828026045564/mrvl-20260625.htm",
+        "published_date": "2026-06-25",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-25 under item(s) 5.07, 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "title": "MRVL 8-K: Departure/Election of Directors or Officers; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000119312526267688/d151562d8k.htm",
+        "published_date": "2026-06-11",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-11 under item(s) 5.02, 7.01, 9.01 (Departure/Election of Directors or Officers; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "title": "MRVL 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000014/mrvl-20260527.htm",
+        "published_date": "2026-05-27",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-27 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MRVL",
+        "title": "MRVL 8-K: Entry into a Material Definitive Agreement; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1835632/000119312526157134/d123910d8k.htm",
+        "published_date": "2026-04-15",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-15 under item(s) 1.01, 8.01, 9.01 (Entry into a Material Definitive Agreement; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "MU": {
+    "ticker": "MU",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:33+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "MU",
+      "last_price": 971.66,
+      "fifty_two_week_low": 113.46,
+      "fifty_two_week_high": 1255.0,
+      "pct_change_3m": 0.209089,
+      "pct_change_1y": 6.755288,
+      "avg_volume_30d": 48629650.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "MU",
+      "market_cap": 1086666399999.9999,
+      "ev_to_revenue": 11.8239,
+      "ev_to_ebitda": 15.6385,
+      "price_to_sales": 12.0374,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "MU",
+        "insider_name": "MEHROTRA SANJAY",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 1050.0,
+        "value_usd": 990013.5,
+        "filing_date": "2026-07-28",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000014/xslF345X06/primarydocument.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "insider_name": "MEHROTRA SANJAY",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 626.0,
+        "value_usd": 591563.74,
+        "filing_date": "2026-07-28",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000014/xslF345X06/primarydocument.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "insider_name": "MEHROTRA SANJAY",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 955.0,
+        "value_usd": 903305.85,
+        "filing_date": "2026-07-28",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000014/xslF345X06/primarydocument.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "insider_name": "MEHROTRA SANJAY",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 797.0,
+        "value_usd": 754583.66,
+        "filing_date": "2026-07-28",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000014/xslF345X06/primarydocument.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "insider_name": "MEHROTRA SANJAY",
+        "role": "Insider",
+        "transaction_type": "Sell",
+        "shares": 1207.0,
+        "value_usd": 1144525.68,
+        "filing_date": "2026-07-28",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000124265426000014/xslF345X06/primarydocument.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "MU",
+        "title": "MU 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000013/mu-20260624.htm",
+        "published_date": "2026-06-24",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-24 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "title": "MU 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000110465926071845/tm2617112d1_8k.htm",
+        "published_date": "2026-06-09",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-09 under item(s) 5.02, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "title": "MU 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000110465926038249/tm2610810d1_8k.htm",
+        "published_date": "2026-04-01",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-01 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "title": "MU 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000110465926034174/tm269755d1_8k.htm",
+        "published_date": "2026-03-25",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-25 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MU",
+        "title": "MU 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/723125/000072312526000004/mu-20260318.htm",
+        "published_date": "2026-03-18",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-18 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "MXL": {
+    "ticker": "MXL",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:37+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "MXL",
+      "last_price": 84.84,
+      "fifty_two_week_low": 12.77,
+      "fifty_two_week_high": 128.3,
+      "pct_change_3m": -0.032942,
+      "pct_change_1y": 4.459459,
+      "avg_volume_30d": 4707660.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "MXL",
+      "market_cap": 7069533700.0,
+      "ev_to_revenue": 12.5299,
+      "ev_to_ebitda": 147.6277,
+      "price_to_sales": 12.426,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "MXL",
+        "insider_name": "PARDUN THOMAS E",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 11000.0,
+        "value_usd": 1155000.0,
+        "filing_date": "2026-05-28",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000123283326000008/xslF345X06/wk-form4_1780002291.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "insider_name": "Kwong Connie H.",
+        "role": "Corporate Controller & PAO",
+        "transaction_type": "Sell",
+        "shares": 6539.0,
+        "value_usd": 635231.81,
+        "filing_date": "2026-05-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000166699426000010/xslF345X06/wk-form4_1778282744.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "insider_name": "Kwong Connie H.",
+        "role": "Corporate Controller & PAO",
+        "transaction_type": "Sell",
+        "shares": 28461.0,
+        "value_usd": 2758448.66,
+        "filing_date": "2026-05-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000166699426000010/xslF345X06/wk-form4_1778282744.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "insider_name": "Tewksbury Ted L III",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 2790.0,
+        "value_usd": 219475.35,
+        "filing_date": "2026-05-05",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000137568126000003/xslF345X06/wk-form4_1778011943.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "insider_name": "Tewksbury Ted L III",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 3935.0,
+        "value_usd": 304411.6,
+        "filing_date": "2026-05-05",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000137568126000003/xslF345X06/wk-form4_1778011943.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "MXL",
+        "title": "MXL 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000050/mxl-20260723.htm",
+        "published_date": "2026-07-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-23 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "title": "MXL 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000035/mxl-20260520.htm",
+        "published_date": "2026-05-21",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-21 under item(s) 5.02, 5.07, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "title": "MXL 8-K: Entry into a Material Definitive Agreement; Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000027/mxl-20260422.htm",
+        "published_date": "2026-04-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-23 under item(s) 1.01, 2.02, 2.03, 9.01 (Entry into a Material Definitive Agreement; Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "title": "MXL 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000017/mxl-20260213.htm",
+        "published_date": "2026-02-17",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-17 under item(s) 5.02, 9.01 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "MXL",
+        "title": "MXL 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000009/mxl-20260129.htm",
+        "published_date": "2026-01-29",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-01-29 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "NBIS": {
+    "ticker": "NBIS",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:43+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "NBIS",
+      "last_price": 277.68,
+      "fifty_two_week_low": 62.01,
+      "fifty_two_week_high": 299.86,
+      "pct_change_3m": 0.339702,
+      "pct_change_1y": 3.0560910000000003,
+      "avg_volume_30d": 19928560.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "NBIS",
+      "market_cap": 64171530000.0,
+      "ev_to_revenue": 47.7272,
+      "ev_to_ebitda": 796.4917,
+      "price_to_sales": 47.3556,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "NBIS",
+        "insider_name": "Boynton John Wilson IV",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 200.0,
+        "value_usd": 37558.0,
+        "filing_date": "2026-07-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1513845/000151384526000084/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "NBIS",
+        "insider_name": "Boynton John Wilson IV",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 200.0,
+        "value_usd": 37848.0,
+        "filing_date": "2026-07-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1513845/000151384526000084/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "NBIS",
+        "insider_name": "Boynton John Wilson IV",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 400.0,
+        "value_usd": 76932.0,
+        "filing_date": "2026-07-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1513845/000151384526000084/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "NBIS",
+        "insider_name": "Boynton John Wilson IV",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 700.0,
+        "value_usd": 135849.0,
+        "filing_date": "2026-07-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1513845/000151384526000084/xslF345X06/form4.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "NBIS",
+        "insider_name": "Boynton John Wilson IV",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 1200.0,
+        "value_usd": 235320.0,
+        "filing_date": "2026-07-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1513845/000151384526000084/xslF345X06/form4.xml",
+        "is_mock": false
+      }
+    ],
+    "news": []
+  },
+  "PLTR": {
+    "ticker": "PLTR",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:47+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "PLTR",
+      "last_price": 174.04,
+      "fifty_two_week_low": 106.37,
+      "fifty_two_week_high": 207.52,
+      "pct_change_3m": 0.338255,
+      "pct_change_1y": -0.038559,
+      "avg_volume_30d": 45603000.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "PLTR",
+      "market_cap": 432064120000.0,
+      "ev_to_revenue": 69.8568,
+      "ev_to_ebitda": 161.5073,
+      "price_to_sales": 70.1865,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "PLTR",
+        "insider_name": "Sankar Shyam",
+        "role": "See Remarks",
+        "transaction_type": "Sell",
+        "shares": 2735.0,
+        "value_usd": 419561.58,
+        "filing_date": "2026-08-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000182415926000011/xslF345X06/wk-form4_1786406477.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "insider_name": "Sankar Shyam",
+        "role": "See Remarks",
+        "transaction_type": "Sell",
+        "shares": 6191.0,
+        "value_usd": 957456.72,
+        "filing_date": "2026-08-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000182415926000011/xslF345X06/wk-form4_1786406477.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "insider_name": "Sankar Shyam",
+        "role": "See Remarks",
+        "transaction_type": "Sell",
+        "shares": 16063.0,
+        "value_usd": 2501658.05,
+        "filing_date": "2026-08-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000182415926000011/xslF345X06/wk-form4_1786406477.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "insider_name": "Sankar Shyam",
+        "role": "See Remarks",
+        "transaction_type": "Sell",
+        "shares": 7976.0,
+        "value_usd": 1250470.1,
+        "filing_date": "2026-08-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000182415926000011/xslF345X06/wk-form4_1786406477.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "insider_name": "Sankar Shyam",
+        "role": "See Remarks",
+        "transaction_type": "Sell",
+        "shares": 2035.0,
+        "value_usd": 320397.52,
+        "filing_date": "2026-08-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000182415926000011/xslF345X06/wk-form4_1786406477.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "PLTR",
+        "title": "PLTR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000039/pltr-20260803.htm",
+        "published_date": "2026-08-03",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-03 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "title": "PLTR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000026/pltr-20260504.htm",
+        "published_date": "2026-05-04",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-04 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "title": "PLTR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000004/pltr-20260202.htm",
+        "published_date": "2026-02-02",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-02-02 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "title": "PLTR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000130/pltr-20251103.htm",
+        "published_date": "2025-11-03",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2025-11-03 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "PLTR",
+        "title": "PLTR 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000105/pltr-20250804.htm",
+        "published_date": "2025-08-04",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2025-08-04 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "RKLB": {
+    "ticker": "RKLB",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:50+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "RKLB",
+      "last_price": 80.25,
+      "fifty_two_week_low": 37.57,
+      "fifty_two_week_high": 150.9999,
+      "pct_change_3m": -0.353605,
+      "pct_change_1y": 0.874562,
+      "avg_volume_30d": 25064710.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "RKLB",
+      "market_cap": 47927875000.0,
+      "ev_to_revenue": 59.5826,
+      "ev_to_ebitda": null,
+      "price_to_sales": 62.3131,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "RKLB",
+        "insider_name": "Beck Peter",
+        "role": "Director, CEO",
+        "transaction_type": "Sell",
+        "shares": 213106.0,
+        "value_usd": 19778751.45,
+        "filing_date": "2026-07-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000200101126000109/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "insider_name": "Beck Peter",
+        "role": "Director, CEO",
+        "transaction_type": "Sell",
+        "shares": 198726.0,
+        "value_usd": 18628396.39,
+        "filing_date": "2026-07-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000200101126000109/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "insider_name": "Beck Peter",
+        "role": "Director, CEO",
+        "transaction_type": "Sell",
+        "shares": 84387.0,
+        "value_usd": 7990368.75,
+        "filing_date": "2026-07-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000200101126000109/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "insider_name": "Beck Peter",
+        "role": "Director, CEO",
+        "transaction_type": "Sell",
+        "shares": 138478.0,
+        "value_usd": 13278835.44,
+        "filing_date": "2026-07-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000200101126000109/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "insider_name": "Beck Peter",
+        "role": "Director, CEO",
+        "transaction_type": "Sell",
+        "shares": 169457.0,
+        "value_usd": 16399489.25,
+        "filing_date": "2026-07-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000200101126000109/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "RKLB",
+        "title": "RKLB 8-K: Regulation FD Disclosure; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001463/g085846_8k.htm",
+        "published_date": "2026-08-13",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-13 under item(s) 7.01, 8.01, 9.01 (Regulation FD Disclosure; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "title": "RKLB 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001454/g085841_8k.htm",
+        "published_date": "2026-08-13",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-13 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "title": "RKLB 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000061/rklb-20260810.htm",
+        "published_date": "2026-08-10",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-10 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "title": "RKLB 8-K: Entry into a Material Definitive Agreement; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000175392626001085/g085783_8k.htm",
+        "published_date": "2026-06-29",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-29 under item(s) 1.01, 7.01, 9.01 (Entry into a Material Definitive Agreement; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "RKLB",
+        "title": "RKLB 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1819994/000181999426000056/rklb-20260603.htm",
+        "published_date": "2026-06-05",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-05 under item(s) 5.02 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "SIVE": {
+    "ticker": "SIVE",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:54+00:00",
+    "errors": [
+      "price: No quote data from Finnhub for 'SIVE'.",
+      "valuation: No market cap from Finnhub for 'SIVE'.",
+      "insiders: No SEC EDGAR CIK found for ticker 'SIVE' — not a US-listed filer, or the ticker is wrong.",
+      "news: No SEC EDGAR CIK found for ticker 'SIVE' — not a US-listed filer, or the ticker is wrong."
+    ],
+    "price": null,
+    "valuation": null,
+    "insider_transactions": [],
+    "news": []
+  },
+  "SKHY": {
+    "ticker": "SKHY",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:55+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "SKHY",
+      "last_price": 166.33,
+      "fifty_two_week_low": 449500.0,
+      "fifty_two_week_high": 2987000.0,
+      "pct_change_3m": -0.30385100000000004,
+      "pct_change_1y": 2.533835,
+      "avg_volume_30d": 5910810.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "SKHY",
+      "market_cap": 1096213600000000.0,
+      "ev_to_revenue": 8.3044,
+      "ev_to_ebitda": 14.0534,
+      "price_to_sales": 8.2994,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [],
+    "news": []
+  },
+  "SMCI": {
+    "ticker": "SMCI",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:37:59+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "SMCI",
+      "last_price": 39.84,
+      "fifty_two_week_low": 19.48,
+      "fifty_two_week_high": 58.78,
+      "pct_change_3m": 0.245,
+      "pct_change_1y": -0.124203,
+      "avg_volume_30d": 51521530.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "SMCI",
+      "market_cap": 25402768000.0,
+      "ev_to_revenue": 0.9758,
+      "ev_to_ebitda": 20.9675,
+      "price_to_sales": 0.7538,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [],
+    "news": [
+      {
+        "ticker": "SMCI",
+        "title": "SMCI 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000021/smci-20260811.htm",
+        "published_date": "2026-08-11",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-11 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMCI",
+        "title": "SMCI 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000020/smci-20260805.htm",
+        "published_date": "2026-08-05",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-05 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMCI",
+        "title": "SMCI 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1375365/000137536526000019/smci-20260721.htm",
+        "published_date": "2026-07-21",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-21 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMCI",
+        "title": "SMCI 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1375365/000119312526270430/d151436d8k.htm",
+        "published_date": "2026-06-15",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-15 under item(s) 1.01, 3.03, 5.03, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMCI",
+        "title": "SMCI 8-K: Entry into a Material Definitive Agreement; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1375365/000119312526269703/d45696d8k.htm",
+        "published_date": "2026-06-12",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-12 under item(s) 1.01, 7.01, 9.01 (Entry into a Material Definitive Agreement; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "SMTC": {
+    "ticker": "SMTC",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:38:08+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "SMTC",
+      "last_price": 140.35,
+      "fifty_two_week_low": 46.02,
+      "fifty_two_week_high": 177.35,
+      "pct_change_3m": 0.004365,
+      "pct_change_1y": 1.778108,
+      "avg_volume_30d": 3198210.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "SMTC",
+      "market_cap": 13041164000.0,
+      "ev_to_revenue": 12.2658,
+      "ev_to_ebitda": 6166.8985,
+      "price_to_sales": 11.9643,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "SMTC",
+        "insider_name": "HOU HONG Q",
+        "role": "Director, President and CEO",
+        "transaction_type": "Sell",
+        "shares": 2000.0,
+        "value_usd": 280000.0,
+        "filing_date": "2026-08-11",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000115689926000029/xslF345X06/wk-form4_1786478724.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "insider_name": "Walsh Paul V Jr",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 500.0,
+        "value_usd": 66535.0,
+        "filing_date": "2026-07-24",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000162828026049581/xslF345X06/wk-form4_1784923289.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "insider_name": "Silberstein Asaf",
+        "role": "EVP and COO",
+        "transaction_type": "Sell",
+        "shares": 3000.0,
+        "value_usd": 435120.0,
+        "filing_date": "2026-07-16",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000151495426000029/xslF345X06/wk-form4_1784232074.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "insider_name": "HOU HONG Q",
+        "role": "Director, President and CEO",
+        "transaction_type": "Sell",
+        "shares": 2000.0,
+        "value_usd": 266000.0,
+        "filing_date": "2026-07-14",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000115689926000027/xslF345X06/wk-form4_1784059275.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "insider_name": "Silberstein Asaf",
+        "role": "EVP and COO",
+        "transaction_type": "Sell",
+        "shares": 437.0,
+        "value_usd": 54270.81,
+        "filing_date": "2026-07-10",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000151495426000027/xslF345X06/wk-form4_1783713920.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "SMTC",
+        "title": "SMTC 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000119312526347716/d123711d8k.htm",
+        "published_date": "2026-08-13",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-13 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "title": "SMTC 8-K: Entry into a Material Definitive Agreement",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000008894126000022/smtc-20260706.htm",
+        "published_date": "2026-07-06",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-06 under item(s) 1.01, 2.03, 9.01 (Entry into a Material Definitive Agreement). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "title": "SMTC 8-K: Departure/Election of Directors or Officers",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000008894126000019/smtc-20260602.htm",
+        "published_date": "2026-06-08",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-08 under item(s) 5.02, 5.07 (Departure/Election of Directors or Officers). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "title": "SMTC 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000008894126000009/smtc-20260526.htm",
+        "published_date": "2026-05-26",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-26 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SMTC",
+        "title": "SMTC 8-K: Results of Operations and Financial Condition; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/88941/000008894126000003/smtc-20260316.htm",
+        "published_date": "2026-03-16",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-16 under item(s) 2.02, 7.01, 9.01 (Results of Operations and Financial Condition; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "SNDK": {
+    "ticker": "SNDK",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:38:12+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "SNDK",
+      "last_price": 1641.11,
+      "fifty_two_week_low": 42.82,
+      "fifty_two_week_high": 2354.39,
+      "pct_change_3m": 0.133966,
+      "pct_change_1y": 34.1566,
+      "avg_volume_30d": 14396150.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "SNDK",
+      "market_cap": 226297470000.0,
+      "ev_to_revenue": 10.9411,
+      "ev_to_ebitda": 17.6691,
+      "price_to_sales": 11.1763,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "SNDK",
+        "insider_name": "Shek Bernard",
+        "role": "Chief Legal Officer & Secty",
+        "transaction_type": "Sell",
+        "shares": 600.0,
+        "value_usd": 697296.0,
+        "filing_date": "2026-08-04",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000136324926000058/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "insider_name": "Shek Bernard",
+        "role": "Chief Legal Officer & Secty",
+        "transaction_type": "Sell",
+        "shares": 600.0,
+        "value_usd": 1252800.0,
+        "filing_date": "2026-07-02",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000136324926000056/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "insider_name": "Shek Bernard",
+        "role": "Chief Legal Officer & Secty",
+        "transaction_type": "Sell",
+        "shares": 600.0,
+        "value_usd": 1041600.0,
+        "filing_date": "2026-06-05",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000136324926000052/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "insider_name": "Ilkbahar Alper",
+        "role": "EVP, Chief Technology Officer",
+        "transaction_type": "Sell",
+        "shares": 999.0,
+        "value_usd": 1753557.89,
+        "filing_date": "2026-06-02",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000136324926000048/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "insider_name": "Ilkbahar Alper",
+        "role": "EVP, Chief Technology Officer",
+        "transaction_type": "Sell",
+        "shares": 401.0,
+        "value_usd": 704557.0,
+        "filing_date": "2026-06-02",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000136324926000048/xslF345X06/edgardoc.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "SNDK",
+        "title": "SNDK 8-K: Results of Operations and Financial Condition; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000162828026053346/sndk-20260805.htm",
+        "published_date": "2026-08-05",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-05 under item(s) 2.02, 8.01, 9.01 (Results of Operations and Financial Condition; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "title": "SNDK 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000119312526224694/d157363d8k.htm",
+        "published_date": "2026-05-15",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-05-15 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "title": "SNDK 8-K: Results of Operations and Financial Condition; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000162828026028879/sndk-20260430.htm",
+        "published_date": "2026-04-30",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-04-30 under item(s) 2.02, 8.01, 9.01 (Results of Operations and Financial Condition; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "title": "SNDK 8-K: Entry into a Material Definitive Agreement; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000119312526122705/d136592d8k.htm",
+        "published_date": "2026-03-25",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-03-25 under item(s) 1.01, 8.01, 9.01 (Entry into a Material Definitive Agreement; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SNDK",
+        "title": "SNDK 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/2023554/000162828026004121/sndk-20260129.htm",
+        "published_date": "2026-01-29",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-01-29 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "SOI": {
+    "ticker": "SOI",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:38:16+00:00",
+    "errors": [
+      "price: No quote data from Finnhub for 'SOI'.",
+      "insiders: No SEC EDGAR CIK found for ticker 'SOI' — not a US-listed filer, or the ticker is wrong.",
+      "news: No SEC EDGAR CIK found for ticker 'SOI' — not a US-listed filer, or the ticker is wrong."
+    ],
+    "price": null,
+    "valuation": {
+      "ticker": "SOI",
+      "market_cap": 2099579600.0,
+      "ev_to_revenue": null,
+      "ev_to_ebitda": null,
+      "price_to_sales": 7.6403,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [],
+    "news": []
+  },
+  "SPCX": {
+    "ticker": "SPCX",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:38:18+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "SPCX",
+      "last_price": 140.0,
+      "fifty_two_week_low": 104.83,
+      "fifty_two_week_high": 225.64,
+      "pct_change_3m": 0.0,
+      "pct_change_1y": 0.0,
+      "avg_volume_30d": 125105040.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "SPCX",
+      "market_cap": 1862453600000.0,
+      "ev_to_revenue": null,
+      "ev_to_ebitda": null,
+      "price_to_sales": 59.7285,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "SPCX",
+        "insider_name": "Musk Elon",
+        "role": "Director, CEO, CTO & Chairman, 10% Owner",
+        "transaction_type": "Sell",
+        "shares": 11390.0,
+        "value_usd": 1199572.02,
+        "filing_date": "2026-06-17",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044069/xslF345X06/wk-form4_1781740812.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "SPCX",
+        "title": "SPCX 8-K: Completion of Acquisition or Disposition of Assets",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026056945/spcx-20260814.htm",
+        "published_date": "2026-08-14",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-14 under item(s) 2.01, 3.02, 9.01 (Completion of Acquisition or Disposition of Assets). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SPCX",
+        "title": "SPCX 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026052515/spcx-20260804.htm",
+        "published_date": "2026-08-04",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-04 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SPCX",
+        "title": "SPCX 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026045763/spcx-closing8xkjune2026.htm",
+        "published_date": "2026-06-26",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-26 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SPCX",
+        "title": "SPCX 8-K: Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044955/spcx-pricing8xk.htm",
+        "published_date": "2026-06-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-23 under item(s) 8.01, 9.01 (Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "SPCX",
+        "title": "SPCX 8-K: Regulation FD Disclosure; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026044489/spcx8-kxlaunchseniornotes.htm",
+        "published_date": "2026-06-22",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-06-22 under item(s) 7.01, 8.01, 9.01 (Regulation FD Disclosure; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  },
+  "TSEM": {
+    "ticker": "TSEM",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:38:22+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "TSEM",
+      "last_price": 265.48,
+      "fifty_two_week_low": 46.0,
+      "fifty_two_week_high": 319.94,
+      "pct_change_3m": -0.019537,
+      "pct_change_1y": 4.619814,
+      "avg_volume_30d": 2192120.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "TSEM",
+      "market_cap": 29543210000.0,
+      "ev_to_revenue": null,
+      "ev_to_ebitda": 49.3465,
+      "price_to_sales": 2.10356,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "TSEM",
+        "insider_name": "Ellwanger Russell Craig",
+        "role": "Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 1025.0,
+        "value_usd": 252078.25,
+        "filing_date": "2026-08-12",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/928876/000197640826000719/xslF345X06/primary_doc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "TSEM",
+        "insider_name": "Ellwanger Russell Craig",
+        "role": "Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 2062.0,
+        "value_usd": 508716.02,
+        "filing_date": "2026-08-12",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/928876/000197640826000719/xslF345X06/primary_doc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "TSEM",
+        "insider_name": "Ellwanger Russell Craig",
+        "role": "Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 5498.0,
+        "value_usd": 1363613.96,
+        "filing_date": "2026-08-12",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/928876/000197640826000719/xslF345X06/primary_doc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "TSEM",
+        "insider_name": "Ellwanger Russell Craig",
+        "role": "Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 5559.0,
+        "value_usd": 1383857.46,
+        "filing_date": "2026-08-12",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/928876/000197640826000719/xslF345X06/primary_doc.xml",
+        "is_mock": false
+      },
+      {
+        "ticker": "TSEM",
+        "insider_name": "Ellwanger Russell Craig",
+        "role": "Chief Executive Officer",
+        "transaction_type": "Sell",
+        "shares": 1123.0,
+        "value_usd": 280806.15,
+        "filing_date": "2026-08-12",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/928876/000197640826000719/xslF345X06/primary_doc.xml",
+        "is_mock": false
+      }
+    ],
+    "news": []
+  },
+  "USAR": {
+    "ticker": "USAR",
+    "jurisdiction": "United States",
+    "retrieved_at": "2026-08-15T21:38:26+00:00",
+    "errors": [],
+    "price": {
+      "ticker": "USAR",
+      "last_price": 20.0,
+      "fifty_two_week_low": 11.45,
+      "fifty_two_week_high": 43.98,
+      "pct_change_3m": -0.213218,
+      "pct_change_1y": 0.12485900000000001,
+      "avg_volume_30d": 15248640.0,
+      "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "valuation": {
+      "ticker": "USAR",
+      "market_cap": 4573917500.0,
+      "ev_to_revenue": null,
+      "ev_to_ebitda": null,
+      "price_to_sales": null,
+      "peer_median_ev_to_revenue": null,
+      "as_of_date": "2026-08-15",
+      "is_mock": false
+    },
+    "insider_transactions": [
+      {
+        "ticker": "USAR",
+        "insider_name": "Trabuco Carolyn",
+        "role": "Director",
+        "transaction_type": "Sell",
+        "shares": 13000.0,
+        "value_usd": 295984.0,
+        "filing_date": "2026-06-08",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1970622/000189774526000011/xslF345X06/wk-form4_1780962098.xml",
+        "is_mock": false
+      }
+    ],
+    "news": [
+      {
+        "ticker": "USAR",
+        "title": "USAR 8-K: Results of Operations and Financial Condition",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1970622/000197062226000056/usar-20260810.htm",
+        "published_date": "2026-08-10",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-10 under item(s) 2.02, 9.01 (Results of Operations and Financial Condition). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "USAR",
+        "title": "USAR 8-K: Completion of Acquisition or Disposition of Assets",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026086814/ea0301206-8k_usarare.htm",
+        "published_date": "2026-08-07",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-08-07 under item(s) 2.01, 9.01 (Completion of Acquisition or Disposition of Assets). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "USAR",
+        "title": "USAR 8-K: Regulation FD Disclosure; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026080645/ea0299001-8k_usarare.htm",
+        "published_date": "2026-07-23",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-23 under item(s) 3.02, 7.01, 8.01, 9.01 (Regulation FD Disclosure; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "USAR",
+        "title": "USAR 8-K: Departure/Election of Directors or Officers; Regulation FD Disclosure",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026079438/ea0298490-8k_usarare.htm",
+        "published_date": "2026-07-20",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-20 under item(s) 5.02, 7.01, 9.01 (Departure/Election of Directors or Officers; Regulation FD Disclosure). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      },
+      {
+        "ticker": "USAR",
+        "title": "USAR 8-K: Entry into a Material Definitive Agreement; Other Events",
+        "url_or_identifier": "https://www.sec.gov/Archives/edgar/data/1970622/000121390026078760/ea0296752-8k_usarare.htm",
+        "published_date": "2026-07-16",
+        "source_type": "Press Release",
+        "snippet": "SEC Form 8-K filed 2026-07-16 under item(s) 1.01, 8.01, 9.01 (Entry into a Material Definitive Agreement; Other Events). This is filing metadata, not extracted press-release text — open the source to read the actual content.",
+        "tag": "neutral",
+        "is_mock": false
+      }
+    ]
+  }
+}

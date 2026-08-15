@@ -41,7 +41,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 TRACKED_TICKERS_PATH = PROJECT_ROOT / "data" / "tracked_tickers.json"
 SNAPSHOTS_PATH = PROJECT_ROOT / "data" / "ticker_snapshots.json"
 
-DEFAULT_MAX_TICKERS_PER_RUN = 15
+DEFAULT_MAX_TICKERS_PER_RUN = 40  # headroom above the initial ~31-ticker tracked list
 
 
 def load_tracked_tickers() -> list[str]:
