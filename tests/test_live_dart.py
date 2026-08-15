@@ -131,6 +131,9 @@ def test_live_dart_filings_passes_explicit_date_range(tmp_path, monkeypatch):
     assert "bgn_de" in captured_params and captured_params["bgn_de"]
     assert "end_de" in captured_params and captured_params["end_de"]
     assert len(captured_params["bgn_de"]) == 8  # YYYYMMDD
+    # Also explicit, not left to documented defaults — same class of bug as bgn_de/end_de.
+    assert captured_params["sort"] == "date"
+    assert captured_params["sort_mth"] == "desc"
 
 
 def test_live_dart_filings_raises_when_ticker_not_found():

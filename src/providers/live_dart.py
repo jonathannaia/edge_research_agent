@@ -101,6 +101,10 @@ class LiveDartFilingsProvider(FilingsProvider):
                 {
                     "crtfc_key": api_key, "corp_code": corp_code, "page_count": str(min(limit, 100)),
                     "bgn_de": bgn_de.strftime("%Y%m%d"), "end_de": end_de.strftime("%Y%m%d"),
+                    # Explicit, not relying on documented defaults — the
+                    # bgn_de/end_de bug above was exactly that mistake once
+                    # already. Newest-first is what "recent filings" means.
+                    "sort": "date", "sort_mth": "desc",
                 },
             )
         except dart_client.DartError as exc:
