@@ -34,6 +34,8 @@ _KEYWORDS: dict[str, list[str]] = {
         "interest rate", "rate cut", "rate hike", "inflation", "cpi", "fomc", "federal reserve",
         "central bank", "ecb", "monetary policy", "fiscal policy", "tariff", "gdp", "jobs report",
         "unemployment", "yield", "treasury", "recession", "basis point",
+        "export control", "export administration", "entity list", "denied person", "commerce control list",
+        "export ban", "export restriction", "sanction", "bis rule", "section 232",
     ],
 }
 

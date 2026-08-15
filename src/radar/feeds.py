@@ -166,10 +166,90 @@ def fetch_edgar_search_entries(query: str = "data center capital expenditure") -
     return entries, None
 
 
+FEDERAL_REGISTER_FEED = Feed(
+    "Federal Register — BIS Export Controls",
+    "https://www.federalregister.gov/agencies/industry-and-security-bureau",
+    Niche.MACRO.value,
+    "Regulatory/Gov Release",
+)
+
+FEDERAL_REGISTER_MAX_RESULTS = 8
+FEDERAL_REGISTER_LOOKBACK_DAYS = 3
+
+
+def fetch_federal_register_entries() -> tuple[list[dict], str | None]:
+    """A 'virtual feed' backed by the Federal Register's free, keyless API
+    (https://www.federalregister.gov/developers/documentation/api/v1),
+    scoped to the Bureau of Industry and Security (BIS) — the agency behind
+    the Entity List, Export Administration Regulations (EAR), and Commerce
+    Control List. This is the real, current source for export-control rule
+    changes; there is no equivalent free feed for credit-rating actions
+    (Moody's/S&P/Fitch require paid data-feed subscriptions, and the one
+    known free RSS aggregator is behind Cloudflare bot protection), so that
+    trigger type from the original spec remains unbuilt.
+
+    Verified live before writing this: the obvious agency slug
+    'bureau-of-industry-and-security' 400s — the API's real slug is
+    'industry-and-security-bureau' (confirmed via
+    GET /api/v1/agencies.json). Returns real rules like Entity List
+    additions and EAR amendments, not just notices/comment requests.
+    """
+    import json
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    from src.utils.ssl_context import SSL_CONTEXT
+
+    start = (date.today() - timedelta(days=FEDERAL_REGISTER_LOOKBACK_DAYS)).isoformat()
+    params = [
+        ("conditions[agencies][]", "industry-and-security-bureau"),
+        ("conditions[publication_date][gte]", start),
+        ("order", "newest"),
+        ("per_page", str(FEDERAL_REGISTER_MAX_RESULTS)),
+        ("fields[]", "title"),
+        ("fields[]", "publication_date"),
+        ("fields[]", "html_url"),
+        ("fields[]", "type"),
+        ("fields[]", "abstract"),
+    ]
+    url = f"https://www.federalregister.gov/api/v1/documents.json?{urllib.parse.urlencode(params)}"
+    req = urllib.request.Request(url, headers={"User-Agent": "EevaResearchAI-Radar/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=15, context=SSL_CONTEXT) as resp:
+            data = json.loads(resp.read())
+    except (urllib.error.URLError, urllib.error.HTTPError) as exc:
+        return [], f"{FEDERAL_REGISTER_FEED.name}: fetch failed ({exc})"
+    except json.JSONDecodeError as exc:
+        return [], f"{FEDERAL_REGISTER_FEED.name}: non-JSON response ({exc})"
+
+    entries = []
+    for doc in data.get("results", [])[:FEDERAL_REGISTER_MAX_RESULTS]:
+        pub_date = doc.get("publication_date", "")
+        try:
+            published_epoch = (
+                int(datetime.fromisoformat(pub_date).replace(tzinfo=timezone.utc).timestamp()) if pub_date else None
+            )
+        except ValueError:
+            published_epoch = None
+
+        entries.append(
+            {
+                "title": doc.get("title", ""),
+                "link": doc.get("html_url", ""),
+                "summary": doc.get("abstract", "") or doc.get("title", ""),
+                "published": pub_date,
+                "published_epoch": published_epoch,
+            }
+        )
+    return entries, None
+
+
 def fetch_all(feeds: list[Feed] | None = None) -> tuple[list[tuple[Feed, dict]], list[str]]:
-    """Fetches every configured feed plus the SEC EDGAR full-text-search
-    virtual feed. Returns (items, errors) where items is a flat list of
-    (feed, entry) pairs across all sources."""
+    """Fetches every configured feed plus the SEC EDGAR full-text-search and
+    Federal Register (BIS export controls) virtual feeds. Returns (items,
+    errors) where items is a flat list of (feed, entry) pairs across all
+    sources."""
     feeds = feeds if feeds is not None else FEEDS
     items: list[tuple[Feed, dict]] = []
     errors: list[str] = []
@@ -185,5 +265,11 @@ def fetch_all(feeds: list[Feed] | None = None) -> tuple[list[tuple[Feed, dict]],
         errors.append(edgar_err)
     for entry in edgar_entries:
         items.append((EDGAR_SEARCH_FEED, entry))
+
+    fr_entries, fr_err = fetch_federal_register_entries()
+    if fr_err:
+        errors.append(fr_err)
+    for entry in fr_entries:
+        items.append((FEDERAL_REGISTER_FEED, entry))
 
     return items, errors

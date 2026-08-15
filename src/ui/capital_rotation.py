@@ -93,8 +93,10 @@ def render(settings: Settings) -> None:
         st.subheader("Watch triggers")
         st.warning(
             "Single-day price move ≥7% — the price-based watch-trigger threshold from your spec. "
-            "Other trigger types (export bans, credit rating changes, guidance cuts, IPO pricing) "
-            "aren't wired up — no live source for those yet."
+            "Export-control rule changes (BIS Entity List, EAR amendments) are covered separately, "
+            "as regular Radar findings under Macro / Rates / Policy — not as a price trigger here. "
+            "Credit rating changes, guidance cuts, and IPO pricing still aren't wired up — no free "
+            "live source found for the first two, and no live source configured for the third."
         )
         st.dataframe(
             [

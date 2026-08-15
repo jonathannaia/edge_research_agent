@@ -1,10 +1,25 @@
 """Tests for src/radar/feeds.py. Network calls are mocked — no real
-requests to sec.gov or any RSS source from the test suite."""
-from unittest.mock import patch
+requests to sec.gov, federalregister.gov, or any RSS source from the test
+suite."""
+import json
+from unittest.mock import MagicMock, patch
 
 from src.providers.edgar_client import EdgarError
 from src.radar import feeds
 from src.radar.models import Niche
+
+FAKE_FEDERAL_REGISTER_RESPONSE = {
+    "count": 1,
+    "results": [
+        {
+            "title": "Streamlining Export Controls for Drone Exports",
+            "publication_date": "2026-08-14",
+            "html_url": "https://www.federalregister.gov/documents/2026/08/14/2026-16628/streamlining-export-controls-for-drone-exports",
+            "type": "Rule",
+            "abstract": "The Bureau of Industry and Security (BIS) is easing export controls on certain UAVs...",
+        }
+    ],
+}
 
 FAKE_SEARCH_RESPONSE = {
     "hits": {
@@ -75,10 +90,64 @@ def test_fetch_edgar_search_entries_returns_error_not_raises_on_failure():
 
 
 def test_fetch_all_includes_edgar_search_results():
+    import urllib.error
+
     with patch("src.radar.feeds.fetch_feed", return_value=([], None)):  # skip real RSS feeds
         with patch("src.radar.feeds.edgar_client.full_text_search", return_value=FAKE_SEARCH_RESPONSE):
-            items, errors = feeds.fetch_all(feeds=[])  # empty RSS feed list, EDGAR search still runs
+            with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("network disabled in test")):
+                items, errors = feeds.fetch_all(feeds=[])  # empty RSS feed list, EDGAR search still runs
 
-    assert len(items) == 2
-    assert all(feed.niche == Niche.AI_BUILDOUT.value for feed, _ in items)
+    edgar_items = [item for item in items if item[0].name == feeds.EDGAR_SEARCH_FEED.name]
+    assert len(edgar_items) == 2
+    assert all(feed.niche == Niche.AI_BUILDOUT.value for feed, _ in edgar_items)
+
+
+def _mock_urlopen(json_body: dict):
+    mock_resp = MagicMock()
+    mock_resp.read.return_value = json.dumps(json_body).encode()
+    mock_resp.__enter__.return_value = mock_resp
+    return mock_resp
+
+
+def test_fetch_federal_register_entries_parses_real_shape():
+    with patch("urllib.request.urlopen", return_value=_mock_urlopen(FAKE_FEDERAL_REGISTER_RESPONSE)):
+        entries, err = feeds.fetch_federal_register_entries()
+
+    assert err is None
+    assert len(entries) == 1
+    assert "Export Controls" in entries[0]["title"]
+    assert entries[0]["link"] == "https://www.federalregister.gov/documents/2026/08/14/2026-16628/streamlining-export-controls-for-drone-exports"
+    assert entries[0]["published_epoch"] is not None
+    assert "Bureau of Industry and Security" in entries[0]["summary"]
+
+
+def test_fetch_federal_register_entries_falls_back_to_title_when_no_abstract():
+    response = {"results": [{"title": "Notice Only", "publication_date": "2026-08-14", "html_url": "https://example.com", "type": "Notice"}]}
+    with patch("urllib.request.urlopen", return_value=_mock_urlopen(response)):
+        entries, err = feeds.fetch_federal_register_entries()
+
+    assert err is None
+    assert entries[0]["summary"] == "Notice Only"
+
+
+def test_fetch_federal_register_entries_returns_error_not_raises_on_failure():
+    import urllib.error
+
+    with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("network down")):
+        entries, err = feeds.fetch_federal_register_entries()
+
+    assert entries == []
+    assert err is not None
+    assert "network down" in err
+
+
+def test_fetch_all_includes_federal_register_results():
+    with patch("src.radar.feeds.fetch_feed", return_value=([], None)):
+        with patch("src.radar.feeds.edgar_client.full_text_search", return_value={"hits": {"hits": []}}):
+            with patch("urllib.request.urlopen", return_value=_mock_urlopen(FAKE_FEDERAL_REGISTER_RESPONSE)):
+                items, errors = feeds.fetch_all(feeds=[])
+
+    fr_items = [item for item in items if item[0].name == feeds.FEDERAL_REGISTER_FEED.name]
+    assert len(fr_items) == 1
+    assert fr_items[0][0].niche == Niche.MACRO.value
     assert errors == []

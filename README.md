@@ -270,7 +270,7 @@ on its own. All hand-picked and URL-verified before being added (`src/radar/feed
 | AI Buildout | Data Center Dynamics, Data Center Knowledge, Semiconductor Engineering, NVIDIA Newsroom, TechCrunch AI, IEEE Spectrum AI, **+ SEC EDGAR full-text search** for real 8-K filings mentioning data-center capex (capped at 8/run — see below) |
 | Humanoids | IEEE Spectrum Robotics, The Robot Report |
 | Space | NASA News Releases, SpaceNews, Ars Technica Space, Space.com |
-| Macro / Rates / Policy | Federal Reserve press releases, European Central Bank press, Bank of Japan press (English), Bank of England news |
+| Macro / Rates / Policy | Federal Reserve press releases, European Central Bank press, Bank of Japan press (English), Bank of England news, **+ Federal Register full-text API** for real BIS export-control rules (Entity List additions, EAR amendments — capped at 8/run, see below) |
 
 The SEC EDGAR entry is not RSS — it's a live full-text search (`src/providers/edgar_client.py`,
 free and keyless, same API `live_edgar.py` uses) for real 8-K filings mentioning data-center capex,
@@ -278,6 +278,18 @@ filed in roughly the last 2 days. Its findings carry a **confirmed filer straigh
 itself**, not an LLM's guess at who a news story is about — the strongest-grounded ticker tags
 Radar produces. Capped at the 8 most relevant hits per run so one broad-matching source can't crowd
 out every other feed's share of the per-run LLM budget.
+
+The Federal Register entry works the same way: a free, keyless JSON API query
+(`src/radar/feeds.py::fetch_federal_register_entries`), scoped to the Bureau of Industry and
+Security (agency slug `industry-and-security-bureau`), pulling real rules published in roughly the
+last 3 days — Entity List additions, EAR amendments, Commerce Control List changes. Verified live
+against the real API before being wired in.
+
+**Credit-rating change alerts were requested but not built** — there's no free, keyless source for
+them. Moody's, S&P, and Fitch all require paid data-feed subscriptions for programmatic access to
+rating actions; the one known free RSS aggregator (StreetInsider) is behind Cloudflare bot
+protection, so scraping it would be unreliable and outside what this project scrapes. This gap is
+called out here rather than papered over with an unreliable workaround.
 
 ### Cross-referenced against your Watchlist, and trend views
 
