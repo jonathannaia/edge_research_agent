@@ -1,5 +1,19 @@
 [
   {
+    "niche": "Space",
+    "headline": "Will the new moon race turn Earth's nearest neighbor into a dumping ground?",
+    "summary": "Experts are calling for regulatory rules to prevent space companies from dumping spent rockets on the moon's surface as lunar activity increases.",
+    "source_url": "https://www.space.com/astronomy/moon/will-the-new-moon-race-turn-earths-nearest-neighbor-into-a-dumping-ground",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 14 Aug 2026 18:00:00 +0000",
+    "retrieved_at": "2026-08-15T06:22:20+00:00",
+    "tickers": [],
+    "relevance_reason": "article addresses lunar space activities and infrastructure management concerns relevant to space sector",
+    "url_hash": "10b1ad1129616a9a",
+    "id": "10b1ad1129616a9a"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Meta’s ‘open’ AI, and a $250M deal gone very wrong",
     "summary": "Meta released Glimmer, an open-weight AI model that users can download and run on their own hardware, alongside a letter from Mark Zuckerberg advocating for democratized AI access in contrast to the company's more powerful, API-locked Muse Spark model.",
