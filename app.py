@@ -2,12 +2,13 @@
 
 Run with: streamlit run app.py
 
-Registers Home + the seven other visible primary pages, plus the hidden
-ticker-detail template, via st.navigation(position="hidden") — Streamlit's
-own nav widget is fully suppressed; src/ui/chrome.render_top_nav is the
-custom replacement (see chrome.py's module docstring for why "hidden" was
-chosen over the native "top" position). Page objects are stored in
-st.session_state so any page can build a cross-page st.page_link.
+Registers Home (first-visit landing, no sidebar) plus the persistent-
+sidebar primary routes (Dashboard, Themes, Signals, Research), the footer
+doc pages (Methodology, Disclaimer, About), and two hidden routes (Company,
+reached only by clicking a ticker; Watchlists, temporary until it's fully
+absorbed into Signals as sidebar filter entries) — see
+design/eevaresearch-brief.md §4 for the route table this implements.
+src/ui/ui.render_sidebar is the persistent left-rail nav widget.
 """
 from __future__ import annotations
 
@@ -15,18 +16,21 @@ from pathlib import Path
 
 import streamlit as st
 
-from src.ui.chrome import NAV_ITEMS, with_chrome
+from src.data_access.container import get_repositories
+from src.logic.unread import seed_initial_last_seen
 from src.ui.pages import (
-    capital_rotation,
+    about,
+    company,
+    dashboard,
+    disclaimer,
     home,
     methodology,
-    overview,
-    research_chat,
-    signal_board,
+    research,
+    signals,
     themes,
-    ticker_detail,
     watchlists,
 )
+from src.ui.ui import PRIMARY_NAV, FOOTER_NAV, LAST_SEEN_KEY, READ_IDS_KEY, with_chrome
 
 _LOGO_PATH = Path(__file__).resolve().parent / "assets" / "eeva-logo.png"
 
@@ -34,49 +38,61 @@ st.set_page_config(
     page_title="EevaResearch AI",
     page_icon=str(_LOGO_PATH) if _LOGO_PATH.exists() else None,
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 _RENDER_FNS = {
-    "home": home.render,
-    "overview": overview.render,
+    "dashboard": dashboard.render,
     "themes": themes.render,
-    "research_chat": research_chat.render,
-    "capital_rotation": capital_rotation.render,
-    "signal_board": signal_board.render,
-    "watchlists": watchlists.render,
+    "signals": signals.render,
+    "research": research.render,
     "methodology": methodology.render,
+    "disclaimer": disclaimer.render,
+    "about": about.render,
 }
 
 _URL_PATHS = {
-    "overview": "overview",
+    "dashboard": "dashboard",
     "themes": "themes",
-    "research_chat": "research-chat",
-    "capital_rotation": "capital-rotation",
-    "signal_board": "signal-board",
-    "watchlists": "watchlists",
+    "signals": "signals",
+    "research": "research",
     "methodology": "methodology",
+    "disclaimer": "disclaimer",
+    "about": "about",
 }
 
-pages = {}
-for key, label in NAV_ITEMS:
-    is_home = key == "home"
+# Home renders on first visit only; Dashboard is the default thereafter
+# (brief §4) — a page keeps the root path "/" via default=True regardless
+# of its own url_path, so Dashboard stays reachable at both "/" and
+# "/dashboard" once it takes over as default.
+_first_visit = "_has_visited" not in st.session_state
+st.session_state["_has_visited"] = True
+
+pages = {
+    "home": st.Page(with_chrome(home.render, "home", show_sidebar=False), title="Home", default=_first_visit),
+}
+for key, _label in PRIMARY_NAV + FOOTER_NAV:
     pages[key] = st.Page(
         with_chrome(_RENDER_FNS[key], key),
-        title=label,
-        # default=True always maps a page to the root path regardless of
-        # url_path, per st.Page's own docs — Home is the new landing page.
-        default=is_home,
+        title=_label,
         url_path=_URL_PATHS.get(key),
+        default=(key == "dashboard" and not _first_visit),
     )
-pages["ticker_detail"] = st.Page(
-    with_chrome(ticker_detail.render, "ticker_detail"), title="Ticker Detail", url_path="ticker", visibility="hidden"
+pages["company"] = st.Page(
+    with_chrome(company.render, "company"), title="Company", url_path="company", visibility="hidden",
+)
+pages["watchlists"] = st.Page(
+    with_chrome(watchlists.render, "watchlists"), title="Watchlists", url_path="watchlists", visibility="hidden",
 )
 
-# Each page's nav_key is already baked into its with_chrome(...) closure
-# above, so render_top_nav always gets the right active key without
-# needing to track "current page" separately here.
 st.session_state["_pages"] = pages
+
+if LAST_SEEN_KEY not in st.session_state:
+    # One-time per-session seed so the unread/last-seen pattern (brief §10)
+    # has something to demonstrate on the very first view, not just after a
+    # real Signals visit. Only Signals itself advances this afterward.
+    st.session_state[LAST_SEEN_KEY] = seed_initial_last_seen(get_repositories().signal_repository.get_all_signals())
+st.session_state.setdefault(READ_IDS_KEY, set())
 
 selected = st.navigation(list(pages.values()), position="hidden")
 selected.run()

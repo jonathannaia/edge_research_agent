@@ -4,6 +4,7 @@ stays free of presentation concerns — this module maps a ClaimType/
 freshness value to the label and color token a UI badge should use."""
 from __future__ import annotations
 
+from src.logic.formatting import fmt_date
 from src.models.models import ClaimType, EvidenceItem
 
 CLAIM_TYPE_COLOR: dict[ClaimType, str] = {
@@ -38,3 +39,12 @@ def source_label(evidence: EvidenceItem) -> str:
     if evidence.source_url:
         return f"{evidence.source_name} — {evidence.source_url}"
     return f"{evidence.source_name} (no external source — demo data)"
+
+
+def cite_label(evidence: EvidenceItem) -> str:
+    """Issuer · venue · date · document location, for the <cite> line under
+    a source excerpt (brief §7)."""
+    parts = [evidence.source_name, evidence.source_type, fmt_date(evidence.published_at)]
+    if evidence.document_location:
+        parts.append(evidence.document_location)
+    return " · ".join(parts)

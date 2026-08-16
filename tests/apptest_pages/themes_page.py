@@ -1,4 +1,4 @@
-from src.ui.chrome import with_chrome
 from src.ui.pages import themes
+from src.ui.ui import with_chrome
 
 with_chrome(themes.render, "themes")()

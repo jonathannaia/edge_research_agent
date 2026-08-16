@@ -1,0 +1,344 @@
+/* EevaResearch — consolidated stylesheet (UI restructure, design/eevaresearch-brief.md).
+   Single source of truth for all app styling, loaded once via
+   src/ui/ui.py::load_css(). No inline <style> blocks anywhere else.
+   Zero accent color anywhere — direction is carried by glyph + text-weight,
+   never hue. Motion is restricted to two instances (breadth-bar fill,
+   live-status-dot pulse), both gated by prefers-reduced-motion. */
+
+:root {
+    --rail: #181818;
+    --bg: #212121;
+    --surface: #2A2A2A;
+    --surface-2: #303030;
+    --surface-3: #3A3A3A;
+    --hairline: rgba(255, 255, 255, .08);
+    --hairline-2: rgba(255, 255, 255, .14);
+    --text: #ECECEC;
+    --text-2: #B4B4B4;
+    --text-3: #8F8F8F;
+    --text-4: #6E6E6E;
+    --invert-bg: #FFFFFF;
+    --invert-fg: #0D0D0D;
+    --glow: rgba(255, 255, 255, .20);
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --font-ui: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+    --font-serif: "Source Serif 4", "Noto Serif JP", "Noto Serif KR", "Noto Serif SC", serif;
+}
+
+/* ---------- Streamlit chrome (brief §17) ---------- */
+#MainMenu, header, footer,
+[data-testid="stToolbar"], [data-testid="stDecoration"], [data-testid="stStatusWidget"] {
+    display: none !important; visibility: hidden !important;
+}
+
+/* ---------- base / layout ---------- */
+.stApp { background: var(--bg); }
+.block-container {
+    max-width: 1240px;
+    padding-top: 1.25rem;
+    padding-bottom: 3rem;
+}
+html, body, [class*="css"] { font-family: var(--font-ui); }
+h1, h2, h3 { font-family: var(--font-ui); letter-spacing: -0.006em; color: var(--text); }
+p, li, span, div { letter-spacing: -0.006em; }
+
+/* ---------- type scale ---------- */
+.er-eyebrow {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-3); margin-bottom: 0.5rem;
+}
+.er-hero-title {
+    /* 40px only on the Home hero (brief §5 type scale) — the only page
+       that uses this class. */
+    font-weight: 600; font-size: 40px;
+    line-height: 1.15; letter-spacing: -0.01em; color: var(--text); margin: 0 0 0.75rem 0;
+}
+.er-hero-sub {
+    font-size: 0.95rem; line-height: 1.6; color: var(--text-2);
+    max-width: 640px; margin-bottom: 0.5rem;
+}
+.er-page-title {
+    font-weight: 600; font-size: 1.55rem; color: var(--text); margin: 0 0 0.35rem 0;
+}
+.er-card-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
+.er-section-label { font-size: 13px; color: var(--text-3); margin: 1.75rem 0 0.5rem 0; font-weight: 500; }
+.er-muted { color: var(--text-2); font-size: 0.85rem; }
+.er-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text); }
+.er-metric-value { font-family: var(--font-mono); font-weight: 500; font-size: 1.05rem; color: var(--text); }
+.er-metric-label {
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--text-3);
+}
+.er-excerpt {
+    font-family: var(--font-serif);
+    font-size: 0.92rem; line-height: 1.65; color: var(--text-2);
+}
+
+/* ---------- footer ---------- */
+.er-footer {
+    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--hairline);
+    color: var(--text-3); font-size: 0.78rem; line-height: 1.6;
+}
+.er-footer .er-footer-version { font-family: var(--font-mono); margin-top: 0.6rem; }
+
+/* ---------- rows (catalyst timeline etc.) ---------- */
+.er-row { padding: 0.55rem 0; border-bottom: 1px solid var(--hairline); }
+.er-row:last-child { border-bottom: none; }
+
+/* ---------- direction: glyph + text-weight only, never color ---------- */
+.er-dir {
+    font-weight: 600; color: var(--text);
+}
+.er-dir.er-dir-weakening, .er-dir.er-dir-mixed { font-weight: 400; color: var(--text-3); }
+.er-dir-glyph { margin-right: 0.3rem; font-weight: 700; }
+
+/* ---------- sidebar rail ---------- */
+[data-testid="stSidebar"] {
+    background: var(--rail) !important;
+    border-right: 1px solid var(--hairline);
+}
+[data-testid="stSidebar"] > div:first-child { padding-top: 1rem; }
+.er-rail-brand {
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.25rem 0.25rem 1rem 0.25rem; border-bottom: 1px solid var(--hairline);
+    margin-bottom: 1rem;
+}
+/* 22px logo beside a 14.5px semibold wordmark, per brief §17. */
+.er-rail-logo { width: 22px; height: 22px; display: inline-flex; }
+.er-rail-logo img, .er-rail-logo svg { width: 100%; height: 100%; object-fit: contain; }
+.er-rail-word { font-weight: 600; font-size: 14.5px; color: var(--text); letter-spacing: 0.01em; }
+.er-rail-brand [data-testid="stPageLink"] a p { font-weight: 600 !important; font-size: 14.5px !important; }
+.er-rail-group-label {
+    font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-4); margin: 1.1rem 0 0.35rem 0.25rem;
+}
+[data-testid="stSidebar"] [data-testid="stPageLink"] a {
+    color: var(--text-2) !important; border-radius: var(--r-sm);
+    padding: 0.35rem 0.5rem !important; transition: background-color .12s ease, color .12s ease;
+}
+[data-testid="stSidebar"] [data-testid="stPageLink"] a p { font-size: 0.83rem; }
+[data-testid="stSidebar"] [data-testid="stPageLink"] a:hover {
+    background: var(--surface); color: var(--text) !important;
+}
+.er-rail-navactive [data-testid="stPageLink"] a {
+    background: var(--surface-2); color: var(--text) !important; font-weight: 600;
+}
+.er-rail-status {
+    display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono);
+    font-size: 0.68rem; color: var(--text-3); margin-top: 0.25rem;
+}
+.er-rail-footlinks { display: flex; flex-direction: column; gap: 0.1rem; margin-top: 0.4rem; }
+.er-rail-footlinks [data-testid="stPageLink"] a p { font-size: 0.74rem; color: var(--text-3); }
+
+/* live-status dot (the one non-breadth-bar permitted motion instance) */
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: var(--text-3); }
+.dot.live { background: var(--text); position: relative; }
+@media (prefers-reduced-motion: no-preference) {
+    .dot.live::after {
+        content: ""; position: absolute; inset: -4px; border-radius: 50%;
+        border: 1px solid var(--glow); animation: dot-pulse 2.4s ease-out infinite;
+    }
+}
+@keyframes dot-pulse {
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* ---------- buttons (brief §6) ----------
+   Key-prefix convention carried over from round 3: a wrapping
+   st.container(key="cta-{tier}-...") gets a `st-key-{key}` class from
+   Streamlit, matched here via substring attribute selector. primary =
+   solid invert fill + glow (one of the app's exactly three glow spots),
+   secondary = outlined pill, tertiary = ghost/text link. Full pill radius
+   per §5; no hover lift anywhere — the glow alone carries primary's state. */
+[class*="st-key-cta-primary-"] [data-testid="stPageLink"] a,
+[class*="st-key-cta-primary-"] [data-testid="stBaseButton-secondary"] {
+    background: var(--invert-bg) !important; color: var(--invert-fg) !important;
+    border: none !important; border-radius: 999px !important; font-weight: 600 !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 0 22px var(--glow), 0 2px 10px rgba(0,0,0,.4) !important;
+    transition: box-shadow .22s ease, background .18s ease;
+}
+[class*="st-key-cta-primary-"] [data-testid="stPageLink"] a:hover,
+[class*="st-key-cta-primary-"] [data-testid="stBaseButton-secondary"]:hover {
+    box-shadow: 0 0 0 1px rgba(255,255,255,.22), 0 0 38px rgba(255,255,255,.34), 0 4px 16px rgba(0,0,0,.45) !important;
+}
+[class*="st-key-cta-primary-"] [data-testid="stPageLink"] a span,
+[class*="st-key-cta-primary-"] [data-testid="stPageLink"] a p { color: var(--invert-fg) !important; }
+[class*="st-key-cta-primary-"] [data-testid="stBaseButton-secondary"]:disabled {
+    background: var(--surface-3) !important; color: var(--text-4) !important; box-shadow: none !important; cursor: not-allowed;
+}
+
+[class*="st-key-cta-secondary-"] [data-testid="stPageLink"] a,
+[class*="st-key-cta-secondary-"] [data-testid="stBaseButton-secondary"] {
+    background: transparent !important; border: 1px solid var(--hairline-2) !important;
+    border-radius: 999px !important; color: var(--text) !important;
+    transition: border-color .15s ease, background-color .15s ease;
+}
+[class*="st-key-cta-secondary-"] [data-testid="stPageLink"] a:hover,
+[class*="st-key-cta-secondary-"] [data-testid="stBaseButton-secondary"]:hover {
+    border-color: var(--text-2) !important; background: var(--surface) !important;
+}
+
+[class*="st-key-cta-tertiary-"] [data-testid="stPageLink"] a,
+[class*="st-key-cta-tertiary-"] [data-testid="stBaseButton-secondary"] {
+    background: transparent !important; border: none !important; color: var(--text-3) !important;
+    padding-left: 0 !important; transition: color .15s ease;
+}
+[class*="st-key-cta-tertiary-"] [data-testid="stPageLink"] a:hover,
+[class*="st-key-cta-tertiary-"] [data-testid="stBaseButton-secondary"]:hover { color: var(--text) !important; }
+
+.btn:focus-visible, [data-testid="stBaseButton-secondary"]:focus-visible { outline: 2px solid #fff !important; outline-offset: 3px; }
+
+[data-testid="stPageLink"] a:focus-visible,
+[data-testid="stBaseButton-secondary"]:focus-visible,
+[data-testid="stSidebarNavLink"]:focus-visible {
+    outline: 2px solid var(--text-2) !important; outline-offset: 2px;
+}
+
+/* ---------- cards ----------
+   Streamlit's st.container(border=True) renders a real 1px border by
+   default. Brief §5: "Panels have no outer border; separation is by
+   surface value" — override it away and separate purely by background
+   against --bg, with a small radius instead (12px small cards per §5). */
+[class*="st-key-card-"] {
+    border: none !important; border-radius: var(--r-md) !important;
+    background: var(--surface) !important; transition: background-color .15s ease;
+}
+[class*="st-key-card-"]:hover { background: var(--surface-2) !important; }
+
+/* ---------- theme icon motifs ---------- */
+.er-theme-icon { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; margin-bottom: 0.5rem; color: var(--text-2); }
+.er-theme-icon svg { width: 100%; height: 100%; }
+
+/* ---------- evidence chips (the signature element) ---------- */
+.er-chip {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em;
+    padding: 0.15rem 0.55rem; border-radius: 999px; line-height: 1.5;
+}
+.er-chip-fact { background: var(--invert-bg); color: var(--invert-fg); cursor: pointer; }
+.er-chip-fact:hover { box-shadow: 0 0 0 1px var(--invert-bg); }
+.er-chip-interpretation { background: rgba(255, 255, 255, .16); color: var(--text); }
+.er-chip-inference { background: transparent; color: var(--text-2); border: 1px solid var(--hairline-2); }
+.er-chip-uncertainty { background: transparent; color: var(--text-2); border: 1px dashed var(--hairline-2); }
+
+/* ---------- evidence spine ---------- */
+.er-spine {
+    display: grid; grid-template-columns: 2px 96px 1fr; column-gap: 0.9rem;
+}
+.er-spine-bar { background: var(--hairline-2); }
+.er-spine-bar.first { border-top-left-radius: 2px; border-top-right-radius: 2px; }
+.er-spine-bar.last { border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; }
+.er-spine-chip { display: flex; justify-content: flex-end; padding-top: 0.15rem; }
+.er-spine-body { padding: 0.5rem 0 0.9rem 0; color: var(--text); font-size: 0.9rem; line-height: 1.6; }
+.er-spine-body .er-excerpt { margin-top: 0.4rem; }
+.er-spine-source { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-4); margin-top: 0.35rem; }
+@media (max-width: 860px) {
+    .er-spine { grid-template-columns: 2px 1fr; }
+    .er-spine-chip { justify-content: flex-start; padding-top: 0.2rem; grid-column: 2; }
+    .er-spine-body { grid-column: 2; }
+}
+
+/* ---------- freshness (Live / Stale / Demo) — brief §13.
+   Stale is the deliberately "louder" state (solid ring + surface-3 chip),
+   not a softer/quieter one — it's the dangerous case (connected but
+   behind), so it must not read as calmer than Live. ---------- */
+.er-fresh {
+    display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono);
+    font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 999px;
+}
+.er-fresh-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; position: relative; }
+
+.er-fresh-live { background: var(--surface-2); color: var(--text); }
+.er-fresh-live .er-fresh-dot { background: var(--text); }
+@media (prefers-reduced-motion: no-preference) {
+    .er-fresh-live .er-fresh-dot::after {
+        content: ""; position: absolute; inset: -4px; border-radius: 50%;
+        border: 1px solid var(--glow); animation: dot-pulse 2.4s ease-out infinite;
+    }
+}
+
+.er-fresh-stale { background: var(--surface-3); color: var(--text); }
+.er-fresh-stale .er-fresh-dot { background: var(--text-2); box-shadow: 0 0 0 2px var(--hairline-2); }
+.er-fresh-retry {
+    background: none; border: none; color: var(--text); text-decoration: underline;
+    font-family: var(--font-mono); font-size: 0.68rem; cursor: pointer; padding: 0;
+}
+
+.er-fresh-demo { background: transparent; border: 1px dashed var(--hairline-2); color: var(--text-4); }
+.er-fresh-demo .er-fresh-dot { background: var(--text-4); }
+
+/* ---------- breadth bars (the one data-driven motion instance) ----------
+   Leading theme's bar is --text with glow (one of the app's exactly three
+   glow spots); the rest are --text-4 (brief §9/§16). */
+.bar { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--text-4); width: var(--w, 0%); border-radius: 2px; }
+.bar i.leader { background: var(--text); box-shadow: 0 0 8px var(--glow); }
+@media (prefers-reduced-motion: no-preference) {
+    .bar i { animation: fill .9s cubic-bezier(.22, .9, .3, 1) both; }
+}
+@keyframes fill { from { width: 0%; } to { width: var(--w, 0%); } }
+@media (prefers-reduced-motion: reduce) {
+    .bar i { width: var(--w, 0%); }
+    .dot.live::after { display: none; }
+}
+
+/* ---------- diverging bars (rotation leaders/laggards) — static, no
+   motion; the breadth strip above is the one animated data bar. ---------- */
+.er-divbar-row { display: flex; align-items: center; gap: 0.6rem; margin: 0.4rem 0; }
+.er-divbar-label { width: 130px; font-size: 0.78rem; color: var(--text-2); flex-shrink: 0; }
+.er-divbar-track { flex: 1; height: 6px; background: var(--surface-3); border-radius: 3px; position: relative; }
+.er-divbar-zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--hairline-2); }
+.er-divbar-fill { position: absolute; top: 0; bottom: 0; background: var(--text-2); border-radius: 3px; }
+.er-divbar-value { width: 60px; text-align: right; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text); flex-shrink: 0; }
+
+/* ---------- unread / last-seen divider ---------- */
+.er-unread-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text); display: inline-block; margin-right: 0.4rem; }
+.er-divider { display: flex; align-items: center; gap: 0.6rem; margin: 0.9rem 0; color: var(--text-4); font-size: 0.72rem; }
+.er-divider::before, .er-divider::after { content: ""; flex: 1; height: 1px; background: var(--hairline); }
+
+/* ---------- skeleton loading rows ---------- */
+.er-skel { background: var(--surface); border-radius: var(--r-sm); }
+.er-skel-line { height: 0.8rem; border-radius: 4px; background: var(--surface-2); margin-bottom: 0.5rem; }
+@media (prefers-reduced-motion: no-preference) {
+    /* 1.4s per brief §14 ("subtle shimmer, 1.4s") — the one motion
+       instance outside §16's "exactly two" count, since it's explicitly
+       sanctioned by the empty/loading-states section instead. */
+    .er-skel-line { animation: skel-pulse 1.4s ease-in-out infinite; }
+}
+@keyframes skel-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.9; } }
+
+/* ---------- film-grain texture (the only permitted texture, brief §16) ----------
+   Applied to .stApp rather than body — body sits behind Streamlit's own
+   app root in the DOM and a body::before doesn't reliably paint over the
+   visible surface in this Streamlit version; .stApp is the actual visible
+   canvas. Parameters otherwise match the brief's snippet exactly. */
+.stApp::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9998;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Home: single narrow column, minimal top bar (brief §8) ---------- */
+.er-home-topbar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+.er-home-topbar .er-rail-logo { width: 22px; height: 22px; display: inline-flex; }
+.er-home-topbar .er-rail-logo img, .er-home-topbar .er-rail-logo svg { width: 100%; height: 100%; object-fit: contain; }
+.er-home-column { max-width: 900px; margin: 0 auto; }
+
+/* ---------- hero watermark + signal-path decoration (static, no motion —
+   brief §16 permits motion only on breadth-bar fill and the live-status
+   dot; this decorative SVG is a fixed backdrop, not animated) ---------- */
+.er-hero-wrap { position: relative; padding: 2rem 0 1.5rem 0; overflow: hidden; }
+.er-hero-signal-svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.er-signal-path { fill: none; stroke: var(--hairline-2); stroke-width: 1; stroke-dasharray: 6 10; }
+.er-signal-path-2 { stroke: var(--hairline); }
+.er-signal-node { fill: var(--text-4); }
+.er-hero-watermark {
+    position: absolute; top: 50%; right: -4%; transform: translateY(-50%);
+    width: 300px; height: 300px; color: var(--text); opacity: 0.035; z-index: 0; pointer-events: none;
+}
+.er-hero-watermark svg, .er-hero-watermark img { width: 100%; height: 100%; object-fit: contain; }
+.er-hero-content { position: relative; z-index: 1; }

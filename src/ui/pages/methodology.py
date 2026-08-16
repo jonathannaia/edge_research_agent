@@ -1,66 +1,66 @@
-"""Methodology — the evidence-first framework, claim-type legend, and
-disclaimer. The one page every other page's "demo data" and claim-type
-labels implicitly point back to."""
+"""Methodology — the evidence-first framework and claim-type legend. The
+disclaimer/limitations content that used to live here has moved to its own
+Disclaimer page, and the roadmap/what-it-does content that overlapped with
+marketing copy has moved to About (brief §4: Methodology page splits into
+three doc pages)."""
 from __future__ import annotations
 
 import streamlit as st
 
 from src.models.models import ClaimType
-from src.ui.chrome import METHODOLOGY_STATEMENT
-from src.ui.components.badges import claim_type_badge, freshness_badge
+from src.ui.components.badges import claim_type_badge
 from src.ui.components.section import section_header
+from src.ui.ui import METHODOLOGY_STATEMENT, get_page
 
 
 def render() -> None:
     st.markdown('<div class="er-page-title">Methodology</div>', unsafe_allow_html=True)
     st.write(METHODOLOGY_STATEMENT)
 
-    section_header("Claim types")
-    st.write("Every material claim in EevaResearch is labeled as one of four types:")
+    section_header("Where the material comes from")
+    st.write(
+        "Signals are extracted from primary filings across five venues — EDGAR, TDnet, DART, CNINFO, "
+        "and HKEX — rather than from press coverage. A large share of what matters appears first in a "
+        "footnote, a segment note, or a Japanese- or Korean-language disclosure that English coverage "
+        "does not pick up for days. In this foundation phase, every filing referenced is demo data — "
+        "no live filing feed is connected yet."
+    )
+
+    section_header("The four labels")
     for ct, description in [
-        (ClaimType.FACT, "A source-backed statement — something that happened, verifiable against a cited source."),
-        (ClaimType.INTERPRETATION, "A read on what a fact or set of facts means — reasonable, but not itself a fact."),
-        (ClaimType.INFERENCE, "A conclusion drawn from incomplete or indirect evidence — flagged as more speculative than an interpretation."),
-        (ClaimType.UNCERTAINTY, "An open question or a point where the evidence doesn't yet support a confident read."),
+        (ClaimType.FACT, "Stated in a source document, and attributed to it. No attribution, no label."),
+        (ClaimType.INTERPRETATION, "A market read built on facts shown alongside it."),
+        (ClaimType.INFERENCE, "Follows logically from the evidence but is not confirmed anywhere."),
+        (ClaimType.UNCERTAINTY, "A named open question. Recorded rather than smoothed over."),
     ]:
-        with st.container(border=True):
+        with st.container(border=True, key=f"card-legend-{ct.value}"):
             cols = st.columns([1, 4])
             with cols[0]:
                 claim_type_badge(ct)
             with cols[1]:
                 st.write(description)
 
+    section_header("Novelty check")
+    st.write(
+        "Before a signal is published it is checked against prior coverage by source and date. If the "
+        "material has already been reported, it is not a signal."
+    )
+
+    section_header("Contrary evidence")
+    st.write(
+        "Every signal carries a contrary-evidence field. When none has been recorded, that is stated "
+        "explicitly rather than hiding the section — an absent counter-argument and an unexamined one "
+        "are different things."
+    )
+
     section_header("Freshness")
-    st.write("Evidence is labeled by how recently it was retrieved:")
-    freshness_cols = st.columns(3)
-    for col, label, color in zip(freshness_cols, ["Fresh", "Aging", "Stale"], ["green", "yellow", "gray"]):
-        with col:
-            st.badge(label, color=color)
-
-    section_header("What this app does not do")
     st.write(
-        "EevaResearch does not execute trades, move money, or give personalized investment advice. "
-        "It never says buy/sell/hold and never gives a price target. Rotation and signal reads are "
-        "evidence-based research inputs, not trading recommendations — you make all final investment decisions."
+        "Every panel carries its own fetch timestamp and one of three states: Live (a connected data "
+        "source, current), Stale (a connected source that hasn't refreshed recently), or Demo (this "
+        "phase's default — no live source connected). Demo mode is active everywhere in this build."
     )
 
-    section_header("Phase 1 — Foundation (this build)")
-    st.write(
-        "Application foundation, data model, navigation, UI system, and mock/demo data only. No real "
-        "ticker coverage, no paid APIs, no autonomous research loops, no live news ingestion, no "
-        "trading integrations, and no LLM wiring. See MIGRATION_NOTES.md and IMPLEMENTATION_NOTES.md "
-        "in the repository for the full detail."
-    )
-
-    section_header("Phase 2 — Data integration (planned)")
-    st.write(
-        "Real evidence ingestion and market-data providers wired in behind the existing repository "
-        "interfaces (src/data_access/interfaces.py) — no page-rendering code changes required. See "
-        "IMPLEMENTATION_NOTES.md for the specific plan."
-    )
-
-    section_header("Phase 3 — Curated ticker universe (planned)")
-    st.write(
-        "A real, curated ticker universe replacing the single demo ticker, populated through the same "
-        "TickerRepository interface. See IMPLEMENTATION_NOTES.md for the specific plan."
-    )
+    page = get_page("disclaimer")
+    if page is not None:
+        with st.container(key="cta-tertiary-methodology-disclaimer"):
+            st.page_link(page, label="Read the disclaimer →")

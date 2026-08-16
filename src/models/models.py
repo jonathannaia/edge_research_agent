@@ -79,6 +79,12 @@ class EvidenceItem:
     is_demo: bool = True
     ticker_symbol: str | None = None
     theme_slug: str | None = None
+    # Original-language text for non-English source excerpts, rendered
+    # above the (English) `excerpt` translation per brief §7. None for
+    # English-language sources. document_location is the in-document
+    # pointer (e.g. "p.7") shown in the excerpt's <cite> line.
+    excerpt_original: str | None = None
+    document_location: str = ""
 
     @property
     def freshness_label(self) -> str:
@@ -207,6 +213,11 @@ class ChatAnswer:
     freshness: str
     claim_type: ClaimType = ClaimType.INTERPRETATION
     is_demo: bool = True
+    # Per-claim breakdown for the evidence-spine rendering (brief §7) — each
+    # claim carries its own ClaimType, distinct from the single summary
+    # claim_type above. Empty for answers that predate this (e.g. the
+    # generic fallback), which render as plain text instead.
+    claims: list[ResearchClaim] = field(default_factory=list)
 
 
 @dataclass
@@ -215,3 +226,4 @@ class WatchlistEntry:
     ticker_symbol: str
     added_at: str
     note: str = ""
+    invalidates_if: str = ""

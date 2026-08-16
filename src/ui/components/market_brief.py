@@ -15,7 +15,7 @@ from src.data_access.container import AppContext
 from src.logic.formatting import fmt_pct
 from src.logic.theme_metrics import leaders_and_laggards
 from src.models.models import ClaimType
-from src.ui.chrome import get_page
+from src.ui.ui import get_page
 from src.ui.components.badges import claim_type_badge, demo_badge
 
 

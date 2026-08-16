@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from src.config.settings import Settings
 from src.data_access import loaders
 from src.data_access.interfaces import ResearchAnswerProvider
-from src.models.models import ChatAnswer, ClaimType, EvidenceItem, Strength
+from src.models.models import ChatAnswer, ClaimType, EvidenceItem, ResearchClaim, Strength
 
 SEED_FILE = "chat_demo_answers.json"
 
@@ -23,6 +23,14 @@ def _parse_source(raw: dict) -> EvidenceItem:
         published_at=raw["published_at"], retrieved_at=raw["retrieved_at"], excerpt=raw["excerpt"],
         claim_type=ClaimType(raw["claim_type"]), source_url=raw.get("source_url"),
         is_demo=raw.get("is_demo", True), ticker_symbol=raw.get("ticker_symbol"), theme_slug=raw.get("theme_slug"),
+        excerpt_original=raw.get("excerpt_original"), document_location=raw.get("document_location", ""),
+    )
+
+
+def _parse_claim(raw: dict) -> ResearchClaim:
+    return ResearchClaim(
+        text=raw["text"], claim_type=ClaimType(raw["claim_type"]),
+        evidence=[_parse_source(e) for e in raw.get("evidence", [])],
     )
 
 
@@ -39,6 +47,7 @@ def _parse_answer(raw: dict) -> ChatAnswer:
         freshness=raw["freshness"],
         claim_type=ClaimType(raw.get("claim_type", "Interpretation")),
         is_demo=raw.get("is_demo", True),
+        claims=[_parse_claim(c) for c in raw.get("claims", [])],
     )
 
 

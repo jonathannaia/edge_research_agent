@@ -14,7 +14,9 @@ import streamlit as st
 from src.logic.evidence import source_label
 from src.logic.formatting import fmt_date, fmt_pct
 from src.models.models import CapitalRotationMetric, Catalyst, EvidenceItem, Signal, Theme
-from src.ui.components.badges import claim_type_badge, demo_badge, direction_dot_html, freshness_badge
+from src.ui.components.badges import demo_badge, direction_dot_html, freshness_badge
+from src.ui.components.evidence_chips import evidence_chip
+from src.ui.components.excerpts import render_excerpt
 
 _THEME_ICONS: dict[str, str] = {
     "ai-buildout": (
@@ -52,14 +54,6 @@ _THEME_ICONS: dict[str, str] = {
         '<circle cx="2" cy="10" r="1" fill="currentColor" stroke="none"/></svg>'
     ),
 }
-
-_RAIL_COLOR_VAR = {
-    "Improving": "var(--er-positive)",
-    "Weakening": "var(--er-negative)",
-    "Mixed": "var(--er-caution)",
-    "Emerging": "var(--er-accent)",
-}
-
 
 def theme_icon_html(theme_slug: str) -> str:
     icon = _THEME_ICONS.get(theme_slug, "")
@@ -114,15 +108,13 @@ def _infer_direction(relative_performance_pct: float):
     return Direction.MIXED
 
 
-def signal_card(signal: Signal, theme_page=None) -> None:
+def signal_card(signal: Signal, theme_page=None, evidence_repository=None, unread: bool = False) -> None:
     key = f"card-signal-{signal.id}"
-    rail_color = _RAIL_COLOR_VAR.get(signal.direction.value, "var(--er-text-muted)")
-    st.markdown(f'<style>.st-key-{key} {{ border-left: 3px solid {rail_color} !important; }}</style>', unsafe_allow_html=True)
-
     with st.container(border=True, key=key):
         top = st.columns([3, 1])
         with top[0]:
-            st.markdown(f'<div class="er-card-title">{signal.title}</div>', unsafe_allow_html=True)
+            dot = '<span class="er-unread-dot"></span>' if unread else ""
+            st.markdown(f'<div class="er-card-title">{dot}{signal.title}</div>', unsafe_allow_html=True)
             tag_line = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
             st.markdown(f'<div class="er-muted">{tag_line}</div>', unsafe_allow_html=True)
         with top[1]:
@@ -147,15 +139,26 @@ def signal_card(signal: Signal, theme_page=None) -> None:
             f'· updated {fmt_date(signal.last_updated)}</div>',
             unsafe_allow_html=True,
         )
-        with st.expander("Contrary evidence & validation criteria"):
-            st.markdown(f"**Contrary evidence:** {signal.contrary_evidence}")
-            st.markdown(f"**Would validate:** {signal.validation_criteria}")
-            st.markdown(f"**Would invalidate:** {signal.invalidation_criteria}")
         if signal.related_tickers:
-            st.markdown(f'<div class="er-muted">Related: {", ".join(signal.related_tickers)}</div>', unsafe_allow_html=True)
+            # Every ticker mention links to its Company page (acceptance
+            # checklist: "every ticker in the app links to one").
+            links = ", ".join(
+                f'<a href="company?symbol={t}" style="color:var(--text-2); text-decoration:underline;">{t}</a>'
+                for t in signal.related_tickers
+            )
+            st.markdown(f'<div class="er-muted">Related: {links}</div>', unsafe_allow_html=True)
+
+        action_cols = st.columns([1, 1, 2])
+        with action_cols[0]:
+            with st.container(key=f"cta-secondary-{signal.id}"):
+                if st.button("View details", key=f"open-drawer-{signal.id}", width="stretch"):
+                    from src.ui.components.signal_drawer import open_signal_drawer
+
+                    open_signal_drawer(signal, evidence_repository=evidence_repository)
         if theme_page is not None:
-            with st.container(key=f"cta-tertiary-{signal.id}"):
-                st.page_link(theme_page, label="Open theme →")
+            with action_cols[1]:
+                with st.container(key=f"cta-tertiary-{signal.id}"):
+                    st.page_link(theme_page, label="Open theme →")
 
 
 def compact_signal_row(signal: Signal) -> None:
@@ -164,9 +167,6 @@ def compact_signal_row(signal: Signal) -> None:
     evidence-count/related-tickers/CTA — that detail lives on the full
     signal_card, which is Signal Board's job now, not Overview's."""
     key = f"card-compact-signal-{signal.id}"
-    rail_color = _RAIL_COLOR_VAR.get(signal.direction.value, "var(--er-text-muted)")
-    st.markdown(f'<style>.st-key-{key} {{ border-left: 3px solid {rail_color} !important; }}</style>', unsafe_allow_html=True)
-
     with st.container(border=True, key=key):
         st.markdown(f'<div class="er-card-title" style="font-size:0.95rem;">{signal.title}</div>', unsafe_allow_html=True)
         st.markdown(
@@ -209,10 +209,10 @@ def evidence_row(evidence: EvidenceItem) -> None:
         top = st.columns([3, 1, 1])
         top[0].markdown(f'<div class="er-card-title">{evidence.title}</div>', unsafe_allow_html=True)
         with top[1]:
-            claim_type_badge(evidence.claim_type)
+            evidence_chip(evidence.claim_type, has_source=bool(evidence.source_name))
         with top[2]:
             freshness_badge(evidence)
-        st.write(evidence.excerpt)
+        render_excerpt(evidence)
         st.markdown(
             f'<div class="er-muted" style="margin-top:0.3rem;">{source_label(evidence)}</div>',
             unsafe_allow_html=True,

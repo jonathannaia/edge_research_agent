@@ -69,6 +69,6 @@
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
     "validation_criteria": "Demo placeholder validation criteria — not real.",
     "invalidation_criteria": "Demo placeholder invalidation criteria — not real.",
-    "related_tickers": [], "last_updated": "2026-08-15T05:00:00+00:00", "is_demo": true
+    "related_tickers": ["DEMO"], "last_updated": "2026-08-15T05:00:00+00:00", "is_demo": true
   }
 ]

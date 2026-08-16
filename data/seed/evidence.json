@@ -10,7 +10,9 @@
     "id": "ev-002", "title": "Sample evidence: Networking interconnect demand",
     "source_name": "EevaResearch Demo Data", "source_type": "Demo Dataset",
     "published_at": "2026-08-10T09:00:00+00:00", "retrieved_at": "2026-08-10T09:00:00+00:00",
-    "excerpt": "Demo excerpt standing in for a market-interpretation statement about interconnect demand. Not a real data point.",
+    "excerpt": "Demo excerpt standing in for a market-interpretation statement about interconnect demand, translated from the fictional original below. Not a real data point.",
+    "excerpt_original": "当社は、光インターコネクト需要の拡大を見込み、来期の生産能力を段階的に引き上げる計画です。(架空のデモ文)",
+    "document_location": "p.4 (demo)",
     "claim_type": "Interpretation", "is_demo": true, "theme_slug": "ai-buildout"
   },
   {
@@ -45,7 +47,9 @@
     "id": "ev-007", "title": "Sample evidence: HBM capacity allocation",
     "source_name": "EevaResearch Demo Data", "source_type": "Demo Dataset",
     "published_at": "2026-07-20T09:00:00+00:00", "retrieved_at": "2026-07-20T09:00:00+00:00",
-    "excerpt": "Demo excerpt standing in for an inference about HBM capacity allocation trends. Not a real data point.",
+    "excerpt": "Demo excerpt standing in for an inference about HBM capacity allocation trends, translated from the fictional original below. Not a real data point.",
+    "excerpt_original": "당사는 차세대 HBM 생산능력의 상당 부분을 소수의 전략 고객사에 우선 배정할 계획입니다. (가상의 데모 문구)",
+    "document_location": "p.11 (demo)",
     "claim_type": "Inference", "is_demo": true, "theme_slug": "memory"
   },
   {

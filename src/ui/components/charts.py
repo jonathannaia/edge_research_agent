@@ -1,9 +1,15 @@
 """One deliberate exception to "no third-party charting library": st.bar_chart
-cannot do per-bar conditional colors (positive/negative/leading), which the
-redesign explicitly calls for on the rotation chart. Altair already ships
-as a transitive dependency of Streamlit (used internally by st.bar_chart
-itself) — this adds no new package to requirements.txt, just a small
-inline spec instead of the simplified wrapper.
+cannot do per-bar conditional colors (leader vs. rest), which the redesign
+explicitly calls for on the rotation chart. Altair already ships as a
+transitive dependency of Streamlit (used internally by st.bar_chart itself)
+— this adds no new package to requirements.txt, just a small inline spec
+instead of the simplified wrapper.
+
+Currently unrouted: this chart backed the standalone Capital Rotation page,
+which brief §4 dissolves into a Dashboard panel and a per-theme tab (see
+src/ui/pages/capital_rotation.py's docstring) — kept on disk, not deleted,
+per the non-goal against deleting content. Colors below are grayscale-only
+(brief §5: zero accent colour, no red/green) even though unreachable today.
 """
 from __future__ import annotations
 
@@ -14,7 +20,7 @@ from src.models.models import CapitalRotationMetric, Theme
 
 _COLOR_SCALE = alt.Scale(
     domain=["leader", "positive", "negative"],
-    range=["#F5F5F5", "#5B9E7D", "#C77B84"],
+    range=["#ECECEC", "#B4B4B4", "#6E6E6E"],
 )
 
 
@@ -44,14 +50,14 @@ def rotation_bar_chart(metrics: list[CapitalRotationMetric], themes: dict[str, T
             tooltip=[alt.Tooltip("Theme:N"), alt.Tooltip("Value:Q", format="+.1f")],
         )
     )
-    zero_rule = alt.Chart(pd.DataFrame({"y": [0]})).mark_rule(color="#2F3336").encode(y="y:Q")
+    zero_rule = alt.Chart(pd.DataFrame({"y": [0]})).mark_rule(color="rgba(255,255,255,.14)").encode(y="y:Q")
 
     return (
         (bars + zero_rule)
         .properties(height=260, background="transparent")
         .configure_view(strokeWidth=0)
         .configure_axis(
-            domainColor="#2F3336", gridColor="#161616", tickColor="#2F3336",
-            labelColor="#71767B", titleColor="#71767B", labelFont="Inter", titleFont="Inter",
+            domainColor="rgba(255,255,255,.14)", gridColor="#303030", tickColor="rgba(255,255,255,.14)",
+            labelColor="#8F8F8F", titleColor="#8F8F8F", labelFont="Inter", titleFont="Inter",
         )
     )

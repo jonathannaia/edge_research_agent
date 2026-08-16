@@ -1,33 +1,33 @@
 [theme]
 base = "dark"
 
-primaryColor = "#C7D6E3"
-backgroundColor = "#050505"
-secondaryBackgroundColor = "#0B0B0B"
-textColor = "#F5F5F5"
+primaryColor = "#B4B4B4"
+backgroundColor = "#212121"
+secondaryBackgroundColor = "#2A2A2A"
+textColor = "#ECECEC"
 
-linkColor = "#C7D6E3"
+linkColor = "#ECECEC"
 linkUnderline = false
 
-borderColor = "#2F3336"
-dataframeBorderColor = "#2F3336"
-dataframeHeaderBackgroundColor = "#0B0B0B"
+borderColor = "rgba(255, 255, 255, .08)"
+dataframeBorderColor = "rgba(255, 255, 255, .08)"
+dataframeHeaderBackgroundColor = "#2A2A2A"
 
-codeTextColor = "#C7D6E3"
-codeBackgroundColor = "#0B0B0B"
+codeTextColor = "#ECECEC"
+codeBackgroundColor = "#2A2A2A"
 
 font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
 codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
 
-baseFontSize = 16
-headingFontWeights = [700, 600, 600, 600, 600, 600]
+baseFontSize = 15
+headingFontWeights = [600, 600, 600, 600, 600, 600]
 
 baseRadius = "small"
 buttonRadius = "small"
 
 showWidgetBorder = true
-showSidebarBorder = true
+showSidebarBorder = false
 
 [server]
 headless = true

@@ -1,4 +1,4 @@
-from src.logic.evidence import claim_type_badge, freshness_badge, source_label
+from src.logic.evidence import cite_label, claim_type_badge, freshness_badge, source_label
 from src.models.models import ClaimType, EvidenceItem
 
 
@@ -37,3 +37,21 @@ def test_source_label_with_url_includes_it():
     ev = _evidence(source_url="https://example.com/demo-only")
     label = source_label(ev)
     assert "https://example.com/demo-only" in label
+
+
+def test_cite_label_joins_issuer_venue_date():
+    ev = _evidence(published_at="2026-08-14T09:00:00+00:00")
+    label = cite_label(ev)
+    assert "EevaResearch Demo Data" in label
+    assert "Demo Dataset" in label
+    assert "Aug 14, 2026" in label
+
+
+def test_cite_label_appends_document_location_when_present():
+    ev = _evidence(document_location="p.7 (demo)")
+    assert cite_label(ev).endswith("p.7 (demo)")
+
+
+def test_cite_label_omits_document_location_when_absent():
+    ev = _evidence(document_location="")
+    assert cite_label(ev).count(" · ") == 2

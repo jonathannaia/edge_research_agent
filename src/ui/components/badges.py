@@ -1,43 +1,44 @@
-"""Badge components — thin wrappers over Streamlit's native st.badge, so
-every claim-type, direction, strength, and freshness indicator in the app
-uses one consistent, accessible widget instead of hand-rolled HTML pills.
+"""Badge/indicator components. Claim-type rendering now delegates to
+evidence_chips.py (brief §7's custom HTML chip system replaces st.badge for
+that one case — see that module's docstring for why). Freshness/strength
+badges still use native st.badge for now; freshness gets a real 3-state
+Live/Stale/Demo treatment in the dedicated freshness pass (brief §13).
+Direction is glyph + text-weight only, never color (brief §5 — zero accent
+color anywhere).
 """
 from __future__ import annotations
 
 import streamlit as st
 
-from src.models.models import ClaimType, Direction, EvidenceItem, Strength
-
-_CLAIM_TYPE_COLOR = {
-    ClaimType.FACT: "gray",
-    ClaimType.INTERPRETATION: "primary",
-    ClaimType.INFERENCE: "orange",
-    ClaimType.UNCERTAINTY: "gray",
-}
+from src.models.models import Direction, EvidenceItem, Strength, ClaimType
+from src.ui.components.evidence_chips import evidence_chip
 
 _FRESHNESS_COLOR = {"Fresh": "green", "Aging": "orange", "Stale": "gray", "Unknown": "gray"}
 
-_DIRECTION_COLOR = {
-    Direction.IMPROVING: "green",
-    Direction.WEAKENING: "red",
-    Direction.EMERGING: "primary",
-    Direction.MIXED: "orange",
-}
-
 _STRENGTH_COLOR = {Strength.STRONG: "green", Strength.MODERATE: "yellow", Strength.WEAK: "gray"}
 
+_DIRECTION_GLYPH = {
+    Direction.IMPROVING: "▲",
+    Direction.WEAKENING: "▼",
+    Direction.EMERGING: "●",
+    Direction.MIXED: "◆",
+}
 
-def claim_type_badge(claim_type: ClaimType) -> None:
-    st.badge(claim_type.value, color=_CLAIM_TYPE_COLOR.get(claim_type, "gray"))
+_DIRECTION_WEIGHT_CLASS = {
+    Direction.IMPROVING: "er-dir",
+    Direction.WEAKENING: "er-dir er-dir-weakening",
+    Direction.EMERGING: "er-dir",
+    Direction.MIXED: "er-dir er-dir-mixed",
+}
+
+
+def claim_type_badge(claim_type: ClaimType, has_source: bool = True) -> None:
+    evidence_chip(claim_type, has_source=has_source)
 
 
 def freshness_badge(evidence: EvidenceItem) -> None:
     label = evidence.freshness_label
     st.badge(label, color=_FRESHNESS_COLOR.get(label, "gray"))
-
-
-def direction_badge(direction: Direction) -> None:
-    st.badge(direction.value, color=_DIRECTION_COLOR.get(direction, "gray"))
 
 
 def strength_badge(strength: Strength) -> None:
@@ -48,33 +49,9 @@ def demo_badge(label: str = "Demo data") -> None:
     st.badge(label, color="gray")
 
 
-_DIRECTION_RAIL_CLASS = {
-    Direction.IMPROVING: "er-rail-improving",
-    Direction.WEAKENING: "er-rail-weakening",
-    Direction.MIXED: "er-rail-mixed",
-    Direction.EMERGING: "er-rail-emerging",
-}
-
-_DIRECTION_DOT_CLASS = {
-    Direction.IMPROVING: "er-dir-improving",
-    Direction.WEAKENING: "er-dir-weakening",
-    Direction.MIXED: "er-dir-mixed",
-    Direction.EMERGING: "er-dir-emerging",
-}
-
-
-def direction_rail_class(direction: Direction) -> str:
-    """CSS class for the left accent rail on a signal/market-pulse item —
-    used as `st.container(key=..., ...)` doesn't accept a class directly,
-    so callers wrap content in `st.markdown(f'<div class="{cls}">')` /
-    `</div>` around the block, or apply it via a keyed container's class
-    (see cards.py for the exact pattern in use)."""
-    return _DIRECTION_RAIL_CLASS.get(direction, "")
-
-
 def direction_dot_html(direction: Direction) -> str:
-    """A small colored dot + the direction label, as a single inline HTML
-    snippet — the rail carries the same color for redundant (not
-    color-only) encoding of direction."""
-    cls = _DIRECTION_DOT_CLASS.get(direction, "")
-    return f'<span class="er-dir-dot {cls}"></span>{direction.value}'
+    """Direction shown as a glyph + label, weight-differentiated — never
+    color (zero accent-color rule, brief §5)."""
+    glyph = _DIRECTION_GLYPH.get(direction, "●")
+    cls = _DIRECTION_WEIGHT_CLASS.get(direction, "er-dir")
+    return f'<span class="{cls}"><span class="er-dir-glyph">{glyph}</span>{direction.value}</span>'

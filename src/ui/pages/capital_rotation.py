@@ -12,7 +12,7 @@ from src.data_access.container import get_repositories
 from src.logic.formatting import fmt_date, fmt_pct
 from src.logic.theme_metrics import average_breadth, leaders_and_laggards, rank_by_performance
 from src.models.models import ClaimType
-from src.ui.chrome import get_page
+from src.ui.ui import get_page
 from src.ui.components.badges import claim_type_badge
 from src.ui.components.cards import catalyst_timeline_row
 from src.ui.components.charts import rotation_bar_chart
