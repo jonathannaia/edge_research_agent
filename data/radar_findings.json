@@ -1,6 +1,20 @@
 [
   {
     "niche": "Space",
+    "headline": "NASA funds spherical 'Aerobots' that could explore the caves of Saturn's moon Titan",
+    "summary": "NASA has awarded an early-stage grant to develop spherical 'Aerobots' that could explore caves on Saturn's moon Titan, with a planned demonstration mission similar to the Mars Ingenuity rover.",
+    "source_url": "https://www.space.com/technology/nasa-funds-spherical-aerobots-that-could-explore-the-caves-of-saturns-moon-titan",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sun, 16 Aug 2026 15:00:00 +0000",
+    "retrieved_at": "2026-08-16T16:14:13+00:00",
+    "tickers": [],
+    "relevance_reason": "The article describes NASA-funded development of robotic explorers for space missions, specifically for Saturn's moon Titan, which directly relates to the Space scope.",
+    "url_hash": "7726551c08f5c764",
+    "id": "7726551c08f5c764"
+  },
+  {
+    "niche": "Space",
     "headline": "Artemis II pilot thanks NASA for letting him fly Orion by hand: 'I'm still blown away by that trust'",
     "summary": "The Artemis II crew publicly thanked NASA and its contractors at a public event in August 2026, with the pilot expressing appreciation for being allowed to manually pilot the Orion spacecraft.",
     "source_url": "https://www.space.com/space-exploration/artemis/artemis-ii-pilot-thanks-nasa-for-letting-him-fly-orion-by-hand-im-still-blown-away-by-that-trust",
