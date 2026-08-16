@@ -1,6 +1,20 @@
 [
   {
     "niche": "Space",
+    "headline": "'This goes beyond showcasing technological soft power': China's new moon map signals bold space ambitions (video)",
+    "summary": "China has released a new moon map with updated chronology and data about the far side, establishing its own cartographic standard for mapping the solar system.",
+    "source_url": "https://www.space.com/astronomy/moon/this-goes-beyond-showcasing-technological-soft-power-chinas-new-moon-map-signals-bold-space-ambitions-video",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sun, 16 Aug 2026 10:00:00 +0000",
+    "retrieved_at": "2026-08-16T10:15:02+00:00",
+    "tickers": [],
+    "relevance_reason": "This article discusses China's lunar mapping initiative and its space exploration ambitions, which directly relates to space infrastructure and activities.",
+    "url_hash": "ecdc354d14d3b2c8",
+    "id": "ecdc354d14d3b2c8"
+  },
+  {
+    "niche": "Space",
     "headline": "New record! SpaceX launches 2 Falcon 9 rockets just 38 minutes apart",
     "summary": "SpaceX launched two Falcon 9 rockets 38 minutes apart on August 15, setting a new spaceflight record for the time between consecutive launches.",
     "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-breaks-record-launch-doubleheader-ussf-366-globalstar-2r",
