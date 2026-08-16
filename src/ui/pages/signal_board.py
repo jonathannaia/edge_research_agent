@@ -5,6 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from src.data_access.container import get_repositories
+from src.ui.chrome import get_page
 from src.ui.components.cards import signal_card
 from src.ui.components.empty_state import empty_state
 
@@ -14,7 +15,7 @@ def render() -> None:
     themes = {t.slug: t.name for t in ctx.theme_repository.get_all_themes()}
     signals = ctx.signal_repository.get_all_signals()
 
-    st.markdown("# Signal Board")
+    st.markdown('<div class="er-page-title">Signal Board</div>', unsafe_allow_html=True)
     st.write("Every tracked signal in one place — demo data in this phase, filterable by theme, direction, strength, and time horizon.")
 
     if not signals:
@@ -44,5 +45,6 @@ def render() -> None:
         empty_state("No signals match the current filters.")
         return
 
+    theme_page = get_page("themes")
     for s in filtered:
-        signal_card(s)
+        signal_card(s, theme_page=theme_page)

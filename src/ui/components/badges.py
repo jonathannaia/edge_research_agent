@@ -46,3 +46,35 @@ def strength_badge(strength: Strength) -> None:
 
 def demo_badge(label: str = "Demo data") -> None:
     st.badge(label, color="gray")
+
+
+_DIRECTION_RAIL_CLASS = {
+    Direction.IMPROVING: "er-rail-improving",
+    Direction.WEAKENING: "er-rail-weakening",
+    Direction.MIXED: "er-rail-mixed",
+    Direction.EMERGING: "er-rail-emerging",
+}
+
+_DIRECTION_DOT_CLASS = {
+    Direction.IMPROVING: "er-dir-improving",
+    Direction.WEAKENING: "er-dir-weakening",
+    Direction.MIXED: "er-dir-mixed",
+    Direction.EMERGING: "er-dir-emerging",
+}
+
+
+def direction_rail_class(direction: Direction) -> str:
+    """CSS class for the left accent rail on a signal/market-pulse item —
+    used as `st.container(key=..., ...)` doesn't accept a class directly,
+    so callers wrap content in `st.markdown(f'<div class="{cls}">')` /
+    `</div>` around the block, or apply it via a keyed container's class
+    (see cards.py for the exact pattern in use)."""
+    return _DIRECTION_RAIL_CLASS.get(direction, "")
+
+
+def direction_dot_html(direction: Direction) -> str:
+    """A small colored dot + the direction label, as a single inline HTML
+    snippet — the rail carries the same color for redundant (not
+    color-only) encoding of direction."""
+    cls = _DIRECTION_DOT_CLASS.get(direction, "")
+    return f'<span class="er-dir-dot {cls}"></span>{direction.value}'

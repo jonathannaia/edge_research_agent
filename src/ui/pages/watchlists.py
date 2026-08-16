@@ -38,7 +38,7 @@ def render() -> None:
         st.session_state[SESSION_KEY] = _seed_watchlists()
     lists: dict[str, list[WatchlistEntry]] = st.session_state[SESSION_KEY]
 
-    st.markdown("# Watchlists")
+    st.markdown('<div class="er-page-title">Watchlists</div>', unsafe_allow_html=True)
     st.write(
         "Demo watchlists, seeded from mock data. Adding or removing a ticker updates this session "
         "only — reloading the page resets to the seeded lists. Built so real, persisted watchlists "

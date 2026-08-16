@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from src.ui.chrome import with_chrome
+from src.ui.chrome import render_brand_header, with_chrome
 from src.ui.pages import (
     capital_rotation,
     methodology,
@@ -45,6 +45,9 @@ pages = {
 # build a cross-page st.page_link from this same dict (see e.g.
 # src/ui/components/market_brief.py's _get_page helper).
 st.session_state["_pages"] = pages
+
+with st.sidebar:
+    render_brand_header()
 
 selected = st.navigation(list(pages.values()))
 selected.run()

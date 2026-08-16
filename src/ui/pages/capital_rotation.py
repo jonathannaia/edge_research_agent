@@ -12,15 +12,18 @@ from src.data_access.container import get_repositories
 from src.logic.formatting import fmt_date, fmt_pct
 from src.logic.theme_metrics import average_breadth, leaders_and_laggards, rank_by_performance
 from src.models.models import ClaimType
+from src.ui.chrome import get_page
 from src.ui.components.badges import claim_type_badge
+from src.ui.components.charts import rotation_bar_chart
 from src.ui.components.empty_state import empty_state
 from src.ui.components.section import section_header
+from src.ui.components.tables import leaderboard_table
 
 
 def _rotation_narrative_card(title: str, what_changed: str, why_it_matters: str, evidence: str, invalidation: str) -> None:
-    with st.container(border=True):
+    with st.container(border=True, key="card-rotation-narrative"):
         top = st.columns([4, 1])
-        top[0].markdown(f"**{title}**")
+        top[0].markdown(f'<div class="er-card-title">{title}</div>', unsafe_allow_html=True)
         with top[1]:
             claim_type_badge(ClaimType.INTERPRETATION)
         st.markdown(f"**What changed**\n\n{what_changed}")
@@ -34,7 +37,7 @@ def render() -> None:
     themes = {t.slug: t for t in ctx.theme_repository.get_all_themes()}
     metrics = ctx.market_data_provider.get_rotation_metrics()
 
-    st.markdown("# Capital Rotation")
+    st.markdown('<div class="er-page-title">Capital Rotation</div>', unsafe_allow_html=True)
     st.write(
         "A price-momentum-style comparison across the five tracked themes, built entirely from demo "
         "data in this phase. Rotation reads are interpretations across multiple data points, not "
@@ -43,12 +46,15 @@ def render() -> None:
 
     section_header("Theme relative performance")
     ranked = rank_by_performance(metrics)
-    rows = [
-        {"Theme": themes[m.theme_slug].name, "Relative performance": f"{m.relative_performance_pct:+.1f}%", "Breadth": f"{m.breadth_pct:.0f}%"}
-        for m in ranked if m.theme_slug in themes
-    ]
-    st.dataframe(rows, hide_index=True, width="stretch")
-    st.bar_chart({themes[m.theme_slug].name: m.relative_performance_pct for m in ranked if m.theme_slug in themes})
+    leaderboard_table(ranked, themes)
+    st.altair_chart(rotation_bar_chart(ranked, themes), width="stretch")
+    if ranked and ranked[0].theme_slug in themes:
+        st.markdown(
+            f'<div class="er-muted">Rotation read: <strong>{themes[ranked[0].theme_slug].name}</strong> leads; '
+            f'<strong>{themes[ranked[-1].theme_slug].name}</strong> is weakest. Investigate the leading theme\'s '
+            "nearest catalyst below before treating this as durable.</div>",
+            unsafe_allow_html=True,
+        )
 
     section_header("Relative strength vs. benchmarks", "Placeholder — requires a live benchmark data source, not built in this phase.")
     st.dataframe(
@@ -58,21 +64,25 @@ def render() -> None:
 
     section_header("Breadth")
     avg = average_breadth(metrics)
-    st.metric("Average breadth across themes", f"{avg:.0f}%" if avg is not None else "—", help="Demo data — placeholder breadth measure")
+    st.markdown(
+        f'<div class="er-metric-label">Average breadth across themes</div>'
+        f'<div class="er-metric-value" style="font-size:1.4rem;">{f"{avg:.0f}%" if avg is not None else "—"}</div>',
+        unsafe_allow_html=True,
+    )
 
     section_header("Leaders and laggards")
     leaders, laggards = leaders_and_laggards(metrics, top_n=2)
     cols = st.columns(2)
     with cols[0]:
-        st.markdown("**Leading**")
+        st.markdown('<div class="er-metric-label">Leading</div>', unsafe_allow_html=True)
         for m in leaders:
             if m.theme_slug in themes:
-                st.write(f"{themes[m.theme_slug].name} — {fmt_pct(m.relative_performance_pct)}")
+                st.markdown(f'<div class="er-mono">{themes[m.theme_slug].name} — {fmt_pct(m.relative_performance_pct)}</div>', unsafe_allow_html=True)
     with cols[1]:
-        st.markdown("**Lagging**")
+        st.markdown('<div class="er-metric-label">Lagging</div>', unsafe_allow_html=True)
         for m in laggards:
             if m.theme_slug in themes:
-                st.write(f"{themes[m.theme_slug].name} — {fmt_pct(m.relative_performance_pct)}")
+                st.markdown(f'<div class="er-mono">{themes[m.theme_slug].name} — {fmt_pct(m.relative_performance_pct)}</div>', unsafe_allow_html=True)
 
     section_header("Rotation narrative")
     if leaders and laggards and leaders[0].theme_slug in themes and laggards[0].theme_slug in themes:
@@ -117,6 +127,9 @@ def render() -> None:
         st.write(
             "Rotation conclusions on this page are built from demo relative-performance and breadth "
             "figures only. They require evidence to be meaningful and should never be treated as "
-            "trading recommendations — EevaResearch does not provide investment advice. See the "
-            "Methodology page for the full evidence-first framework this app is built around."
+            "trading recommendations — EevaResearch does not provide investment advice."
         )
+        page = get_page("methodology")
+        if page is not None:
+            with st.container(key="cta-tertiary-rotation-methodology"):
+                st.page_link(page, label="Read the full evidence-first framework →")

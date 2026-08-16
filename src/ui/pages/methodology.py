@@ -12,7 +12,7 @@ from src.ui.components.section import section_header
 
 
 def render() -> None:
-    st.markdown("# Methodology")
+    st.markdown('<div class="er-page-title">Methodology</div>', unsafe_allow_html=True)
     st.write(METHODOLOGY_STATEMENT)
 
     section_header("Claim types")

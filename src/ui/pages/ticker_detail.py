@@ -14,7 +14,7 @@ import streamlit as st
 from src.data_access.container import get_repositories
 from src.logic.formatting import fmt_date
 from src.ui.components.badges import demo_badge
-from src.ui.components.cards import catalyst_row, evidence_row
+from src.ui.components.cards import catalyst_timeline_row, evidence_row
 from src.ui.components.empty_state import empty_state
 from src.ui.components.section import section_header
 
@@ -27,7 +27,7 @@ def render() -> None:
     ticker = ctx.ticker_repository.get_ticker(symbol)
 
     if ticker is None:
-        st.markdown("# Ticker Detail")
+        st.markdown('<div class="er-page-title">Ticker Detail</div>', unsafe_allow_html=True)
         empty_state(
             f"No ticker found for symbol '{symbol}'.",
             f"The only ticker loaded in this phase is the fictional {DEFAULT_SYMBOL} — see Themes to reach it.",
@@ -39,7 +39,7 @@ def render() -> None:
 
     header_cols = st.columns([4, 1])
     with header_cols[0]:
-        st.markdown(f"# {ticker.symbol} — {ticker.company_name}")
+        st.markdown(f'<div class="er-page-title">{ticker.symbol} — {ticker.company_name}</div>', unsafe_allow_html=True)
         tag_line = theme.name if theme else ticker.theme_slug
         if subtheme:
             tag_line += f" / {subtheme.name}"
@@ -73,7 +73,7 @@ def render() -> None:
         empty_state("No catalysts scheduled for this ticker yet.")
     else:
         for c in catalysts:
-            catalyst_row(c)
+            catalyst_timeline_row(c)
 
     section_header("Bull / base / bear")
     bull_col, base_col, bear_col = st.columns(3)

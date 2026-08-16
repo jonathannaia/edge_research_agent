@@ -1,11 +1,10 @@
-"""The editorial opening experience on Overview — a short, narrative brief
-synthesized from the same demo repositories every other page reads from
-(not separately hardcoded prose), so it stays consistent with the rest of
-the app and exercises the full data_access -> logic -> UI path end to end.
+"""The editorial opening experience on Overview — a compact bento-style
+summary synthesized from the same demo repositories every other page reads
+from. Redesigned from the original five stacked full-paragraph cards into
+four short panels (title + 1-2 lines + deep link) per the UI redesign brief.
 
-Every synthesized read here is an Interpretation or Inference, never a
-Fact — these are readings across multiple demo data points, not a single
-sourced statement, so they're labeled accordingly.
+Every synthesized read here is an Interpretation, never a Fact — these are
+readings across multiple demo data points, not a single sourced statement.
 """
 from __future__ import annotations
 
@@ -17,11 +16,15 @@ from src.data_access.container import AppContext
 from src.logic.formatting import fmt_date, fmt_pct
 from src.logic.theme_metrics import leaders_and_laggards, strongest_signals
 from src.models.models import ClaimType
+from src.ui.chrome import get_page
 from src.ui.components.badges import claim_type_badge, demo_badge
 
 
-def _get_page(name: str):
-    return st.session_state.get("_pages", {}).get(name)
+def _panel_header(title: str, claim_type: ClaimType = ClaimType.INTERPRETATION) -> None:
+    top = st.columns([4, 1])
+    top[0].markdown(f'<div class="er-card-title">{title}</div>', unsafe_allow_html=True)
+    with top[1]:
+        claim_type_badge(claim_type)
 
 
 def render_market_brief(ctx: AppContext) -> None:
@@ -34,72 +37,77 @@ def render_market_brief(ctx: AppContext) -> None:
 
     header_cols = st.columns([3, 1])
     with header_cols[0]:
-        st.markdown("### Market Brief")
-        st.markdown(f'<div class="er-muted">As of {datetime.now(timezone.utc).strftime("%b %-d, %Y, %H:%M UTC")}</div>', unsafe_allow_html=True)
+        st.markdown('<div class="er-page-title" style="font-size:1.4rem;">Market Brief</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="er-muted er-mono">As of {datetime.now(timezone.utc).strftime("%b %-d, %Y, %H:%M UTC")}</div>',
+            unsafe_allow_html=True,
+        )
     with header_cols[1]:
         demo_badge("Demo / mock-data mode")
 
-    blocks: list[tuple[str, str]] = []
-
-    if leaders:
-        leader_names = ", ".join(themes[m.theme_slug].name for m in leaders if m.theme_slug in themes)
-        blocks.append((
-            "Where capital is rotating",
-            f"Across the five tracked themes, {leader_names} show the strongest relative performance "
-            f"reads this period ({', '.join(fmt_pct(m.relative_performance_pct) for m in leaders)}). "
-            "This is a synthesized read across demo metrics, not a single sourced fact.",
-        ))
-    if laggards:
-        laggard_names = ", ".join(themes[m.theme_slug].name for m in laggards if m.theme_slug in themes)
-        blocks.append((
-            "Which themes are weakening",
-            f"{laggard_names} show the weakest relative performance reads this period "
-            f"({', '.join(fmt_pct(m.relative_performance_pct) for m in laggards)}).",
-        ))
-    if top_signals:
-        sig_titles = "; ".join(f"{s.title} ({s.direction.value.lower()}, {s.strength.value.lower()})" for s in top_signals)
-        blocks.append((
-            "What deserves research attention",
-            f"The strongest current signals: {sig_titles}. See Signal Board for full validation/invalidation criteria.",
-        ))
-    if upcoming:
-        cat_list = "; ".join(f"{c.title} ({fmt_date(c.date)})" for c in upcoming)
-        blocks.append((
-            "Catalysts approaching",
-            f"Nearest tracked catalysts: {cat_list}.",
-        ))
-    blocks.append((
-        "What changed today / this week",
-        "Phase 1 has no live data connection, so nothing in this brief reflects real intraday or "
-        "weekly change — every figure above is static demo data included to exercise this layout.",
-    ))
-
-    for title, body in blocks[:5]:
-        with st.container(border=True):
-            top = st.columns([4, 1])
-            top[0].markdown(f"**{title}**")
-            with top[1]:
-                claim_type_badge(ClaimType.INTERPRETATION)
-            st.write(body)
-
-    with st.container(border=True):
-        st.markdown("**What would change this read**")
-        st.write(
-            "This brief is a fixed demo snapshot, not a live model — nothing will change it in this "
-            "phase. Once real evidence ingestion exists (Phase 2), this section will state the specific "
-            "new data (a filing, a rating action, a catalyst outcome) that would update the read above."
-        )
-
-    st.markdown("&nbsp;", unsafe_allow_html=True)
-    link_cols = st.columns(4)
-    link_targets = [
-        ("Capital Rotation", "capital_rotation"),
-        ("Signal Board", "signal_board"),
-        ("Themes", "themes"),
-        ("Research Chat", "research_chat"),
-    ]
-    for col, (label, key) in zip(link_cols, link_targets):
-        page = _get_page(key)
-        with col:
+    row1 = st.columns([2, 1])
+    with row1[0]:
+        with st.container(border=True, key="card-brief-rotation"):
+            _panel_header("Capital rotation read")
+            if leaders and laggards:
+                lead_names = ", ".join(themes[m.theme_slug].name for m in leaders if m.theme_slug in themes)
+                lag_names = ", ".join(themes[m.theme_slug].name for m in laggards if m.theme_slug in themes)
+                st.write(f"**{lead_names}** lead this demo snapshot; **{lag_names}** show the weakest reads.")
+                st.markdown(
+                    f'<div class="er-muted">A sustained gap is one input into where research attention may be '
+                    f"concentrating — on its own it isn't conclusive.</div>",
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.caption("Not enough theme data yet.")
+            page = get_page("capital_rotation")
             if page is not None:
-                st.page_link(page, label=f"{label} →", width="stretch")
+                with st.container(key="cta-tertiary-brief-rotation"):
+                    st.page_link(page, label="Open Capital Rotation →")
+
+    with row1[1]:
+        with st.container(border=True, key="card-brief-attention"):
+            _panel_header("Research attention")
+            if top_signals:
+                for s in top_signals:
+                    st.markdown(f"**{s.title}**")
+                    st.markdown(
+                        f'<div class="er-muted">{s.direction.value}, {s.strength.value.lower()}</div>',
+                        unsafe_allow_html=True,
+                    )
+            else:
+                st.caption("No signals yet.")
+            page = get_page("signal_board")
+            if page is not None:
+                with st.container(key="cta-tertiary-brief-attention"):
+                    st.page_link(page, label="Open Signal Board →")
+
+    row2 = st.columns([1, 1])
+    with row2[0]:
+        with st.container(border=True, key="card-brief-catalysts"):
+            _panel_header("Approaching catalysts")
+            if upcoming:
+                for c in upcoming:
+                    st.markdown(
+                        f'<div class="er-row"><span class="er-mono">{fmt_date(c.date)}</span> — {c.title}</div>',
+                        unsafe_allow_html=True,
+                    )
+            else:
+                st.caption("No catalysts scheduled.")
+            page = get_page("themes")
+            if page is not None:
+                with st.container(key="cta-tertiary-brief-catalysts"):
+                    st.page_link(page, label="View full calendar in Themes →")
+
+    with row2[1]:
+        with st.container(border=True, key="card-brief-invalidate"):
+            _panel_header("What would change this read", ClaimType.UNCERTAINTY)
+            st.markdown(
+                '<div class="er-muted">This is a fixed demo snapshot — nothing updates it in this phase. '
+                "Phase 2 evidence ingestion would state the specific new data that changes the read above.</div>",
+                unsafe_allow_html=True,
+            )
+            page = get_page("methodology")
+            if page is not None:
+                with st.container(key="cta-tertiary-brief-invalidate"):
+                    st.page_link(page, label="Read Methodology →")

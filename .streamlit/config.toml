@@ -1,20 +1,20 @@
 [theme]
 base = "dark"
 
-primaryColor = "#58A6FF"
-backgroundColor = "#0A0A0A"
-secondaryBackgroundColor = "#161616"
-textColor = "#F2F2F2"
+primaryColor = "#38BDF8"
+backgroundColor = "#070B14"
+secondaryBackgroundColor = "#0D1424"
+textColor = "#F8FAFC"
 
-linkColor = "#58A6FF"
+linkColor = "#38BDF8"
 linkUnderline = false
 
-borderColor = "#2A2A2A"
-dataframeBorderColor = "#2A2A2A"
-dataframeHeaderBackgroundColor = "#161616"
+borderColor = "#26334A"
+dataframeBorderColor = "#26334A"
+dataframeHeaderBackgroundColor = "#0D1424"
 
-codeTextColor = "#58A6FF"
-codeBackgroundColor = "#161616"
+codeTextColor = "#38BDF8"
+codeBackgroundColor = "#0D1424"
 
 font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
 headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"
@@ -23,8 +23,8 @@ codeFont = "JetBrains Mono:https://fonts.googleapis.com/css2?family=JetBrains+Mo
 baseFontSize = 16
 headingFontWeights = [700, 600, 600, 600, 600, 600]
 
-baseRadius = "medium"
-buttonRadius = "full"
+baseRadius = "small"
+buttonRadius = "small"
 
 showWidgetBorder = true
 showSidebarBorder = true

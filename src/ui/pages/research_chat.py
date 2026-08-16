@@ -49,7 +49,7 @@ def _render_answer_card(answer: ChatAnswer) -> None:
 
 def render() -> None:
     ctx = get_repositories()
-    st.markdown("# Research Chat")
+    st.markdown('<div class="er-page-title">Research Chat</div>', unsafe_allow_html=True)
     st.write(
         "Ask a research question and get a structured, evidence-labeled answer. In this phase, "
         "answers are canned demo responses only — there is no live model behind this yet."

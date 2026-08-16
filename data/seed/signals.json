@@ -1,6 +1,6 @@
 [
   {
-    "id": "sig-001", "title": "Placeholder signal — AI Buildout compute demand", "theme_slug": "ai-buildout", "subtheme_slug": "compute-accelerators",
+    "id": "sig-001", "title": "Demo signal: AI Buildout compute demand", "theme_slug": "ai-buildout", "subtheme_slug": "compute-accelerators",
     "direction": "Improving", "strength": "Strong", "horizon": "Multi-quarter", "evidence_count": 2,
     "interpretation": "Demo placeholder interpretation text for a strengthening-signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -9,7 +9,7 @@
     "related_tickers": ["DEMO"], "last_updated": "2026-08-15T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-002", "title": "Placeholder signal — networking interconnect bottleneck", "theme_slug": "ai-buildout", "subtheme_slug": "networking-interconnect",
+    "id": "sig-002", "title": "Demo signal: Networking interconnect bottleneck", "theme_slug": "ai-buildout", "subtheme_slug": "networking-interconnect",
     "direction": "Mixed", "strength": "Moderate", "horizon": "Swing", "evidence_count": 1,
     "interpretation": "Demo placeholder interpretation text for a mixed-signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -18,7 +18,7 @@
     "related_tickers": [], "last_updated": "2026-08-13T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-003", "title": "Placeholder signal — humanoid production scaling", "theme_slug": "humanoids", "subtheme_slug": "integrators-oems",
+    "id": "sig-003", "title": "Demo signal: Humanoid production scaling", "theme_slug": "humanoids", "subtheme_slug": "integrators-oems",
     "direction": "Emerging", "strength": "Moderate", "horizon": "Multi-quarter", "evidence_count": 1,
     "interpretation": "Demo placeholder interpretation text for an emerging-signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -27,7 +27,7 @@
     "related_tickers": [], "last_updated": "2026-08-11T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-004", "title": "Placeholder signal — launch cadence acceleration", "theme_slug": "space", "subtheme_slug": "launch-systems",
+    "id": "sig-004", "title": "Demo signal: Launch cadence acceleration", "theme_slug": "space", "subtheme_slug": "launch-systems",
     "direction": "Improving", "strength": "Weak", "horizon": "Swing", "evidence_count": 1,
     "interpretation": "Demo placeholder interpretation text for a weak-strength signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -36,7 +36,7 @@
     "related_tickers": [], "last_updated": "2026-08-12T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-005", "title": "Placeholder signal — memory pricing inflection", "theme_slug": "memory", "subtheme_slug": "dram",
+    "id": "sig-005", "title": "Demo signal: Memory pricing inflection", "theme_slug": "memory", "subtheme_slug": "dram",
     "direction": "Improving", "strength": "Strong", "horizon": "Multi-week", "evidence_count": 2,
     "interpretation": "Demo placeholder interpretation text for a strong-signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -45,7 +45,7 @@
     "related_tickers": [], "last_updated": "2026-08-14T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-006", "title": "Placeholder signal — HBM allocation tightness", "theme_slug": "memory", "subtheme_slug": "hbm",
+    "id": "sig-006", "title": "Demo signal: HBM allocation tightness", "theme_slug": "memory", "subtheme_slug": "hbm",
     "direction": "Weakening", "strength": "Moderate", "horizon": "Multi-quarter", "evidence_count": 1,
     "interpretation": "Demo placeholder interpretation text for a weakening-signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -54,7 +54,7 @@
     "related_tickers": [], "last_updated": "2026-08-09T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-007", "title": "Placeholder signal — optical interconnect adoption curve", "theme_slug": "photonics", "subtheme_slug": "optical-transceivers",
+    "id": "sig-007", "title": "Demo signal: Optical interconnect adoption curve", "theme_slug": "photonics", "subtheme_slug": "optical-transceivers",
     "direction": "Improving", "strength": "Strong", "horizon": "Multi-quarter", "evidence_count": 2,
     "interpretation": "Demo placeholder interpretation text for a strong-signal card tied to the demo ticker's theme. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",
@@ -63,7 +63,7 @@
     "related_tickers": ["DEMO"], "last_updated": "2026-08-15T07:00:00+00:00", "is_demo": true
   },
   {
-    "id": "sig-008", "title": "Placeholder signal — silicon photonics yield uncertainty", "theme_slug": "photonics", "subtheme_slug": "silicon-photonics",
+    "id": "sig-008", "title": "Demo signal: Silicon photonics yield uncertainty", "theme_slug": "photonics", "subtheme_slug": "silicon-photonics",
     "direction": "Mixed", "strength": "Weak", "horizon": "Intraday", "evidence_count": 1,
     "interpretation": "Demo placeholder interpretation text for a mixed, short-horizon signal card. Not a real market read.",
     "contrary_evidence": "Demo placeholder contrary-evidence text — not real.",

@@ -35,7 +35,7 @@ def test_primary_page_renders_status_banner_and_footer(harness_file):
     at = AppTest.from_file(str(HARNESS_DIR / harness_file), default_timeout=10)
     at.run()
     all_html = " ".join(m.value for m in at.markdown)
-    assert "Demo data — no live market data connected" in all_html
+    assert "DEMO MODE — NO LIVE DATA" in all_html
     assert "does not provide investment advice" in all_html
     assert "EevaResearch AI v" in all_html
 
@@ -65,6 +65,15 @@ def test_overview_page_shows_demo_evidence_with_no_fabricated_source():
     all_markdown = " ".join(m.value for m in at.markdown)
     assert "EevaResearch Demo Data" in all_markdown
     assert "no external source" in all_markdown
+
+
+def test_sidebar_brand_header_renders_wordmark():
+    at = AppTest.from_file(str(HARNESS_DIR / "sidebar_brand_header.py"), default_timeout=10)
+    at.run()
+    assert not at.exception
+    all_html = " ".join(m.value for m in at.sidebar.markdown)
+    assert "EEVA" in all_html
+    assert "Research" in all_html
 
 
 def test_themes_page_all_five_themes_present():
