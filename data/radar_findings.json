@@ -1,6 +1,20 @@
 [
   {
     "niche": "Space",
+    "headline": "Lunar orbiter among upcoming NASA CLPS task orders",
+    "summary": "NASA plans to award three additional lunar missions this year through its commercial services program, including an orbiter designed to replace the Lunar Reconnaissance Orbiter.",
+    "source_url": "https://spacenews.com/lunar-orbiter-among-upcoming-nasa-clps-task-orders/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 15 Aug 2026 23:49:58 +0000",
+    "retrieved_at": "2026-08-16T00:43:59+00:00",
+    "tickers": [],
+    "relevance_reason": "Article is substantively about NASA lunar missions and spacecraft within the Space scope.",
+    "url_hash": "ad79625e8f323d07",
+    "id": "ad79625e8f323d07"
+  },
+  {
+    "niche": "Space",
     "headline": "Will the new moon race turn Earth's nearest neighbor into a dumping ground?",
     "summary": "Experts are calling for regulatory rules to prevent space companies from dumping spent rockets on the moon's surface as lunar activity increases.",
     "source_url": "https://www.space.com/astronomy/moon/will-the-new-moon-race-turn-earths-nearest-neighbor-into-a-dumping-ground",
