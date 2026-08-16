@@ -1,6 +1,27 @@
 [
   {
     "niche": "Space",
+    "headline": "U.S. defense agencies tap three companies for satellite disposal study",
+    "summary": "U.S. defense agencies have selected Firefly, D-Orbit, and Katalyst to conduct studies on how commercial operators could capture and remove aging spacecraft.",
+    "source_url": "https://spacenews.com/u-s-defense-agencies-tap-three-companies-for-satellite-disposal-study/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sun, 16 Aug 2026 10:50:00 +0000",
+    "retrieved_at": "2026-08-16T12:20:22+00:00",
+    "tickers": [
+      {
+        "ticker": "FFW",
+        "company_name": "Firefly Aerospace",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly addresses satellite disposal and spacecraft removal, a key space infrastructure topic.",
+    "url_hash": "9999c0fe69d68102",
+    "id": "9999c0fe69d68102"
+  },
+  {
+    "niche": "Space",
     "headline": "'This goes beyond showcasing technological soft power': China's new moon map signals bold space ambitions (video)",
     "summary": "China has released a new moon map with updated chronology and data about the far side, establishing its own cartographic standard for mapping the solar system.",
     "source_url": "https://www.space.com/astronomy/moon/this-goes-beyond-showcasing-technological-soft-power-chinas-new-moon-map-signals-bold-space-ambitions-video",
