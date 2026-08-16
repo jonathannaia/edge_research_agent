@@ -2,19 +2,23 @@
 
 Run with: streamlit run app.py
 
-Registers all pages (seven visible primary pages + one hidden ticker-detail
-template) via st.navigation, stores the Page objects in st.session_state so
-components like the Market Brief and Themes page can build st.page_link
-references to each other, and wraps every page with the shared chrome
-(status banner + footer) via src/ui/chrome.with_chrome.
+Registers Home + the seven other visible primary pages, plus the hidden
+ticker-detail template, via st.navigation(position="hidden") — Streamlit's
+own nav widget is fully suppressed; src/ui/chrome.render_top_nav is the
+custom replacement (see chrome.py's module docstring for why "hidden" was
+chosen over the native "top" position). Page objects are stored in
+st.session_state so any page can build a cross-page st.page_link.
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import streamlit as st
 
-from src.ui.chrome import render_brand_header, render_sidebar_status, with_chrome
+from src.ui.chrome import NAV_ITEMS, with_chrome
 from src.ui.pages import (
     capital_rotation,
+    home,
     methodology,
     overview,
     research_chat,
@@ -24,31 +28,55 @@ from src.ui.pages import (
     watchlists,
 )
 
-st.set_page_config(page_title="EevaResearch AI", layout="wide")
+_LOGO_PATH = Path(__file__).resolve().parent / "assets" / "eeva-logo.png"
 
-pages = {
-    # url_path is intentionally omitted: default=True always maps this page
-    # to the root path ("") regardless of url_path, per st.Page's own docs.
-    "overview": st.Page(with_chrome(overview.render), title="Overview", default=True),
-    "themes": st.Page(with_chrome(themes.render), title="Themes", url_path="themes"),
-    "research_chat": st.Page(with_chrome(research_chat.render), title="Research Chat", url_path="research-chat"),
-    "capital_rotation": st.Page(with_chrome(capital_rotation.render), title="Capital Rotation", url_path="capital-rotation"),
-    "signal_board": st.Page(with_chrome(signal_board.render), title="Signal Board", url_path="signal-board"),
-    "watchlists": st.Page(with_chrome(watchlists.render), title="Watchlists", url_path="watchlists"),
-    "methodology": st.Page(with_chrome(methodology.render), title="Methodology", url_path="methodology"),
-    "ticker_detail": st.Page(
-        with_chrome(ticker_detail.render), title="Ticker Detail", url_path="ticker", visibility="hidden"
-    ),
+st.set_page_config(
+    page_title="EevaResearch AI",
+    page_icon=str(_LOGO_PATH) if _LOGO_PATH.exists() else None,
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+_RENDER_FNS = {
+    "home": home.render,
+    "overview": overview.render,
+    "themes": themes.render,
+    "research_chat": research_chat.render,
+    "capital_rotation": capital_rotation.render,
+    "signal_board": signal_board.render,
+    "watchlists": watchlists.render,
+    "methodology": methodology.render,
 }
 
-# Set before st.navigation runs the selected page's body, so any page can
-# build a cross-page st.page_link from this same dict (see e.g.
-# src/ui/components/market_brief.py's _get_page helper).
+_URL_PATHS = {
+    "overview": "overview",
+    "themes": "themes",
+    "research_chat": "research-chat",
+    "capital_rotation": "capital-rotation",
+    "signal_board": "signal-board",
+    "watchlists": "watchlists",
+    "methodology": "methodology",
+}
+
+pages = {}
+for key, label in NAV_ITEMS:
+    is_home = key == "home"
+    pages[key] = st.Page(
+        with_chrome(_RENDER_FNS[key], key),
+        title=label,
+        # default=True always maps a page to the root path regardless of
+        # url_path, per st.Page's own docs — Home is the new landing page.
+        default=is_home,
+        url_path=_URL_PATHS.get(key),
+    )
+pages["ticker_detail"] = st.Page(
+    with_chrome(ticker_detail.render, "ticker_detail"), title="Ticker Detail", url_path="ticker", visibility="hidden"
+)
+
+# Each page's nav_key is already baked into its with_chrome(...) closure
+# above, so render_top_nav always gets the right active key without
+# needing to track "current page" separately here.
 st.session_state["_pages"] = pages
 
-with st.sidebar:
-    render_brand_header()
-    render_sidebar_status()
-
-selected = st.navigation(list(pages.values()))
+selected = st.navigation(list(pages.values()), position="hidden")
 selected.run()

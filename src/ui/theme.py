@@ -35,7 +35,7 @@ _CSS = """
 
 /* ---------- layout ---------- */
 .block-container {
-    max-width: 980px;
+    max-width: 1320px;
     padding-top: 1.5rem;
     padding-bottom: 3rem;
 }
@@ -148,132 +148,151 @@ h1, h2, h3 { font-family: var(--er-font-display); letter-spacing: -0.01em; }
 .er-dir-dot.er-dir-mixed { background: var(--er-caution); }
 .er-dir-dot.er-dir-emerging { background: var(--er-accent); }
 
-/* ---------- sidebar brand shell ---------- */
-[data-testid="stSidebar"] {
-    background: var(--er-surface);
-    border-right: 1px solid var(--er-border);
-    position: relative;
-}
-/* st.navigation's nav block is always inserted before any custom
-   `with st.sidebar:` content in the DOM, regardless of call order in the
-   script (confirmed empirically) — reordered visually via flex order. */
-[data-testid="stSidebarContent"] {
+/* ---------- top navigation header ----------
+   Round 3: replaces the sidebar entirely. st.navigation(position="hidden")
+   suppresses Streamlit's own nav widget; everything below is fully custom,
+   built from real st.page_link controls (see chrome.py render_top_nav). */
+.er-topnav {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--er-border);
 }
-[data-testid="stSidebarHeader"] { order: 0; }
-[data-testid="stSidebarUserContent"] { order: 1; padding-bottom: 4.5rem; }
-[data-testid="stSidebarNav"] { order: 2; }
-
-.er-brand {
+.er-topnav-brand {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    padding: 0.25rem 0 0.2rem 0;
 }
-.er-brand-mark {
-    width: 26px;
-    height: 26px;
-    flex-shrink: 0;
+.er-logo-link {
+    display: inline-flex;
+    line-height: 0;
+    border-radius: 4px;
+    transition: filter 0.15s ease, transform 0.15s ease;
+}
+.er-logo-link:hover {
+    filter: brightness(1.25) drop-shadow(0 0 6px rgba(199, 214, 227, 0.35));
+    transform: scale(1.04);
+}
+.er-logo-link:focus-visible {
+    outline: 2px solid var(--er-accent);
+    outline-offset: 3px;
+}
+.er-logo-mark {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+}
+.er-logo-mark img, .er-logo-mark svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     color: var(--er-white);
-    border: 1px solid var(--er-border);
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
 }
-.er-brand-mark svg { width: 100%; height: 100%; }
 .er-brand-word {
     font-family: var(--er-font-display);
     line-height: 1.1;
 }
 .er-brand-word .er-brand-primary {
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: var(--er-white);
-    letter-spacing: 0.01em;
+    letter-spacing: 0.02em;
 }
 .er-brand-word .er-brand-secondary {
     display: block;
     font-family: var(--er-font-body);
     font-weight: 500;
-    font-size: 0.62rem;
-    letter-spacing: 0.16em;
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
     color: var(--er-text-muted);
     text-transform: uppercase;
-}
-.er-brand-subtitle {
-    font-family: var(--er-font-body);
-    font-size: 0.62rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--er-text-muted);
-    padding: 0 0 1rem 0;
-    border-bottom: 1px solid var(--er-border);
-    margin-bottom: 0.5rem;
 }
 
-/* ---------- sidebar nav active state ---------- */
-[data-testid="stSidebarNavLink"] {
-    border-radius: 6px !important;
-    transition: background-color 0.15s ease, color 0.15s ease;
+/* Desktop tab row visible by default; mobile popover menu hidden by
+   default. Swapped at the breakpoint below — both always render, CSS
+   alone decides which is visible, so there's no viewport-detection JS. */
+[class*="st-key-nav-desktop-row"] { display: block; }
+[class*="st-key-nav-mobile-menu"] { display: none; }
+
+[class*="st-key-navtab-"] {
+    border-radius: 6px;
+    text-align: center;
+    transition: background-color 0.15s ease;
 }
-[data-testid="stSidebarNavLink"]:hover {
-    background-color: var(--er-surface-hover) !important;
+[class*="st-key-navtab-"] [data-testid="stPageLink"] a {
+    justify-content: center;
+    color: var(--er-text-muted) !important;
+    border-radius: 6px;
+    padding: 0.3rem 0.3rem !important;
+    transition: color 0.15s ease, background-color 0.15s ease;
 }
-[data-testid="stSidebarNavLink"][aria-current="page"] {
-    background-color: rgba(245, 245, 245, 0.06) !important;
-    box-shadow: inset 2px 0 0 var(--er-white), 0 0 12px rgba(199, 214, 227, 0.12);
+[class*="st-key-navtab-"] [data-testid="stPageLink"] a p {
+    font-size: 0.74rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-[data-testid="stSidebarNavLink"][aria-current="page"] p {
+[class*="st-key-navtab-"] [data-testid="stPageLink"] a:hover {
     color: var(--er-white) !important;
-    font-weight: 600 !important;
+    background-color: var(--er-surface-hover);
+}
+[class*="st-key-navtab-"] [data-testid="stPageLink"] a:focus-visible {
+    outline: 2px solid var(--er-accent) !important;
+    outline-offset: 2px;
 }
 
-/* ---------- sidebar status, pinned to the bottom of the sidebar ----------
-   Streamlit wraps every st.markdown call in its own `stElementContainer`,
-   which itself defaults to `position: relative` (confirmed against the
-   running app — likely for its own hover-toolbar positioning). That
-   became the nearest positioned ancestor instead of stSidebar, so the
-   status block was pinning to the bottom of its own one-line wrapper
-   instead of the full sidebar. Neutralizing position on just that one
-   wrapper lets the absolute positioning bubble up to stSidebar
-   (position: relative, set above) correctly. */
-.stElementContainer:has(.er-sidebar-status) {
-    position: static !important;
+.er-topnav-status {
+    text-align: right;
 }
-.er-sidebar-status {
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    right: 1rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid var(--er-border);
-}
-.er-sidebar-status .er-status-line {
+.er-topnav-status .er-status-line {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 0.4rem;
     font-family: var(--er-font-mono);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 500;
     color: var(--er-caution);
 }
-.er-sidebar-status .er-dot {
+.er-topnav-status .er-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--er-caution);
     display: inline-block;
 }
-.er-sidebar-status .er-status-sub {
+.er-topnav-status .er-status-sub {
     font-family: var(--er-font-body);
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--er-text-muted);
-    margin-top: 0.15rem;
-    margin-left: 0.95rem;
+}
+
+/* Eight labels (including "Capital Rotation", "Research Chat") need real
+   room — below this, the compact popover menu takes over rather than
+   cramming/wrapping tabs. This covers typical laptop widths too, not
+   just phones; that's deliberate, matching "if all eight links cannot
+   fit horizontally, use a stable compact menu." */
+@media (max-width: 1400px) {
+    [class*="st-key-nav-desktop-row"] { display: none; }
+    [class*="st-key-nav-mobile-menu"] { display: block; }
+    .er-topnav { flex-wrap: wrap; row-gap: 0.75rem; }
+}
+
+/* ---------- page-content entrance animation ----------
+   Applies on every render of st.container(key="page-content") — including
+   non-navigation reruns (a filter change, a chat submission), since
+   Streamlit has no client-side-only "page just switched" signal to hook.
+   Deliberately accepted per spec ("a consistent per-page entrance
+   animation that runs safely on each render"). */
+@media (prefers-reduced-motion: no-preference) {
+    [class*="st-key-page-content"] {
+        animation: er-page-enter 200ms ease-out;
+    }
+}
+@keyframes er-page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* ---------- CTA buttons ----------
@@ -411,7 +430,7 @@ h1, h2, h3 { font-family: var(--er-font-display); letter-spacing: -0.01em; }
     z-index: 0;
     pointer-events: none;
 }
-.er-hero-watermark svg { width: 100%; height: 100%; }
+.er-hero-watermark svg, .er-hero-watermark img { width: 100%; height: 100%; object-fit: contain; }
 .er-hero-content { position: relative; z-index: 1; }
 </style>
 """

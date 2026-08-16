@@ -10,9 +10,12 @@ from pathlib import Path
 import pytest
 from streamlit.testing.v1 import AppTest
 
+from src.ui.chrome import NAV_ITEMS
+
 HARNESS_DIR = Path(__file__).parent / "apptest_pages"
 
 PRIMARY_PAGES = [
+    "home_page.py",
     "overview_page.py",
     "themes_page.py",
     "research_chat_page.py",
@@ -71,15 +74,21 @@ def test_ticker_detail_shows_demo_evidence_with_no_fabricated_source():
     assert "no external source" in all_markdown
 
 
-def test_sidebar_brand_header_and_status_render():
-    at = AppTest.from_file(str(HARNESS_DIR / "sidebar_brand_header.py"), default_timeout=10)
+def test_top_nav_header_renders_logo_wordmark_tabs_and_status():
+    at = AppTest.from_file(str(HARNESS_DIR / "top_nav_header.py"), default_timeout=10)
     at.run()
     assert not at.exception
-    all_html = " ".join(m.value for m in at.sidebar.markdown)
-    assert "EEVA" in all_html
-    assert "Research" in all_html
+    all_html = " ".join(m.value for m in at.markdown)
+    assert "EEVARESEARCH" in all_html
+    assert "Market Intelligence" in all_html
     assert "DEMO MODE" in all_html
-    assert "No live data connected" in all_html
+    assert "No live data" in all_html
+    # Both the desktop tab row and the mobile popover render all 8 links —
+    # CSS (not Python) decides which is visible at a given viewport width,
+    # so each label appears twice.
+    tab_link_labels = {pl.label for pl in at.get("page_link")}
+    expected = {label for _, label in NAV_ITEMS}
+    assert tab_link_labels == expected, f"missing or extra nav tabs: {expected.symmetric_difference(tab_link_labels)}"
 
 
 def test_themes_page_all_five_themes_present():
