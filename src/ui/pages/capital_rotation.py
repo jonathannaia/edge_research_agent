@@ -14,6 +14,7 @@ from src.logic.theme_metrics import average_breadth, leaders_and_laggards, rank_
 from src.models.models import ClaimType
 from src.ui.chrome import get_page
 from src.ui.components.badges import claim_type_badge
+from src.ui.components.cards import catalyst_timeline_row
 from src.ui.components.charts import rotation_bar_chart
 from src.ui.components.empty_state import empty_state
 from src.ui.components.section import section_header
@@ -114,6 +115,14 @@ def render() -> None:
         "This section is reserved for delayed, informational positioning data (e.g. short interest) "
         "once a real source is wired up — never real-time, and never a trading signal on its own.",
     )
+
+    section_header("Catalyst timeline", "Full upcoming catalyst calendar across all five themes — moved here from Overview.")
+    upcoming = ctx.catalyst_repository.get_upcoming_catalysts(limit=10)
+    if not upcoming:
+        empty_state("No catalysts scheduled.")
+    else:
+        for c in upcoming:
+            catalyst_timeline_row(c)
 
     section_header("Catalysts in leading/lagging themes")
     if leaders and leaders[0].theme_slug in themes:

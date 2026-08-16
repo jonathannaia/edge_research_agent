@@ -57,7 +57,7 @@ _RAIL_COLOR_VAR = {
     "Improving": "var(--er-positive)",
     "Weakening": "var(--er-negative)",
     "Mixed": "var(--er-caution)",
-    "Emerging": "var(--er-violet)",
+    "Emerging": "var(--er-accent)",
 }
 
 
@@ -156,6 +156,32 @@ def signal_card(signal: Signal, theme_page=None) -> None:
         if theme_page is not None:
             with st.container(key=f"cta-tertiary-{signal.id}"):
                 st.page_link(theme_page, label="Open theme →")
+
+
+def compact_signal_row(signal: Signal) -> None:
+    """A slimmer signal presentation for Overview's top-3 — direction,
+    strength, horizon, and a one-line interpretation only. No expander, no
+    evidence-count/related-tickers/CTA — that detail lives on the full
+    signal_card, which is Signal Board's job now, not Overview's."""
+    key = f"card-compact-signal-{signal.id}"
+    rail_color = _RAIL_COLOR_VAR.get(signal.direction.value, "var(--er-text-muted)")
+    st.markdown(f'<style>.st-key-{key} {{ border-left: 3px solid {rail_color} !important; }}</style>', unsafe_allow_html=True)
+
+    with st.container(border=True, key=key):
+        st.markdown(f'<div class="er-card-title" style="font-size:0.95rem;">{signal.title}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="er-muted" style="margin: 0.2rem 0;">
+                {direction_dot_html(signal.direction)} · <span class="er-mono">{signal.strength.value}</span>
+                · <span class="er-mono">{signal.horizon.value}</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f'<div class="er-muted" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{signal.interpretation}</div>',
+            unsafe_allow_html=True,
+        )
 
 
 def catalyst_timeline_row(catalyst: Catalyst) -> None:

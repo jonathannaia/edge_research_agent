@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from src.ui.chrome import render_brand_header, with_chrome
+from src.ui.chrome import render_brand_header, render_sidebar_status, with_chrome
 from src.ui.pages import (
     capital_rotation,
     methodology,
@@ -48,6 +48,7 @@ st.session_state["_pages"] = pages
 
 with st.sidebar:
     render_brand_header()
+    render_sidebar_status()
 
 selected = st.navigation(list(pages.values()))
 selected.run()

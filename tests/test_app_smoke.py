@@ -31,11 +31,12 @@ def test_primary_page_renders_without_exception(harness_file):
 
 
 @pytest.mark.parametrize("harness_file", PRIMARY_PAGES)
-def test_primary_page_renders_status_banner_and_footer(harness_file):
+def test_primary_page_renders_footer(harness_file):
+    # Demo status now lives in the sidebar (see test_sidebar_status_renders),
+    # not per-page — with_chrome only guarantees the footer.
     at = AppTest.from_file(str(HARNESS_DIR / harness_file), default_timeout=10)
     at.run()
     all_html = " ".join(m.value for m in at.markdown)
-    assert "DEMO MODE — NO LIVE DATA" in all_html
     assert "does not provide investment advice" in all_html
     assert "EevaResearch AI v" in all_html
 
@@ -58,8 +59,11 @@ def test_ticker_detail_page_unknown_symbol_shows_empty_state_not_exception():
     assert "No ticker found" in infos
 
 
-def test_overview_page_shows_demo_evidence_with_no_fabricated_source():
-    at = AppTest.from_file(str(HARNESS_DIR / "overview_page.py"), default_timeout=10)
+def test_ticker_detail_shows_demo_evidence_with_no_fabricated_source():
+    # Overview no longer renders an evidence feed (round-2 IA change) — the
+    # evidence component/data is preserved and still used on Ticker Detail.
+    at = AppTest.from_file(str(HARNESS_DIR / "ticker_detail_page.py"), default_timeout=10)
+    at.query_params["symbol"] = "DEMO"
     at.run()
     assert not at.exception
     all_markdown = " ".join(m.value for m in at.markdown)
@@ -67,13 +71,15 @@ def test_overview_page_shows_demo_evidence_with_no_fabricated_source():
     assert "no external source" in all_markdown
 
 
-def test_sidebar_brand_header_renders_wordmark():
+def test_sidebar_brand_header_and_status_render():
     at = AppTest.from_file(str(HARNESS_DIR / "sidebar_brand_header.py"), default_timeout=10)
     at.run()
     assert not at.exception
     all_html = " ".join(m.value for m in at.sidebar.markdown)
     assert "EEVA" in all_html
     assert "Research" in all_html
+    assert "DEMO MODE" in all_html
+    assert "No live data connected" in all_html
 
 
 def test_themes_page_all_five_themes_present():

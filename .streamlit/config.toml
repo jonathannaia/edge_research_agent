@@ -1,20 +1,20 @@
 [theme]
 base = "dark"
 
-primaryColor = "#38BDF8"
-backgroundColor = "#070B14"
-secondaryBackgroundColor = "#0D1424"
-textColor = "#F8FAFC"
+primaryColor = "#C7D6E3"
+backgroundColor = "#050505"
+secondaryBackgroundColor = "#0B0B0B"
+textColor = "#F5F5F5"
 
-linkColor = "#38BDF8"
+linkColor = "#C7D6E3"
 linkUnderline = false
 
-borderColor = "#26334A"
-dataframeBorderColor = "#26334A"
-dataframeHeaderBackgroundColor = "#0D1424"
+borderColor = "#2F3336"
+dataframeBorderColor = "#2F3336"
+dataframeHeaderBackgroundColor = "#0B0B0B"
 
-codeTextColor = "#38BDF8"
-codeBackgroundColor = "#0D1424"
+codeTextColor = "#C7D6E3"
+codeBackgroundColor = "#0B0B0B"
 
 font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
 headingFont = "Space Grotesk:https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap"

@@ -9,19 +9,19 @@ import streamlit as st
 from src.models.models import ClaimType, Direction, EvidenceItem, Strength
 
 _CLAIM_TYPE_COLOR = {
-    ClaimType.FACT: "blue",
-    ClaimType.INTERPRETATION: "violet",
+    ClaimType.FACT: "gray",
+    ClaimType.INTERPRETATION: "primary",
     ClaimType.INFERENCE: "orange",
     ClaimType.UNCERTAINTY: "gray",
 }
 
-_FRESHNESS_COLOR = {"Fresh": "green", "Aging": "yellow", "Stale": "gray", "Unknown": "gray"}
+_FRESHNESS_COLOR = {"Fresh": "green", "Aging": "orange", "Stale": "gray", "Unknown": "gray"}
 
 _DIRECTION_COLOR = {
     Direction.IMPROVING: "green",
     Direction.WEAKENING: "red",
-    Direction.EMERGING: "blue",
-    Direction.MIXED: "yellow",
+    Direction.EMERGING: "primary",
+    Direction.MIXED: "orange",
 }
 
 _STRENGTH_COLOR = {Strength.STRONG: "green", Strength.MODERATE: "yellow", Strength.WEAK: "gray"}

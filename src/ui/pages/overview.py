@@ -1,36 +1,44 @@
-"""Overview — the market command center. Opens with a hero over an ambient
-background, the compact Market Pulse strip, then the editorial Market
-Brief, then structured theme/leaders/catalysts/rotation/signal/evidence
-sections. Every number on this page comes from data/seed/ via AppContext,
-not hardcoded here.
+"""Overview — a short executive landing page (round 2 IA), not a page
+holding every feature. Keeps only: hero, Market Pulse, Today's Read,
+top-3 signals, next-few catalysts, and quick-action links. Full theme
+detail lives on Themes; the full rotation chart/leaders/breadth/catalyst
+timeline live on Capital Rotation; the full signal feed lives on Signal
+Board. The evidence feed is intentionally not shown here — it's still
+used on Ticker Detail and untouched in the data layer, just not
+previewed on this page in this pass.
 """
 from __future__ import annotations
 
 import streamlit as st
 
 from src.data_access.container import get_repositories
-from src.logic.theme_metrics import rank_by_performance, strongest_signals
-from src.ui.chrome import get_page
-from src.ui.components.cards import catalyst_timeline_row, evidence_row, signal_card, theme_card
-from src.ui.components.charts import rotation_bar_chart
-from src.ui.components.market_brief import render_market_brief
+from src.logic.theme_metrics import strongest_signals
+from src.ui.chrome import brand_mark_svg, get_page
+from src.ui.components.cards import catalyst_timeline_row, compact_signal_row
+from src.ui.components.market_brief import render_todays_read
 from src.ui.components.market_pulse import render_market_pulse
 from src.ui.components.section import section_header
-from src.ui.components.tables import leaderboard_table
 
 
 def render() -> None:
     ctx = get_repositories()
-    themes = ctx.theme_repository.get_all_themes()
-    theme_by_slug = {t.slug: t for t in themes}
-    metrics = {m.theme_slug: m for m in ctx.market_data_provider.get_rotation_metrics()}
-    theme_names = ", ".join(t.name for t in themes)
+    theme_names = ", ".join(t.name for t in ctx.theme_repository.get_all_themes())
 
-    st.markdown('<div class="er-hero-wrap"><div class="er-hero-bg"></div><div class="er-hero-content">', unsafe_allow_html=True)
-    st.markdown('<div class="er-eyebrow">MARKET INTELLIGENCE · DEMO ENVIRONMENT</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="er-hero-wrap"><div class="er-hero-watermark">{brand_mark_svg()}</div>'
+        '<svg class="er-hero-signal-svg" viewBox="0 0 800 260" preserveAspectRatio="none">'
+        '<path class="er-signal-path" d="M-50,190 C150,150 250,230 450,170 S650,90 850,130"/>'
+        '<path class="er-signal-path er-signal-path-2" d="M-50,70 C200,120 350,30 550,90 S750,150 850,100"/>'
+        '<circle class="er-signal-node" cx="120" cy="170" r="2.5"/>'
+        '<circle class="er-signal-node er-signal-node-2" cx="420" cy="90" r="2"/>'
+        '<circle class="er-signal-node er-signal-node-3" cx="620" cy="120" r="2.5"/>'
+        '</svg><div class="er-hero-content">',
+        unsafe_allow_html=True,
+    )
+    st.markdown('<div class="er-eyebrow">EevaResearch · Market Intelligence</div>', unsafe_allow_html=True)
     st.markdown('<div class="er-hero-title">EevaResearch</div>', unsafe_allow_html=True)
     st.markdown(
-        '<div class="er-hero-sub">Follow the infrastructure, bottlenecks, and capital flows behind the AI buildout.</div>',
+        '<div class="er-hero-sub">Track the infrastructure, bottlenecks, and capital flows behind the AI buildout.</div>',
         unsafe_allow_html=True,
     )
     st.markdown(f'<div class="er-muted" style="margin-bottom:1.25rem;">Tracking {theme_names}.</div>', unsafe_allow_html=True)
@@ -40,12 +48,12 @@ def render() -> None:
         page = get_page("themes")
         if page is not None:
             with st.container(key="cta-primary-hero-themes"):
-                st.page_link(page, label="Explore themes →", width="stretch")
+                st.page_link(page, label="Explore themes", width="stretch")
     with cta_cols[1]:
         page = get_page("research_chat")
         if page is not None:
             with st.container(key="cta-secondary-hero-chat"):
-                st.page_link(page, label="Ask research chat →", width="stretch")
+                st.page_link(page, label="Ask research chat", width="stretch")
     with cta_cols[2]:
         page = get_page("capital_rotation")
         if page is not None:
@@ -56,55 +64,33 @@ def render() -> None:
     render_market_pulse(ctx)
 
     st.divider()
-    render_market_brief(ctx)
+    render_todays_read(ctx)
 
     st.divider()
-    section_header("Theme performance", "Demo data — placeholder relative-performance and breadth figures.")
-    for i in range(0, len(themes), 2):
-        cols = st.columns(2)
-        for col, theme in zip(cols, themes[i : i + 2]):
-            with col:
-                theme_card(theme, metrics.get(theme.slug), page=get_page("themes"))
+    section_header("Top signals")
+    for s in strongest_signals(ctx.signal_repository.get_all_signals(), limit=3):
+        compact_signal_row(s)
 
     st.divider()
-    section_header("Leaders and laggards", "Ranked by demo relative-performance figure, highest first.")
-    ranked = rank_by_performance(list(metrics.values()))
-    leaderboard_table(ranked, theme_by_slug)
-
-    st.divider()
-    section_header("Upcoming catalysts", "Demo placeholder catalyst calendar across all five themes.")
-    upcoming = ctx.catalyst_repository.get_upcoming_catalysts(limit=6)
+    section_header("Next catalysts")
+    upcoming = ctx.catalyst_repository.get_upcoming_catalysts(limit=3)
     if not upcoming:
-        st.info("No catalysts loaded.")
+        st.caption("No catalysts scheduled.")
     else:
         for c in upcoming:
             catalyst_timeline_row(c)
 
     st.divider()
-    section_header("Capital Rotation preview", "Relative performance by theme — demo data.")
-    st.altair_chart(rotation_bar_chart(ranked, theme_by_slug), width="stretch")
-    if ranked and ranked[0].theme_slug in theme_by_slug:
-        st.markdown(
-            f'<div class="er-muted">Rotation read: <strong>{theme_by_slug[ranked[0].theme_slug].name}</strong> leads this '
-            f'demo snapshot; <strong>{theme_by_slug[ranked[-1].theme_slug].name}</strong> is weakest. '
-            "See Capital Rotation for the full breakdown.</div>",
-            unsafe_allow_html=True,
-        )
-    page = get_page("capital_rotation")
-    if page is not None:
-        with st.container(key="cta-tertiary-overview-rotation"):
-            st.page_link(page, label="View full Capital Rotation page →")
-
-    st.divider()
-    section_header("Signal Board preview", "Strongest current demo signals.")
-    for s in strongest_signals(ctx.signal_repository.get_all_signals(), limit=2):
-        signal_card(s, theme_page=get_page("themes"))
-    page = get_page("signal_board")
-    if page is not None:
-        with st.container(key="cta-tertiary-overview-signals"):
-            st.page_link(page, label="View full Signal Board →")
-
-    st.divider()
-    section_header("Recently updated research", "Latest demo evidence across all themes.")
-    for ev in ctx.evidence_repository.get_recent_evidence(limit=3):
-        evidence_row(ev)
+    quick_links = [
+        ("Themes", "themes"),
+        ("Research Chat", "research_chat"),
+        ("Capital Rotation", "capital_rotation"),
+        ("Signal Board", "signal_board"),
+    ]
+    link_cols = st.columns(len(quick_links))
+    for col, (label, key) in zip(link_cols, quick_links):
+        page = get_page(key)
+        with col:
+            if page is not None:
+                with st.container(key=f"cta-tertiary-quicklink-{key}"):
+                    st.page_link(page, label=f"{label} →")

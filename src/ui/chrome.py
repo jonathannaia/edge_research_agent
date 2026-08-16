@@ -1,8 +1,13 @@
-"""Global chrome: the sidebar brand header, the sticky demo-status pill, and
-the footer. `with_chrome` applies the status pill + footer around every page
-body when app.py registers its st.Page objects; `render_brand_header` is
-called once by app.py inside `with st.sidebar:`, above st.navigation's own
-auto-rendered nav links.
+"""Global chrome: the sidebar brand header + status block, and the
+footer. `with_chrome` applies the footer around every page body when
+app.py registers its st.Page objects; `render_brand_header` and
+`render_sidebar_status` are both called once by app.py inside
+`with st.sidebar:`, above st.navigation's own auto-rendered nav links.
+
+Round 2: the demo-status indicator moved from a sticky main-content pill
+to a compact block pinned to the bottom of the sidebar (via
+`.er-sidebar-status`'s absolute positioning in theme.py) — one status
+location, not duplicated across the page body.
 """
 from __future__ import annotations
 
@@ -10,17 +15,8 @@ from typing import Callable
 
 import streamlit as st
 
-from src.config.settings import APP_NAME, APP_VERSION, demo_last_updated_label
+from src.config.settings import APP_NAME, APP_VERSION
 from src.ui.theme import inject_global_css
-
-def get_page(name: str):
-    """Looks up a registered st.Page by the key app.py used when building
-    its `pages` dict (see app.py). Returns None if not found — callers
-    render no link rather than a broken one, which also makes this safe
-    to call from an AppTest harness that doesn't set up app.py's full
-    session state."""
-    return st.session_state.get("_pages", {}).get(name)
-
 
 METHODOLOGY_STATEMENT = (
     "EevaResearch separates source-backed facts, market interpretation, model "
@@ -28,31 +24,50 @@ METHODOLOGY_STATEMENT = (
     "does not provide investment advice."
 )
 
+# Abstract, minimal, monochrome "E" / signal mark — three bars of
+# decreasing width (an E without its spine) plus a small dot suggesting a
+# signal ping. Pure inline SVG, no image asset, no emoji.
+_BRAND_MARK_SVG = """
+<svg viewBox="0 0 24 24" fill="none">
+    <rect x="3" y="4" width="18" height="2.2" rx="1.1" fill="currentColor"/>
+    <rect x="3" y="11" width="13" height="2.2" rx="1.1" fill="currentColor"/>
+    <rect x="3" y="18" width="18" height="2.2" rx="1.1" fill="currentColor"/>
+    <circle cx="20" cy="12.1" r="1.6" fill="currentColor"/>
+</svg>
+"""
+
+
+def brand_mark_svg() -> str:
+    """Exposed so the hero watermark (overview.py) can reuse the exact
+    same mark, oversized and near-transparent."""
+    return _BRAND_MARK_SVG
+
 
 def render_brand_header() -> None:
-    """The EEVA / RESEARCH wordmark + a small CSS-drawn node/signal mark
-    (three concentric shapes, no image asset, no emoji), rendered at the
-    top of the sidebar."""
+    """The EEVA / RESEARCH wordmark, the abstract mark, and the
+    'AI BUILDOUT MARKET INTELLIGENCE' subtitle line, rendered at the top
+    of the sidebar."""
     st.markdown(
-        """
+        f"""
         <div class="er-brand">
-            <div class="er-brand-mark"><span></span><span></span><span></span></div>
+            <div class="er-brand-mark">{_BRAND_MARK_SVG}</div>
             <div class="er-brand-word">
                 <span class="er-brand-primary">EEVA</span>
                 <span class="er-brand-secondary">Research</span>
             </div>
         </div>
+        <div class="er-brand-subtitle">AI Buildout Market Intelligence</div>
         """,
         unsafe_allow_html=True,
     )
 
 
-def render_status_banner() -> None:
+def render_sidebar_status() -> None:
     st.markdown(
-        f"""
-        <div class="er-status-row">
-            <span class="er-status-pill"><span class="er-dot"></span>DEMO MODE — NO LIVE DATA</span>
-            <span class="er-status-meta">Last updated: {demo_last_updated_label()}</span>
+        """
+        <div class="er-sidebar-status">
+            <div class="er-status-line"><span class="er-dot"></span>DEMO MODE</div>
+            <div class="er-status-sub">No live data connected</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -74,10 +89,15 @@ def render_footer() -> None:
     )
 
 
+def get_page(name: str):
+    """Looks up a registered st.Page by the key app.py used when building
+    its `pages` dict (see app.py). Returns None if not found."""
+    return st.session_state.get("_pages", {}).get(name)
+
+
 def with_chrome(page_fn: Callable[[], None]) -> Callable[[], None]:
     def _wrapped() -> None:
         inject_global_css()
-        render_status_banner()
         page_fn()
         render_footer()
 
