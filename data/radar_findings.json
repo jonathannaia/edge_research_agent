@@ -1,6 +1,65 @@
 [
   {
     "niche": "Space",
+    "headline": "Artemis II pilot thanks NASA for letting him fly Orion by hand: 'I'm still blown away by that trust'",
+    "summary": "The Artemis II crew publicly thanked NASA and its contractors at a public event in August 2026, with the pilot expressing appreciation for being allowed to manually pilot the Orion spacecraft.",
+    "source_url": "https://www.space.com/space-exploration/artemis/artemis-ii-pilot-thanks-nasa-for-letting-him-fly-orion-by-hand-im-still-blown-away-by-that-trust",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sun, 16 Aug 2026 13:00:00 +0000",
+    "retrieved_at": "2026-08-16T14:14:42+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses Artemis II crewed lunar mission program and NASA's spacecraft development",
+    "url_hash": "4d787618f505d417",
+    "id": "4d787618f505d417"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "The CPU Comeback Is Upon Us",
+    "summary": "AWS has mandated CPU conservation due to server capacity strain from AI workloads, while agentic AI systems are driving a spike in CPU demand alongside GPU infrastructure. Intel has sold out of server CPUs through year-end, AMD has doubled its server CPU forecast, and companies including Nvidia, Arm, and Qualcomm are launching new CPUs designed for agentic AI workloads.",
+    "source_url": "https://spectrum.ieee.org/ai-cpu-comeback",
+    "source_name": "IEEE Spectrum — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sun, 16 Aug 2026 13:00:01 +0000",
+    "retrieved_at": "2026-08-16T14:14:35+00:00",
+    "tickers": [
+      {
+        "ticker": "AMZN",
+        "company_name": "Amazon Web Services (Amazon)",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "INTC",
+        "company_name": "Intel",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "AMD",
+        "company_name": "Advanced Micro Devices",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "QCOM",
+        "company_name": "Qualcomm",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Article substantively discusses CPU demand surge driven by agentic AI workloads in data centers, a core component of AI infrastructure buildout.",
+    "url_hash": "fbd5c7f2369a30b9",
+    "id": "fbd5c7f2369a30b9"
+  },
+  {
+    "niche": "Space",
     "headline": "U.S. defense agencies tap three companies for satellite disposal study",
     "summary": "U.S. defense agencies have selected Firefly, D-Orbit, and Katalyst to conduct studies on how commercial operators could capture and remove aging spacecraft.",
     "source_url": "https://spacenews.com/u-s-defense-agencies-tap-three-companies-for-satellite-disposal-study/",
