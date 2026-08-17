@@ -1,6 +1,62 @@
 [
   {
     "niche": "Space",
+    "headline": "ULA names Peller as new CEO",
+    "summary": "United Launch Alliance has appointed Mark Peller, a long-serving manager and executive at the company, as its new chief executive.",
+    "source_url": "https://spacenews.com/ula-names-peller-as-new-ceo/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 16:43:51 +0000",
+    "retrieved_at": "2026-08-17T18:25:40+00:00",
+    "tickers": [],
+    "relevance_reason": "ULA is a major space launch provider, and CEO succession is substantively material to the space industry scope.",
+    "url_hash": "9d41e09846f72758",
+    "id": "9d41e09846f72758"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Is Shipyard Welding the Right First Job for Humanoid Robots?",
+    "summary": "Persona AI is developing a humanoid robot focused on shipyard welding, targeting long linear welds required in large-scale ship construction through partnerships with HD Hyundai and POSCO in Korea. The company is positioning tool-using humanoids for skilled trades where labor shortages exist, rather than competing in lower-margin general-purpose robot markets.",
+    "source_url": "https://spectrum.ieee.org/persona-ai-humanoid-robot-welding",
+    "source_name": "IEEE Spectrum — Robotics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 15:33:42 +0000",
+    "retrieved_at": "2026-08-17T18:25:34+00:00",
+    "tickers": [
+      {
+        "ticker": "000850",
+        "company_name": "HD Hyundai",
+        "jurisdiction": "South Korea",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Substantively covers humanoid robot development and deployment, specifically detailing Persona AI's engineering approach and commercial partnerships for industrial welding applications.",
+    "url_hash": "53ea3ef21232043b",
+    "id": "53ea3ef21232043b"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Amazon, which started off selling books, is destroying rare texts to train AI",
+    "summary": "Amazon is using rare books to train large language models, taking advantage of texts not previously available online for AI training purposes.",
+    "source_url": "https://techcrunch.com/2026/08/17/amazon-once-an-online-bookseller-is-destroying-rare-books-to-train-ai-models/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 16:38:44 +0000",
+    "retrieved_at": "2026-08-17T18:25:27+00:00",
+    "tickers": [
+      {
+        "ticker": "AMZN",
+        "company_name": "Amazon.com, Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Amazon is directly involved in sourcing training data for AI model development, which is substantively about AI infrastructure buildout.",
+    "url_hash": "248c74532a4432bf",
+    "id": "248c74532a4432bf"
+  },
+  {
+    "niche": "Space",
     "headline": "NASA Challenge Tests Wheel Designs for Moon Base Mobility",
     "summary": "NASA's Rock and Roll with NASA Challenge invites innovators to design next-generation lunar rover wheels to advance surface mobility for the Moon Base mission, with five teams selected from 128 submissions across 49 countries.",
     "source_url": "https://www.nasa.gov/centers-and-facilities/johnson/nasa-challenge-tests-wheel-designs-for-moon-base-mobility/",
