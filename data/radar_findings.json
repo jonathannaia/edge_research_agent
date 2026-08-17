@@ -1,6 +1,167 @@
 [
   {
     "niche": "Space",
+    "headline": "NASA Challenge Tests Wheel Designs for Moon Base Mobility",
+    "summary": "NASA's Rock and Roll with NASA Challenge invites innovators to design next-generation lunar rover wheels to advance surface mobility for the Moon Base mission, with five teams selected from 128 submissions across 49 countries.",
+    "source_url": "https://www.nasa.gov/centers-and-facilities/johnson/nasa-challenge-tests-wheel-designs-for-moon-base-mobility/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Mon, 17 Aug 2026 15:09:05 +0000",
+    "retrieved_at": "2026-08-17T16:17:53+00:00",
+    "tickers": [],
+    "relevance_reason": "NASA lunar surface mobility challenge directly relates to space exploration infrastructure for Moon Base operations.",
+    "url_hash": "81a903bc9479f31f",
+    "id": "81a903bc9479f31f"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Nvidia investing $1.5B in SoftBank data center developer behind OpenAI project",
+    "summary": "Nvidia is investing $1.5 billion in SoftBank's data center developer, which will power an OpenAI data center project using Nvidia's chips.",
+    "source_url": "https://techcrunch.com/2026/08/17/nvidia-investing-1-5b-in-softbank-data-center-developer-behind-openai-project/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 15:16:24 +0000",
+    "retrieved_at": "2026-08-17T16:17:13+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Nvidia is investing in a data center developer, directly relevant to AI infrastructure and chip supply chain.",
+    "url_hash": "9dc5caf38ae16c32",
+    "id": "9dc5caf38ae16c32"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Groq raises $350M to fuel its pivot from AI chips to neocloud",
+    "summary": "Groq raised $350 million at a $3.5 billion valuation while pivoting from an AI chipmaker to a neocloud business and expanding its Nvidia-powered data center footprint.",
+    "source_url": "https://techcrunch.com/2026/08/17/groq-raises-350m-to-fuel-its-pivot-from-ai-chips-to-neocloud/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 16:15:12 +0000",
+    "retrieved_at": "2026-08-17T16:17:10+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Groq's capital raise and pivot to neocloud with expanded Nvidia-powered data center operations directly relates to AI infrastructure buildout.",
+    "url_hash": "f7751a62e0c6a2e9",
+    "id": "f7751a62e0c6a2e9"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "PJM’s New Deal for Data Centers: Bring Power or Face Cuts",
+    "summary": "PJM is allowing major new data center loads to begin operation before equivalent power capacity is fully available, with the understanding that unsupported demand may face earlier emergency curtailment during shortages.",
+    "source_url": "https://www.datacenterknowledge.com/energy-power-supply/pjm-s-new-deal-for-data-centers-bring-power-or-face-cuts",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 11:04:25 GMT",
+    "retrieved_at": "2026-08-17T16:17:08+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses power supply constraints and grid management for data centers, a core AI infrastructure concern.",
+    "url_hash": "c276797d0916c863",
+    "id": "c276797d0916c863"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "APAC Data Center Pipeline Surges as AI Pre-Leasing Tightens Supply",
+    "summary": "Asia-Pacific's data center pipeline reached a record 26.5 GW in the first half of 2026, driven by surging investment in AI and cloud infrastructure.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-construction/apac-data-center-pipeline-surges-as-ai-pre-leasing-tightens-supply",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 12:00:00 GMT",
+    "retrieved_at": "2026-08-17T16:17:06+00:00",
+    "tickers": [],
+    "relevance_reason": "Article substantively addresses data center capacity expansion driven by AI infrastructure buildout in APAC.",
+    "url_hash": "bbf3f959e73ece82",
+    "id": "bbf3f959e73ece82"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Amazon Explores Grid Connection for 8,000-Acre AI Campus",
+    "summary": "Amazon is planning an 8,000-acre AI campus that combines private power generation with an AI data center, and the project has attracted regulatory attention regarding emissions.",
+    "source_url": "https://www.datacenterknowledge.com/energy-power-supply/amazon-explores-grid-connection-for-8-000-acre-ai-campus",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 16:02:20 GMT",
+    "retrieved_at": "2026-08-17T16:17:05+00:00",
+    "tickers": [
+      {
+        "ticker": "AMZN",
+        "company_name": "Amazon.com, Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Substantively about AI data center infrastructure development with power/energy component directly relevant to AI buildout scope.",
+    "url_hash": "72bafb98f257c5c2",
+    "id": "72bafb98f257c5c2"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Google rumored to have partnered with AMD on TPU v10, as shipments of current generations revised down - report",
+    "summary": "Google is rumored to have partnered with AMD on its TPU v10 chip design, while current-generation TPU shipments have been revised downward according to a SemiAnalysis report.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/google-rumored-to-have-partnered-with-amd-on-tpu-v10-as-shipments-of-current-generations-revised-down-report/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 14:40:27 +0000",
+    "retrieved_at": "2026-08-17T16:16:49+00:00",
+    "tickers": [
+      {
+        "ticker": "GOOGL",
+        "company_name": "Alphabet Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly addresses AI infrastructure chip development and supply chain involving major hyperscaler's custom silicon strategy",
+    "url_hash": "8601922a88e3e2a7",
+    "id": "8601922a88e3e2a7"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Is moving inland the only way to address data center energy demands?",
+    "summary": "The data center industry is expanding beyond Northern Virginia to address growing energy demands associated with data center operations.",
+    "source_url": "https://www.datacenterdynamics.com/en/opinions/is-moving-inland-the-only-way-to-address-data-center-energy-demands/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 15:39:35 +0000",
+    "retrieved_at": "2026-08-17T16:16:44+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses data center location strategy in response to energy demands, a core component of AI infrastructure buildout",
+    "url_hash": "f5d8912835d24dc8",
+    "id": "f5d8912835d24dc8"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "WhiteFiber acquires two sites in North Carolina, plans data center developments",
+    "summary": "WhiteFiber, a Bit Digital-backed firm, acquired two industrial sites in North Carolina from Unifi with plans to develop data centers at those locations.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/whitefiber-acquires-two-sites-in-north-carolina-plans-data-center-developments/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 16:07:27 +0000",
+    "retrieved_at": "2026-08-17T16:16:38+00:00",
+    "tickers": [
+      {
+        "ticker": "BTDI",
+        "company_name": "Bit Digital",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Data center development is directly relevant to AI Buildout infrastructure scope.",
+    "url_hash": "cf69d29de49527b7",
+    "id": "cf69d29de49527b7"
+  },
+  {
+    "niche": "Space",
     "headline": "L3Harris names space sector leader Sam Mehta CEO after Kubasik steps down",
     "summary": "L3Harris Technologies named Sam Mehta, a space sector leader, as CEO after Christopher Kubasik stepped down following a board investigation into unspecified conduct.",
     "source_url": "https://spacenews.com/l3harris-names-space-sector-leader-sam-mehta-ceo-after-kubasik-steps-down/",
