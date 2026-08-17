@@ -1,5 +1,33 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "Precision Under Pressure: Rethinking Bond Reliability In High-Density Semiconductor Test",
+    "summary": "Bond testing is identified as a critical control point for ensuring long-term performance and yield in high-density semiconductor manufacturing.",
+    "source_url": "https://semiengineering.com/precision-under-pressure-rethinking-bond-reliability-in-high-density-semiconductor-test/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 07:01:15 +0000",
+    "retrieved_at": "2026-08-17T08:32:59+00:00",
+    "tickers": [],
+    "relevance_reason": "Addresses semiconductor testing and reliability, which is part of the chip supply chain infrastructure critical to AI buildout.",
+    "url_hash": "86bc287bb7a9ee2a",
+    "id": "86bc287bb7a9ee2a"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "800VDC Pushes AI Power Design From Grid To Gate",
+    "summary": "The article examines how 800VDC power architectures are addressing power delivery bottlenecks across the full conversion path from grid-level medium-voltage AC to sub-1V silicon in AI systems.",
+    "source_url": "https://semiengineering.com/800vdc-pushes-ai-power-design-from-grid-to-gate/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 07:01:48 +0000",
+    "retrieved_at": "2026-08-17T08:32:58+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses power infrastructure challenges and design innovations for AI accelerators and data center power delivery, a core AI Buildout topic.",
+    "url_hash": "dcc69b29c269c5d3",
+    "id": "dcc69b29c269c5d3"
+  },
+  {
     "niche": "Space",
     "headline": "Lynk and Omnispace form Elveo Mobile to advance D2D services",
     "summary": "Lynk Global completed a merger with Omnispace and rebranded as Elveo Mobile, combining S-band spectrum to expand direct-to-device satellite services beyond basic messaging.",
