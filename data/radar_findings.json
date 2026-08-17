@@ -1,5 +1,124 @@
 [
   {
+    "niche": "Space",
+    "headline": "Satellite operators are in panic mode due to a worsening launch crisis",
+    "summary": "Satellite operators are concerned about a potential crisis if SpaceX's Falcon rockets cease operations, raising questions about launch capacity for the industry.",
+    "source_url": "https://arstechnica.com/space/2026/08/theres-a-huge-launch-crunch-right-now-and-it-will-probably-get-worse/",
+    "source_name": "Ars Technica — Space",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 11:00:26 +0000",
+    "retrieved_at": "2026-08-17T12:24:27+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla, Inc. (Parent of SpaceX)",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Discusses the satellite industry's concerns about a potential disruption to SpaceX's Falcon rocket launch capability, directly impacting space launch infrastructure.",
+    "url_hash": "e7c00d94af4e2125",
+    "id": "e7c00d94af4e2125"
+  },
+  {
+    "niche": "Space",
+    "headline": "A rocket crashed into the moon. It was harmless, but the next one might not be.",
+    "summary": "A SpaceX Falcon 9 upper stage crashed into the lunar surface at high speed earlier this month in an uncontrolled impact, raising concerns about potential future collisions.",
+    "source_url": "https://spacenews.com/a-rocket-crashed-into-the-moon-it-was-harmless-but-the-next-one-might-not-be/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 11:00:00 +0000",
+    "retrieved_at": "2026-08-17T12:24:25+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "SpaceX (Tesla parent company)",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Article covers a space launch infrastructure incident involving an uncontrolled rocket stage collision with the moon.",
+    "url_hash": "9b76eb9242b50362",
+    "id": "9b76eb9242b50362"
+  },
+  {
+    "niche": "Space",
+    "headline": "SEOPS adds second Waymaker rideshare mission",
+    "summary": "SEOPS, a launch services provider, has announced a second dedicated rideshare mission called Waymaker following strong demand for the first mission announced within the previous three months.",
+    "source_url": "https://spacenews.com/seops-adds-second-waymaker-rideshare-mission/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 12:00:00 +0000",
+    "retrieved_at": "2026-08-17T12:24:22+00:00",
+    "tickers": [],
+    "relevance_reason": "Launch services provider announcing satellite rideshare missions directly relates to space launch infrastructure and operations.",
+    "url_hash": "45c50041397da620",
+    "id": "45c50041397da620"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Blue Energy, GE Vernova Hitachi advance 2.5GW gas-plus-nuclear plant in Texas, to power up to 1.5GW data center",
+    "summary": "Blue Energy, GE Vernova, and Hitachi are advancing a 2.5GW gas-plus-nuclear plant in Texas designed to supply 1GW of power to the Crusoe data center by 2030, with capacity for up to 1.5GW of additional data center power.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/blue-energy-ge-vernova-hitachi-advance-25gw-gas-plus-nuclear-plant-in-texas-to-power-up-to-15gw-data-center/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 10:37:36 +0000",
+    "retrieved_at": "2026-08-17T12:24:11+00:00",
+    "tickers": [
+      {
+        "ticker": "GEV",
+        "company_name": "GE Vernova",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly addresses AI infrastructure power generation with a planned data center power supply project",
+    "url_hash": "2f1578935c046f10",
+    "id": "2f1578935c046f10"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "L&T's data center unit to host Nvidia hardware for Together AI",
+    "summary": "L&T's Vyoma.AI data center unit will host Nvidia B300 AI accelerators for Together AI at a facility in Chennai.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/lts-data-center-unit-to-host-nvidia-hardware-for-together-ai/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 11:18:37 +0000",
+    "retrieved_at": "2026-08-17T12:24:08+00:00",
+    "tickers": [
+      {
+        "ticker": "LT",
+        "company_name": "Larsen & Toubro Limited",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly involves AI infrastructure buildout with GPU hardware deployment in data centers.",
+    "url_hash": "6240877718987147",
+    "id": "6240877718987147"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Nvidia in talks to invest up to $3bn in SB Energy - report",
+    "summary": "Nvidia is reportedly in talks to invest up to $3 billion in SB Energy to support development of a 10GW data center campus in Ohio for OpenAI.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/nvidia-in-talks-to-invest-up-to-3bn-in-sb-energy-report/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 11:45:06 +0000",
+    "retrieved_at": "2026-08-17T12:24:06+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Nvidia's potential investment in data center infrastructure for AI workloads directly relates to AI buildout capex and hyperscaler infrastructure development.",
+    "url_hash": "ed81a0bc9bbb7085",
+    "id": "ed81a0bc9bbb7085"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "8-K filed by TTM TECHNOLOGIES INC  (TTMI)  (CIK 0001116942)",
     "summary": "TTM Technologies Inc (TTMI) filed an 8-K with the SEC on August 17, 2026, which includes discussion of data center capital expenditure activities.",
