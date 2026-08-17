@@ -1,6 +1,62 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "8-K filed by TTM TECHNOLOGIES INC  (TTMI)  (CIK 0001116942)",
+    "summary": "TTM Technologies Inc (TTMI) filed an 8-K with the SEC on August 17, 2026, which includes discussion of data center capital expenditure activities.",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1116942/000119312526353148/d375900dex21.htm",
+    "source_name": "SEC EDGAR Full-Text Search — 8-K capex filings",
+    "source_type": "Regulatory Filing",
+    "published_at": "2026-08-17",
+    "retrieved_at": "2026-08-17T10:23:34+00:00",
+    "tickers": [
+      {
+        "ticker": "TTMI",
+        "company_name": "TTM Technologies Inc",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "TTM Technologies filed an 8-K containing references to data center capital expenditure, directly relevant to AI infrastructure buildout.",
+    "url_hash": "e14ef189e9f73676",
+    "id": "e14ef189e9f73676"
+  },
+  {
+    "niche": "Space",
+    "headline": "Blue Origin adding second pad to Cape Canaveral launch complex amid rocket explosion repairs",
+    "summary": "Blue Origin is building a second launch pad at Cape Canaveral while repairing its New Glenn pad damaged in a May rocket explosion, with the new pad intended to support the larger New Glenn 9x4 variant.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/blue-origin-adding-second-pad-to-cape-canaveral-launch-complex-amid-rocket-explosion-repairs",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 10:00:00 +0000",
+    "retrieved_at": "2026-08-17T10:23:27+00:00",
+    "tickers": [
+      {
+        "ticker": "BKOL",
+        "company_name": "Blue Origin",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Direct reporting on Blue Origin's space launch infrastructure development and repairs at Cape Canaveral.",
+    "url_hash": "89146064106da618",
+    "id": "89146064106da618"
+  },
+  {
+    "niche": "Space",
+    "headline": "Long March 12 launches despite recent 7A failure, Long March 2C launches satellite for UAE",
+    "summary": "China successfully launched a new batch of Guowang megaconstellation satellites using a Long March 12 rocket, and separately launched a developmental satellite for the UAE using a Long March 2C rocket.",
+    "source_url": "https://spacenews.com/long-march-12-launches-despite-recent-7a-failure-long-march-2c-launches-satellite-for-uae/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 09:56:15 +0000",
+    "retrieved_at": "2026-08-17T10:23:25+00:00",
+    "tickers": [],
+    "relevance_reason": "Reports on space launch activity involving Long March rockets and satellite deployment missions.",
+    "url_hash": "200ee3d054893946",
+    "id": "200ee3d054893946"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "Precision Under Pressure: Rethinking Bond Reliability In High-Density Semiconductor Test",
     "summary": "Bond testing is identified as a critical control point for ensuring long-term performance and yield in high-density semiconductor manufacturing.",
     "source_url": "https://semiengineering.com/precision-under-pressure-rethinking-bond-reliability-in-high-density-semiconductor-test/",
