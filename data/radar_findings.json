@@ -1,6 +1,69 @@
 [
   {
     "niche": "Space",
+    "headline": "New EU sanctions target leaders of Russia’s space industry",
+    "summary": "The European Union has imposed sanctions on the head of a Roscosmos subsidiary that is developing a synthetic aperture radar satellite system for the Russian military.",
+    "source_url": "https://spacenews.com/new-eu-sanctions-target-leaders-of-russias-space-industry/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 21:05:13 +0000",
+    "retrieved_at": "2026-08-17T22:16:05+00:00",
+    "tickers": [],
+    "relevance_reason": "EU sanctions against Russian space industry leaders and a Roscosmos subsidiary developing military satellite systems are substantively about the space sector.",
+    "url_hash": "3ba347311bac7a70",
+    "id": "3ba347311bac7a70"
+  },
+  {
+    "niche": "Space",
+    "headline": "HEO to use Planet satellites for non-Earth imaging",
+    "summary": "HEO, an Australian Earth observation satellite company, has signed an agreement with Planet to access Planet's satellites for imaging applications beyond Earth observation.",
+    "source_url": "https://spacenews.com/heo-to-use-planet-satellites-for-non-earth-imaging/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 22:00:00 +0000",
+    "retrieved_at": "2026-08-17T22:16:04+00:00",
+    "tickers": [
+      {
+        "ticker": "PL",
+        "company_name": "Planet Labs PBC",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly concerns satellite operations and space imaging capabilities through a commercial partnership.",
+    "url_hash": "a22ce8c6fcc22634",
+    "id": "a22ce8c6fcc22634"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Five years of operation shape Diligent Robotics rollout of Moxi 2.0",
+    "summary": "Diligent Robotics is rolling out Moxi 2.0, an updated version of its hospital automation robot, to health systems including Endeavor Health Edward Hospital and Children's Hospital Los Angeles.",
+    "source_url": "https://www.therobotreport.com/five-years-operation-shape-diligent-robotics-rollout-moxi-2-0/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 21:15:46 +0000",
+    "retrieved_at": "2026-08-17T22:15:54+00:00",
+    "tickers": [],
+    "relevance_reason": "Diligent Robotics is deploying Moxi 2.0, a robot for healthcare automation, which falls within humanoid robotics and robotic automation scope.",
+    "url_hash": "49bcadb63e9a1a3c",
+    "id": "49bcadb63e9a1a3c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Potentia plans 450-acre behind-the-meter site in Bowie County, Texas, for potential data center",
+    "summary": "Potentia is planning a 450-acre behind-the-meter site in Bowie County, Texas, and is seeking an anchor offtaker for the potential data center.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/potentia-plans-450-acre-behind-the-meter-site-in-bowie-county-texas-for-potential-data-center/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 15:51:19 +0000",
+    "retrieved_at": "2026-08-17T22:15:27+00:00",
+    "tickers": [],
+    "relevance_reason": "The article directly addresses AI infrastructure buildout with a planned data center facility.",
+    "url_hash": "7da1bd52c870ec34",
+    "id": "7da1bd52c870ec34"
+  },
+  {
+    "niche": "Space",
     "headline": "China bounces back from Long March rocket explosion with back-to-back launches (video)",
     "summary": "China's space program conducted back-to-back rocket launches on August 16 with Long March 12 and 2C vehicles, following an August 10 Long March 7A explosion.",
     "source_url": "https://www.space.com/space-exploration/launches-spacecraft/china-bounces-back-from-long-march-rocket-explosion-with-back-to-back-launches-video",
