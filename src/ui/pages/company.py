@@ -57,7 +57,7 @@ def render() -> None:
         exposure_label = "Direct exposure" if ticker.exposure == Exposure.PRIMARY else "Second-order exposure"
         st.markdown(f'<div class="er-muted">{tag_line} · {exposure_label}</div>', unsafe_allow_html=True)
     with header_cols[1]:
-        demo_badge()
+        demo_badge("Sample")
 
     with st.container(key=f"cta-secondary-save-watchlist-{ticker.symbol}"):
         if st.button("Save to watchlist", key=f"company-save-{ticker.symbol}"):

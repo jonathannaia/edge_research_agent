@@ -2,12 +2,13 @@
 
 Run with: streamlit run app.py
 
-Registers Home (first-visit landing, no sidebar) plus the persistent-
-sidebar primary routes (Dashboard, Themes, Signals, Research), the footer
-doc pages (Methodology, Disclaimer, About), and two hidden routes (Company,
-reached only by clicking a ticker; Watchlists, temporary until it's fully
-absorbed into Signals as sidebar filter entries) — see
-design/eevaresearch-brief.md §4 for the route table this implements.
+Registers Home (first-visit landing, no sidebar), the WORKSPACE routes
+(Dashboard, Themes, Signals, Research), the REFERENCE routes (Methodology,
+About), the restored Watchlists page (its own MY WATCHLISTS group header),
+and two hidden-from-nav-but-reachable routes (Company, reached by clicking
+a ticker; Disclaimer, reached via Methodology's cross-link and the page
+footer) — see design/eevaresearch-brief.md §4 for the original route table
+and design/DECISIONS.md for the UX-refinement pass that reorganized it.
 src/ui/ui.render_sidebar is the persistent left-rail nav widget.
 """
 from __future__ import annotations
@@ -47,7 +48,6 @@ _RENDER_FNS = {
     "signals": signals.render,
     "research": research.render,
     "methodology": methodology.render,
-    "disclaimer": disclaimer.render,
     "about": about.render,
 }
 
@@ -57,7 +57,6 @@ _URL_PATHS = {
     "signals": "signals",
     "research": "research",
     "methodology": "methodology",
-    "disclaimer": "disclaimer",
     "about": "about",
 }
 
@@ -81,8 +80,16 @@ for key, _label in PRIMARY_NAV + FOOTER_NAV:
 pages["company"] = st.Page(
     with_chrome(company.render, "company"), title="Company", url_path="company", visibility="hidden",
 )
+# Restored as a real destination (UX-refinement pass) — linked from the
+# sidebar's "My Watchlists" group header and Dashboard's watchlist-changes
+# panel. Per-list sidebar entries still shortcut straight into Signals.
 pages["watchlists"] = st.Page(
-    with_chrome(watchlists.render, "watchlists"), title="Watchlists", url_path="watchlists", visibility="hidden",
+    with_chrome(watchlists.render, "watchlists"), title="Watchlists", url_path="watchlists",
+)
+# Disclaimer is no longer a primary sidebar item, but stays a real
+# reachable route via Methodology's cross-link and the page footer.
+pages["disclaimer"] = st.Page(
+    with_chrome(disclaimer.render, "disclaimer"), title="Disclaimer", url_path="disclaimer", visibility="hidden",
 )
 
 st.session_state["_pages"] = pages

@@ -30,11 +30,11 @@ PRIMARY_NAV: list[tuple[str, str]] = [
     ("research", "Research"),
 ]
 
-# Static doc pages, linked from the sidebar footer rather than the primary
-# nav group.
+# Static doc pages — "REFERENCE" group in the sidebar (UX-refinement pass:
+# Disclaimer is no longer a primary destination here, only reachable via
+# Methodology's own cross-link and the page footer).
 FOOTER_NAV: list[tuple[str, str]] = [
     ("methodology", "Methodology"),
-    ("disclaimer", "Disclaimer"),
     ("about", "About"),
 ]
 
@@ -42,6 +42,17 @@ FOOTER_NAV: list[tuple[str, str]] = [
 # here rather than in logic/unread.py since that module stays Streamlit-free.
 LAST_SEEN_KEY = "signals_last_seen_at"
 READ_IDS_KEY = "read_signal_ids"
+
+# Streamlit remembers the sidebar's collapsed/expanded state in the
+# browser's own localStorage, independent of Python session state and
+# outliving `initial_sidebar_state="expanded"` (set in app.py) — a sidebar
+# collapsed once, even in an earlier unrelated visit to this origin, stays
+# collapsed on every fresh open afterward, including at desktop widths,
+# which reads as broken navigation. Corrected once per session only (see
+# _correct_sidebar_state_for_width below), not every rerun, so it doesn't
+# fight a user who deliberately collapses it mid-session.
+_SIDEBAR_FORCE_CHECK_KEY = "_sidebar_force_checked"
+_SIDEBAR_DESKTOP_BREAKPOINT_PX = 768
 
 # Kept for any code that still enumerates "every visible page" (e.g. a
 # future command-palette index) — primary + footer, in nav order.
@@ -91,9 +102,35 @@ def brand_mark_html(size_px: int | None = None) -> str:
     return _BRAND_MARK_SVG
 
 
+def _correct_sidebar_state_for_width() -> None:
+    """Runs once per session (see module docstring above the session-state
+    keys) to match the sidebar's open/closed state to the current viewport
+    on load: expanded at desktop/laptop widths, collapsed at narrow/mobile
+    widths — correcting whatever a prior, unrelated visit to this origin
+    left in the browser's localStorage. Checked in an iframe/script, same
+    pattern as research.py's composer-focus trick, since Streamlit doesn't
+    execute <script> tags placed directly via st.markdown."""
+    if st.session_state.get(_SIDEBAR_FORCE_CHECK_KEY):
+        return
+    st.session_state[_SIDEBAR_FORCE_CHECK_KEY] = True
+    st.iframe(
+        "<script>"
+        "var w = window.parent;"
+        f"var desktop = w.innerWidth >= {_SIDEBAR_DESKTOP_BREAKPOINT_PX};"
+        "var expandBtn = w.document.querySelector('[data-testid=\"stExpandSidebarButton\"]');"
+        "var collapseBtn = w.document.querySelector('[data-testid=\"stSidebarCollapseButton\"] button');"
+        "if (desktop && expandBtn) { expandBtn.click(); }"
+        "else if (!desktop && collapseBtn) { collapseBtn.click(); }"
+        "</script>",
+        height=1,
+    )
+
+
 def render_sidebar(current_key: str) -> None:
     from src.data_access.container import get_repositories
     from src.logic.unread import unread_count
+
+    _correct_sidebar_state_for_width()
 
     pages = st.session_state.get("_pages", {})
     home_page = pages.get("home")
@@ -123,29 +160,45 @@ def render_sidebar(current_key: str) -> None:
 
         render_palette_trigger()
 
-        st.markdown('<div class="er-rail-group-label">Research</div>', unsafe_allow_html=True)
+        # WORKSPACE — the four core pages (UX-refinement pass groups these
+        # explicitly apart from personal watchlists and reference docs).
+        st.markdown('<div class="er-rail-group-label">Workspace</div>', unsafe_allow_html=True)
         for key, label in PRIMARY_NAV:
             page = pages.get(key)
             if page is None:
                 continue
             active_cls = "er-rail-navactive" if key == current_key else ""
-            display_label = f"{label}  ·  {unread} unread" if key == "signals" and unread else label
             with st.container(key=f"navitem-{key}"):
                 if active_cls:
-                    st.markdown(
-                        f'<style>.st-key-navitem-{key} {{}}</style>'
-                        f'<div class="{active_cls}">', unsafe_allow_html=True,
-                    )
-                st.page_link(page, label=display_label)
+                    st.markdown(f'<div class="{active_cls}">', unsafe_allow_html=True)
+                if key == "signals" and unread:
+                    # A real separate badge, not text folded into the link
+                    # label (st.page_link only accepts a plain string) —
+                    # rendered beside it via a narrow second column.
+                    link_col, badge_col = st.columns([5, 1.4], vertical_alignment="center")
+                    with link_col:
+                        st.page_link(page, label=label)
+                    with badge_col:
+                        st.markdown(f'<span class="er-nav-badge">{unread}</span>', unsafe_allow_html=True)
+                else:
+                    st.page_link(page, label=label)
                 if active_cls:
                     st.markdown("</div>", unsafe_allow_html=True)
 
-        # Watchlists are sidebar entries filtering Signals, not a
-        # standalone page (brief §4) — each link sets ?watchlist=<name> on
-        # the Signals route, which signals.py resolves against the same
-        # session-state watchlists used everywhere else, with counts shown
-        # here per the brief's "listing the user's actual lists with counts."
-        st.markdown('<div class="er-rail-group-label">Watchlists</div>', unsafe_allow_html=True)
+        # MY WATCHLISTS — group header links to the standalone Watchlists
+        # page (restored in the UX-refinement pass); each list name below
+        # stays a quick-filter shortcut straight into Signals, unchanged.
+        watchlists_page = pages.get("watchlists")
+        if watchlists_page is not None:
+            # A plain st.markdown('<div>') doesn't wrap subsequent st.*
+            # calls as children (confirmed elsewhere in this codebase) —
+            # so the group-label look comes from a CSS rule targeting this
+            # container's key instead of nesting.
+            with st.container(key="navitem-watchlists-header"):
+                st.page_link(watchlists_page, label="My Watchlists")
+        else:
+            st.markdown('<div class="er-rail-group-label">My Watchlists</div>', unsafe_allow_html=True)
+
         from src.ui.pages.watchlists import WATCHLIST_NAMES, seed_watchlists
 
         signals_page = pages.get("signals")
@@ -155,7 +208,13 @@ def render_sidebar(current_key: str) -> None:
         for name in WATCHLIST_NAMES:
             count = len(lists.get(name, []))
             if signals_page is not None:
-                st.page_link(signals_page, label=f"{name} ({count})", query_params={"watchlist": name})
+                # Streamlit highlights a page_link as "current" whenever its
+                # target Page object matches the active page, regardless of
+                # query string — so all four of these would light up at once
+                # just from being on Signals. A dedicated container key lets
+                # CSS strip that native highlight back to the plain nav look.
+                with st.container(key=f"navitem-watchlist-{name}"):
+                    st.page_link(signals_page, label=f"{name} ({count})", query_params={"watchlist": name})
             else:
                 st.markdown(f'<div class="er-muted" style="padding:0.2rem 0.5rem;">{name} ({count})</div>', unsafe_allow_html=True)
 
@@ -171,7 +230,10 @@ def render_sidebar(current_key: str) -> None:
                 label = q if len(q) <= 40 else q[:37] + "…"
                 st.page_link(research_page, label=label)
 
-        st.markdown('<div class="er-rail-group-label">Doc pages</div>', unsafe_allow_html=True)
+        # REFERENCE — static docs. Disclaimer is deliberately not a primary
+        # item here; it's reachable via Methodology's cross-link and the
+        # page footer instead (UX-refinement pass).
+        st.markdown('<div class="er-rail-group-label">Reference</div>', unsafe_allow_html=True)
         st.markdown('<div class="er-rail-footlinks">', unsafe_allow_html=True)
         for key, label in FOOTER_NAV:
             page = pages.get(key)
@@ -180,24 +242,39 @@ def render_sidebar(current_key: str) -> None:
         st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown(
-            '<div class="er-rail-status"><span class="dot"></span>Demo mode — no live data</div>',
+            '<div class="er-rail-status"><span class="dot"></span>Demo environment · sample data</div>',
             unsafe_allow_html=True,
         )
 
 
-def render_footer() -> None:
-    st.markdown(
-        f"""
-        <div class="er-footer">
-            <div>{APP_NAME} is evidence-first: every claim is labeled Fact, Interpretation,
-            Inference, or Uncertainty, and material claims link to their source.</div>
-            <div style="margin-top:0.4rem;">Data freshness: demo/mock data only — no live feed connected in this phase.</div>
-            <div style="margin-top:0.4rem;">{METHODOLOGY_STATEMENT}</div>
-            <div class="er-footer-version">{APP_NAME} v{APP_VERSION} · Foundation phase (demo data)</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+# Full text stays on Methodology/Disclaimer (which already carry this
+# content in their own page body — see methodology.py) and, redundantly
+# but harmlessly, in this longer footer variant reserved for just those
+# two pages. Every other page gets the compact one-liner below instead of
+# repeating it at the same length (usability follow-up).
+_COMPACT_FOOTER_TEXT = "Evidence-first research · Sample data only · Not investment advice"
+_FULL_FOOTER_PAGES = {"methodology", "disclaimer"}
+
+
+def render_footer(nav_key: str | None = None) -> None:
+    if nav_key in _FULL_FOOTER_PAGES:
+        st.markdown(
+            f"""
+            <div class="er-footer">
+                <div>{APP_NAME} is evidence-first: every claim is labeled Fact, Interpretation,
+                Inference, or Uncertainty, and material claims link to their source.</div>
+                <div style="margin-top:0.4rem;">Data freshness: demo/mock data only — no live feed connected in this phase.</div>
+                <div style="margin-top:0.4rem;">{METHODOLOGY_STATEMENT}</div>
+                <div class="er-footer-version">{APP_NAME} v{APP_VERSION} · Foundation phase (demo data)</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+    else:
+        st.markdown(
+            f'<div class="er-footer er-footer-compact">{_COMPACT_FOOTER_TEXT}</div>',
+            unsafe_allow_html=True,
+        )
     # "Disclaimer" link on every page footer (brief §17 — one of the four
     # disclaimer placements, deliberately not a dismiss-once banner).
     disclaimer_page = get_page("disclaimer")
@@ -222,7 +299,7 @@ def with_chrome(page_fn: Callable[[], None], nav_key: str, show_sidebar: bool = 
 
         with st.container(key="page-content"):
             page_fn()
-        render_footer()
+        render_footer(nav_key)
 
     _wrapped.__name__ = getattr(page_fn, "__name__", "page")
     return _wrapped

@@ -44,7 +44,7 @@ def render() -> None:
 
     st.markdown('<div class="er-page-title">Watchlists</div>', unsafe_allow_html=True)
     st.write(
-        "Demo watchlists, seeded from mock data. Adding or removing a ticker updates this session "
+        "Sample watchlists, seeded from illustrative data. Adding or removing a ticker updates this session "
         "only — reloading the page resets to the seeded lists. Built so real, persisted watchlists "
         "can be added later without a UI rewrite."
     )
@@ -104,5 +104,6 @@ def render() -> None:
                     to_remove = st.selectbox("Remove ticker", ["—"] + [e.ticker_symbol for e in entries], key=f"remove-select-{name}")
                 with remove_cols[1]:
                     st.markdown("&nbsp;")
-                    if st.button("Remove", key=f"remove-btn-{name}", width="stretch") and to_remove != "—":
-                        lists[name] = [e for e in entries if e.ticker_symbol != to_remove]
+                    with st.container(key=f"cta-secondary-remove-{name}"):
+                        if st.button("Remove", key=f"remove-btn-{name}", width="stretch") and to_remove != "—":
+                            lists[name] = [e for e in entries if e.ticker_symbol != to_remove]

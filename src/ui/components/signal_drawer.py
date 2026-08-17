@@ -54,7 +54,7 @@ def open_signal_drawer(signal: Signal, evidence_repository=None) -> None:
             render_excerpt(evidence_items[0])
         else:
             st.markdown(
-                f'<div class="er-muted">{signal.evidence_count} demo evidence item(s) attributed to this signal '
+                f'<div class="er-muted">{signal.evidence_count} sample evidence item(s) attributed to this signal '
                 '— no individual excerpt attached in this phase.</div>',
                 unsafe_allow_html=True,
             )

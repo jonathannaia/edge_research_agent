@@ -22,8 +22,20 @@ from src.ui.components.evidence_spine import evidence_spine_row
 from src.ui.components.section import section_header
 
 SESSION_KEY = "chat_messages"
-DISCLAIMER_DISMISSED_KEY = "research_disclaimer_dismissed"
 FOCUS_COMPOSER_KEY = "_focus_composer_pending"
+
+# Category mapped from each suggested question's actual content — brief
+# wants a Company/Theme/Compare/Catalyst/Risk-check taxonomy, but only
+# categories with a real matching demo question render (no invented
+# sample content just to fill an empty bucket).
+_QUESTION_CATEGORY = {
+    "What is happening in AI networking and photonics?": "Theme",
+    "Compare three optical interconnect suppliers.": "Compare",
+    "What are the main catalysts for the memory cycle?": "Catalyst",
+    "Which parts of the humanoid supply chain would benefit from volume scaling?": "Theme",
+    "Where is capital rotating across the five themes?": "Theme",
+}
+_CATEGORY_ORDER = ["Company", "Theme", "Compare", "Catalyst", "Risk check"]
 _LOGO_PATH = Path(__file__).resolve().parents[3] / "assets" / "eeva-logo.png"
 # Streamlit's default "user" chat avatar renders as a colored icon, which
 # the zero-accent-colour rule (brief §5) rules out — a plain monochrome
@@ -47,7 +59,7 @@ def _render_answer_card(answer: ChatAnswer) -> None:
         with top[0]:
             st.markdown(f"**{answer.question}**")
         with top[1]:
-            demo_badge()
+            demo_badge("Sample")
 
         badge_row = st.columns([1, 1, 4])
         with badge_row[0]:
@@ -86,55 +98,41 @@ def _render_answer_card(answer: ChatAnswer) -> None:
                 for s in answer.sources:
                     st.markdown(f"- {s.source_name} (no external source — demo data), retrieved {fmt_date(s.retrieved_at)}")
         else:
-            st.caption("No sources attached — demo placeholder answer.")
+            st.caption("No sources attached — sample answer.")
 
 
 def render() -> None:
     ctx = get_repositories()
     st.markdown('<div class="er-page-title">Research</div>', unsafe_allow_html=True)
-    st.write(
-        "Ask a research question and get a structured, evidence-labeled answer. In this phase, "
-        "answers are canned demo responses only — there is no live model behind this yet."
-    )
+    st.write("Ask a research question and get a structured, evidence-labeled answer.")
 
     suggested = ctx.research_answer_provider.get_suggested_questions()
     if suggested:
         section_header("Suggested research questions")
-        cols = st.columns(len(suggested))
-        for col, q in zip(cols, suggested):
-            with col:
-                if st.button(q, key=f"suggested-{q}", width="stretch"):
-                    st.session_state.setdefault(SESSION_KEY, []).append(q)
+        by_category: dict[str, list[str]] = {}
+        for q in suggested:
+            by_category.setdefault(_QUESTION_CATEGORY.get(q, "Theme"), []).append(q)
+        for category in _CATEGORY_ORDER:
+            items = by_category.get(category)
+            if not items:
+                continue
+            st.markdown(f'<div class="er-muted" style="font-size:0.76rem; margin:0.3rem 0 0.2rem 0;">{category}</div>', unsafe_allow_html=True)
+            cols = st.columns(len(items))
+            for col, q in zip(cols, items):
+                with col:
+                    if st.button(q, key=f"suggested-{q}", width="stretch"):
+                        st.session_state.setdefault(SESSION_KEY, []).append(q)
 
-    with st.expander("Saved threads"):
-        empty_state(
-            "Saved-thread persistence isn't built in this phase.",
-            "Phase 2+ would let you name and return to a research thread; today, closing or reloading the page clears the conversation.",
-        )
-
-    # First-session dismissible disclaimer note (brief §17) — shown once,
-    # dismissal persists for the session (not per-page-load).
-    if not st.session_state.get(DISCLAIMER_DISMISSED_KEY):
-        note_cols = st.columns([6, 1])
-        with note_cols[0]:
-            st.markdown(
-                '<div class="er-muted">Research answers are generated from demo data only in this phase and can '
-                "be wrong. Treat them as a starting point, not a conclusion — verify anything you intend to act "
-                "on against the linked source.</div>",
-                unsafe_allow_html=True,
-            )
-        with note_cols[1]:
-            if st.button("Dismiss", key="dismiss-research-disclaimer"):
-                st.session_state[DISCLAIMER_DISMISSED_KEY] = True
-                st.rerun()
+    with st.expander("Saved threads", expanded=False):
+        st.caption("Not built in this phase — closing or reloading the page clears the conversation.")
 
     st.divider()
 
     messages = st.session_state.setdefault(SESSION_KEY, [])
     if not messages:
         empty_state(
-            "No research yet",
-            "Ask about a company, theme, filing, or market move.",
+            "Start a research thread",
+            "Ask about a company, theme, filing, catalyst, or market move.",
             action_label="New thread",
             on_click=_focus_composer,
             key="research-no-threads",
@@ -166,11 +164,13 @@ def render() -> None:
         st.session_state.setdefault(SESSION_KEY, []).append(typed)
         st.rerun()
 
-    # Permanent composer disclaimer line (brief §17) — every page load, not
-    # a dismissible banner ("no banner on every page load — it trains
-    # people to dismiss without reading").
+    # One concise, permanent, non-intrusive note — not a dismissible banner
+    # (those train people to dismiss without reading), and not repeated
+    # elsewhere on this page (UX-refinement pass: previously had both this
+    # line AND a separate first-session dismissible note saying nearly the
+    # same thing).
     st.markdown(
         '<div style="font-size:12px; color:var(--text-4); margin-top:0.5rem;">'
-        "Answers can be wrong. Check the linked source before acting on anything.</div>",
+        "Sample-mode responses are illustrative. Verify material claims against primary sources.</div>",
         unsafe_allow_html=True,
     )

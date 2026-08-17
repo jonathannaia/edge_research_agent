@@ -14,9 +14,15 @@ import streamlit as st
 from src.logic.evidence import source_label
 from src.logic.formatting import fmt_date, fmt_pct
 from src.models.models import CapitalRotationMetric, Catalyst, EvidenceItem, Signal, Theme
-from src.ui.components.badges import demo_badge, direction_dot_html, freshness_badge
+from src.ui.components.badges import demo_badge, direction_dot_html, direction_rail_class, freshness_badge
 from src.ui.components.evidence_chips import evidence_chip
 from src.ui.components.excerpts import render_excerpt
+
+
+def _display_theme_name(signal: Signal, theme_name: str | None) -> str:
+    if theme_name:
+        return theme_name
+    return signal.theme_slug.replace("-", " ").title()
 
 _THEME_ICONS: dict[str, str] = {
     "ai-buildout": (
@@ -108,8 +114,20 @@ def _infer_direction(relative_performance_pct: float):
     return Direction.MIXED
 
 
-def signal_card(signal: Signal, theme_page=None, evidence_repository=None, unread: bool = False) -> None:
+def signal_card(
+    signal: Signal, theme_page=None, evidence_repository=None, unread: bool = False, theme_name: str | None = None,
+) -> None:
+    """Compact signal card — one-line interpretation leads (the thing a
+    scanning reader needs first), meta strip follows, contrary evidence /
+    validation / invalidation live only in the drawer (Review evidence),
+    never inline. A thin left rail carries a restrained direction-color
+    accent (UX-refinement pass)."""
     key = f"card-signal-{signal.id}"
+    rail_var = {"er-rail-pos": "var(--pos)", "er-rail-neg": "var(--neg)", "er-rail-mix": "var(--mix)"}[direction_rail_class(signal.direction)]
+    st.markdown(
+        f'<style>.st-key-{key} {{ border-left: 2px solid {rail_var} !important; }}</style>',
+        unsafe_allow_html=True,
+    )
     with st.container(border=True, key=key):
         top = st.columns([3, 1])
         with top[0]:
@@ -118,11 +136,15 @@ def signal_card(signal: Signal, theme_page=None, evidence_repository=None, unrea
             tag_line = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
             st.markdown(f'<div class="er-muted">{tag_line}</div>', unsafe_allow_html=True)
         with top[1]:
-            demo_badge()
+            demo_badge("Sample")
 
         st.markdown(
+            f'<div style="margin:0.4rem 0; max-height:3.2em; overflow:hidden;">{signal.interpretation}</div>',
+            unsafe_allow_html=True,
+        )
+        st.markdown(
             f"""
-            <div style="display:flex; gap:1.5rem; margin: 0.5rem 0;">
+            <div style="display:flex; gap:1.25rem; margin: 0.4rem 0;">
                 <div><div class="er-metric-label">Direction</div><div class="er-muted">{direction_dot_html(signal.direction)}</div></div>
                 <div><div class="er-metric-label">Strength</div><div class="er-mono">{signal.strength.value}</div></div>
                 <div><div class="er-metric-label">Horizon</div><div class="er-mono">{signal.horizon.value}</div></div>
@@ -131,11 +153,7 @@ def signal_card(signal: Signal, theme_page=None, evidence_repository=None, unrea
             unsafe_allow_html=True,
         )
         st.markdown(
-            f'<div style="max-height:4.2em; overflow:hidden;">{signal.interpretation}</div>',
-            unsafe_allow_html=True,
-        )
-        st.markdown(
-            f'<div class="er-muted" style="margin-top:0.4rem;">{signal.evidence_count} demo evidence item(s) '
+            f'<div class="er-muted" style="font-size:0.78rem;">{signal.evidence_count} evidence item(s) '
             f'· updated {fmt_date(signal.last_updated)}</div>',
             unsafe_allow_html=True,
         )
@@ -146,19 +164,19 @@ def signal_card(signal: Signal, theme_page=None, evidence_repository=None, unrea
                 f'<a href="company?symbol={t}" style="color:var(--text-2); text-decoration:underline;">{t}</a>'
                 for t in signal.related_tickers
             )
-            st.markdown(f'<div class="er-muted">Related: {links}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="er-muted" style="font-size:0.78rem;">Related: {links}</div>', unsafe_allow_html=True)
 
         action_cols = st.columns([1, 1, 2])
         with action_cols[0]:
             with st.container(key=f"cta-secondary-{signal.id}"):
-                if st.button("View details", key=f"open-drawer-{signal.id}", width="stretch"):
+                if st.button("Review evidence", key=f"open-drawer-{signal.id}", width="stretch"):
                     from src.ui.components.signal_drawer import open_signal_drawer
 
                     open_signal_drawer(signal, evidence_repository=evidence_repository)
         if theme_page is not None:
             with action_cols[1]:
                 with st.container(key=f"cta-tertiary-{signal.id}"):
-                    st.page_link(theme_page, label="Open theme →")
+                    st.page_link(theme_page, label=f"Explore {_display_theme_name(signal, theme_name)} →")
 
 
 def compact_signal_row(signal: Signal) -> None:
@@ -187,17 +205,56 @@ def compact_signal_row(signal: Signal) -> None:
 def catalyst_timeline_row(catalyst: Catalyst) -> None:
     st.markdown(
         f"""
-        <div class="er-row" style="display:flex; align-items:baseline; gap:0.9rem;">
-            <span class="er-mono" style="background:var(--er-surface-hover); border:1px solid var(--er-border);
-                  border-radius:4px; padding:0.15rem 0.5rem; font-size:0.75rem; white-space:nowrap;">
-                {fmt_date(catalyst.date)}
-            </span>
-            <span>{catalyst.title}</span>
-            <span class="er-muted" style="margin-left:auto; white-space:nowrap;">{catalyst.catalyst_type}</span>
+        <div class="er-row" style="gap:var(--space-4);">
+            <span class="er-mono er-date-badge">{fmt_date(catalyst.date)}</span>
+            <span style="flex:1;">{catalyst.title}</span>
+            <span class="er-muted" style="white-space:nowrap;">{catalyst.catalyst_type}</span>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+
+def priority_signal_row(
+    signal: Signal, evidence_repository=None, theme_name: str | None = None, order: int | None = None,
+) -> None:
+    """The compact single-line-plus-meta row used by Dashboard's Priority
+    Signals (top 2-3 only) — direction, theme/subtheme, title, strength,
+    horizon, one-line interpretation, and a real 'Review evidence →'
+    action. Distinct from both the full `signal_card` (too tall for a
+    dashboard summary) and `compact_signal_row` (no evidence action).
+    `order` (1-based) renders a small "01"/"02" marker so the section reads
+    as ranked rather than an arbitrary list (final polish pass)."""
+    key = f"card-priority-signal-{signal.id}"
+    rail_var = {"er-rail-pos": "var(--pos)", "er-rail-neg": "var(--neg)", "er-rail-mix": "var(--mix)"}[direction_rail_class(signal.direction)]
+    st.markdown(f'<style>.st-key-{key} {{ border-left: 2px solid {rail_var} !important; }}</style>', unsafe_allow_html=True)
+    with st.container(border=True, key=key):
+        row = st.columns([0.4, 4.6, 1, 1, 1.6])
+        with row[0]:
+            marker = f'<span class="er-order-marker">{order:02d}</span>' if order else ""
+            st.markdown(f'<div style="margin-top:0.15rem;">{marker}</div>', unsafe_allow_html=True)
+        with row[1]:
+            tag_line = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
+            st.markdown(
+                f'<div class="er-card-title" style="font-size:0.88rem;">{direction_dot_html(signal.direction)} · {signal.title}</div>'
+                f'<div class="er-muted" style="font-size:0.76rem; margin-top:var(--space-1);">{tag_line}</div>',
+                unsafe_allow_html=True,
+            )
+        with row[2]:
+            st.markdown(f'<div class="er-metric-label">Strength</div><div class="er-mono" style="font-size:0.8rem;">{signal.strength.value}</div>', unsafe_allow_html=True)
+        with row[3]:
+            st.markdown(f'<div class="er-metric-label">Horizon</div><div class="er-mono" style="font-size:0.8rem;">{signal.horizon.value}</div>', unsafe_allow_html=True)
+        with row[4]:
+            with st.container(key=f"cta-secondary-priority-{signal.id}"):
+                if st.button("Review evidence", key=f"priority-review-{signal.id}", width="stretch"):
+                    from src.ui.components.signal_drawer import open_signal_drawer
+
+                    open_signal_drawer(signal, evidence_repository=evidence_repository)
+        st.markdown(
+            f'<div class="er-muted" style="font-size:0.82rem; margin-top:var(--space-2); white-space:nowrap; '
+            f'overflow:hidden; text-overflow:ellipsis;">{signal.interpretation}</div>',
+            unsafe_allow_html=True,
+        )
 
 
 # Backwards-compatible alias — catalyst_row was the pre-redesign name.

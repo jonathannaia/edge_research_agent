@@ -1,9 +1,18 @@
-/* EevaResearch — consolidated stylesheet (UI restructure, design/eevaresearch-brief.md).
-   Single source of truth for all app styling, loaded once via
-   src/ui/ui.py::load_css(). No inline <style> blocks anywhere else.
-   Zero accent color anywhere — direction is carried by glyph + text-weight,
-   never hue. Motion is restricted to two instances (breadth-bar fill,
-   live-status-dot pulse), both gated by prefers-reduced-motion. */
+/* EevaResearch — consolidated stylesheet (UI restructure, design/eevaresearch-brief.md
+   + design/DECISIONS.md's UX-refinement iteration). Single source of truth
+   for all app styling, loaded once via src/ui/ui.py::load_css(). No inline
+   <style> blocks anywhere else.
+
+   Direction color (added in the UX-refinement pass, explicitly approved as
+   NOT a reversal of the black/white system): muted green/rose/amber are
+   restrained SEMANTIC accents only — small dots, thin rails, small arrows,
+   subtle metric accents, compact status tags, tiny chart-state markers.
+   Never large card backgrounds, never bright/neon, never colored headings,
+   never decorative. Glyph + text-weight still carry direction on their own;
+   color is an additional accent, not a replacement.
+
+   Motion is restricted to two instances (breadth-bar fill, live-status-dot
+   pulse), both gated by prefers-reduced-motion. */
 
 :root {
     --rail: #181818;
@@ -15,8 +24,8 @@
     --hairline-2: rgba(255, 255, 255, .14);
     --text: #ECECEC;
     --text-2: #B4B4B4;
-    --text-3: #8F8F8F;
-    --text-4: #6E6E6E;
+    --text-3: #A8A8A8;
+    --text-4: #8A8A8A;
     --invert-bg: #FFFFFF;
     --invert-fg: #0D0D0D;
     --glow: rgba(255, 255, 255, .20);
@@ -26,21 +35,89 @@
     --font-ui: "Inter", sans-serif;
     --font-mono: "JetBrains Mono", monospace;
     --font-serif: "Source Serif 4", "Noto Serif JP", "Noto Serif KR", "Noto Serif SC", serif;
+    /* Restrained semantic direction accents only — see note above. */
+    --pos: #7CAE8C;
+    --pos-dim: rgba(124, 174, 140, .16);
+    --neg: #C98A93;
+    --neg-dim: rgba(201, 138, 147, .16);
+    --mix: #C7A968;
+    --mix-dim: rgba(199, 169, 104, .16);
+    /* Spacing rhythm (final polish pass) — a shared scale so every
+       component reaches for one of these instead of a one-off margin.
+       4: tight label/value pair. 8: related inline metadata. 12: small
+       internal card grouping. 16: standard card padding/action gap. 24:
+       between component groups. 32: between major Dashboard modules.
+       40-48: between major page blocks. */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 40px;
+    --space-8: 48px;
 }
 
 /* ---------- Streamlit chrome (brief §17) ---------- */
-#MainMenu, header, footer,
-[data-testid="stToolbar"], [data-testid="stDecoration"], [data-testid="stStatusWidget"] {
+#MainMenu, footer,
+[data-testid="stDecoration"], [data-testid="stStatusWidget"] {
+    display: none !important; visibility: hidden !important;
+}
+/* stHeader and stToolbar themselves stay in the tree (not display:none)
+   because the sidebar's expand button lives inside stToolbar in this
+   Streamlit version — display:none on an ancestor can't be overridden
+   per-descendant, which is what made that button permanently unreachable
+   once the sidebar was collapsed. Hide their unwanted native children
+   individually instead (deploy button, hamburger menu, toolbar actions);
+   the shells themselves get a transparent background so they don't paint
+   a visible bar (see the visibility-override rule further down for the
+   expand/collapse buttons themselves). */
+[data-testid="stHeader"], [data-testid="stToolbar"] {
+    background: transparent !important; box-shadow: none !important;
+}
+[data-testid="stToolbarActions"], [data-testid="stAppDeployButton"],
+[data-testid="stMainMenu"], [data-testid="stMainMenuButton"] {
     display: none !important; visibility: hidden !important;
 }
 
 /* ---------- base / layout ---------- */
 .stApp { background: var(--bg); }
 .block-container {
-    max-width: 1240px;
+    max-width: 1360px;
     padding-top: 1.25rem;
     padding-bottom: 3rem;
 }
+/* Sidebar expand/collapse control. Streamlit renders both with
+   `visibility: hidden` by default (a hover-to-reveal treatment that
+   wasn't surfacing reliably here) — with no other affordance to reopen a
+   closed sidebar, that left users with an apparently-permanent dead end
+   once they collapsed it (reported directly). Force both permanently
+   visible, and give them a high-contrast pill treatment on top (was 60%
+   text opacity, easy to miss even when it did show). Covers the collapse
+   button (inside the open sidebar) and the expand button (shown in the
+   main content's top-left corner when the sidebar is closed). */
+[data-testid="stSidebarCollapseButton"],
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stExpandSidebarButton"] {
+    visibility: visible !important;
+}
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stExpandSidebarButton"] {
+    background: var(--surface-2) !important;
+    border: 1px solid var(--hairline-2) !important;
+    border-radius: var(--r-sm) !important;
+}
+[data-testid="stSidebarCollapseButton"] button span,
+[data-testid="stExpandSidebarButton"] span {
+    color: var(--text) !important;
+    opacity: 1 !important;
+}
+[data-testid="stSidebarCollapseButton"] button:hover,
+[data-testid="stExpandSidebarButton"]:hover {
+    background: var(--surface-3) !important;
+    border-color: var(--text-3) !important;
+}
+
 html, body, [class*="css"] { font-family: var(--font-ui); }
 h1, h2, h3 { font-family: var(--font-ui); letter-spacing: -0.006em; color: var(--text); }
 p, li, span, div { letter-spacing: -0.006em; }
@@ -61,16 +138,23 @@ p, li, span, div { letter-spacing: -0.006em; }
     max-width: 640px; margin-bottom: 0.5rem;
 }
 .er-page-title {
-    font-weight: 600; font-size: 1.55rem; color: var(--text); margin: 0 0 0.35rem 0;
+    font-weight: 600; font-size: 1.55rem; color: var(--text); margin: 0 0 var(--space-1) 0;
 }
+/* Muted one-line description directly under a page title (final polish
+   pass) — distinct from .er-hero-sub (Home only, wider/larger) and from
+   section_header()'s own optional subtitle (which sits under a *section*
+   label, not the page title). */
+.er-page-subtitle { font-size: 0.9rem; color: var(--text-2); margin: 0 0 var(--space-6) 0; line-height: 1.5; }
 .er-card-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
-.er-section-label { font-size: 13px; color: var(--text-3); margin: 1.75rem 0 0.5rem 0; font-weight: 500; }
+.er-section-label { font-size: 13px; color: var(--text-3); margin: var(--space-6) 0 var(--space-2) 0; font-weight: 500; }
+.er-section-label:first-child { margin-top: 0; }
 .er-muted { color: var(--text-2); font-size: 0.85rem; }
 .er-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text); }
 .er-metric-value { font-family: var(--font-mono); font-weight: 500; font-size: 1.05rem; color: var(--text); }
 .er-metric-label {
     font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
     text-transform: uppercase; color: var(--text-3);
+    margin-bottom: var(--space-1); display: block;
 }
 .er-excerpt {
     font-family: var(--font-serif);
@@ -79,21 +163,80 @@ p, li, span, div { letter-spacing: -0.006em; }
 
 /* ---------- footer ---------- */
 .er-footer {
-    margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--hairline);
+    margin-top: var(--space-8); padding-top: var(--space-5); border-top: 1px solid var(--hairline);
     color: var(--text-3); font-size: 0.78rem; line-height: 1.6;
 }
-.er-footer .er-footer-version { font-family: var(--font-mono); margin-top: 0.6rem; }
+.er-footer .er-footer-version { font-family: var(--font-mono); margin-top: var(--space-2); }
+/* Compact one-line variant for normal workspace pages — full text stays
+   reserved for Methodology/Disclaimer (usability follow-up: the same long
+   footer repeated at Dashboard length on every page buried the page's own
+   content under boilerplate). */
+.er-footer-compact { margin-top: var(--space-6); padding-top: var(--space-4); }
 
 /* ---------- rows (catalyst timeline etc.) ---------- */
-.er-row { padding: 0.55rem 0; border-bottom: 1px solid var(--hairline); }
+.er-row { padding: var(--space-2) 0; border-bottom: 1px solid var(--hairline); display: flex; align-items: center; }
 .er-row:last-child { border-bottom: none; }
-
-/* ---------- direction: glyph + text-weight only, never color ---------- */
-.er-dir {
-    font-weight: 600; color: var(--text);
+/* Fixed-width date badge so catalyst titles/types start at a consistent
+   x-position across rows, regardless of "Sep 5" vs "Dec 25" width. */
+.er-date-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 92px; background: var(--surface-2); border: 1px solid var(--hairline);
+    border-radius: 4px; padding: 0.15rem var(--space-2); font-size: 0.75rem; white-space: nowrap;
 }
+
+/* ---------- direction: glyph + text-weight, with a restrained color accent
+   on the glyph only (UX-refinement pass — see :root note). The label text
+   itself stays neutral; only the small glyph carries the semantic hue. ---------- */
+.er-dir { font-weight: 600; color: var(--text); }
 .er-dir.er-dir-weakening, .er-dir.er-dir-mixed { font-weight: 400; color: var(--text-3); }
 .er-dir-glyph { margin-right: 0.3rem; font-weight: 700; }
+.er-dir-glyph.er-glyph-pos { color: var(--pos); }
+.er-dir-glyph.er-glyph-neg { color: var(--neg); }
+.er-dir-glyph.er-glyph-mix { color: var(--mix); }
+
+/* Thin left rail on a card — a restrained accent, not a filled background. */
+.er-rail-pos { border-left: 2px solid var(--pos); }
+.er-rail-neg { border-left: 2px solid var(--neg); }
+.er-rail-mix { border-left: 2px solid var(--mix); }
+
+/* Compact status tag — small pill, tinted background, for tight spaces
+   (Theme Health cards, chart-state markers). */
+.er-status-tag {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.68rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 999px;
+}
+.er-status-tag.er-tag-pos { background: var(--pos-dim); color: var(--pos); }
+.er-status-tag.er-tag-neg { background: var(--neg-dim); color: var(--neg); }
+.er-status-tag.er-tag-mix { background: var(--mix-dim); color: var(--mix); }
+
+/* Small mono order marker ("01", "02"...) — Priority Signals only, a
+   restrained way to read the row as ranked rather than an arbitrary list. */
+.er-order-marker {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-4);
+    display: inline-block; min-width: 1.5em;
+}
+
+/* "Moving against thesis" warning treatment (final polish pass) — a muted
+   rose left rail + tinted background (the same --neg-dim tint already used
+   for status-tag pills elsewhere, so this isn't a new color, just a new
+   application of it) plus a small rose dot on the label. Deliberately NOT
+   tiny low-contrast rose text alone: the label is rose, but the quoted
+   invalidation note itself renders in --text (near-white) so it stays
+   readable at any width, and the tint stays restrained rather than a large
+   bright warning block. */
+.er-alert-neg {
+    border-left: 3px solid var(--neg); background: var(--neg-dim);
+    border-radius: var(--r-sm); padding: var(--space-3) var(--space-4);
+}
+.er-alert-neg-label {
+    display: inline-flex; align-items: center; gap: var(--space-1);
+    color: var(--neg); font-weight: 600; font-size: 0.8rem;
+}
+.er-alert-neg-label::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--neg); display: inline-block; flex-shrink: 0;
+}
+.er-alert-neg-note { color: var(--text); font-size: 0.85rem; margin-top: var(--space-1); line-height: 1.5; }
 
 /* ---------- sidebar rail ---------- */
 [data-testid="stSidebar"] {
@@ -113,7 +256,7 @@ p, li, span, div { letter-spacing: -0.006em; }
 .er-rail-brand [data-testid="stPageLink"] a p { font-weight: 600 !important; font-size: 14.5px !important; }
 .er-rail-group-label {
     font-size: 0.66rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--text-4); margin: 1.1rem 0 0.35rem 0.25rem;
+    color: var(--text-4); margin: var(--space-5) 0 var(--space-2) 0.25rem;
 }
 [data-testid="stSidebar"] [data-testid="stPageLink"] a {
     color: var(--text-2) !important; border-radius: var(--r-sm);
@@ -132,6 +275,56 @@ p, li, span, div { letter-spacing: -0.006em; }
 }
 .er-rail-footlinks { display: flex; flex-direction: column; gap: 0.1rem; margin-top: 0.4rem; }
 .er-rail-footlinks [data-testid="stPageLink"] a p { font-size: 0.74rem; color: var(--text-3); }
+
+/* "My Watchlists" group header, styled as a link — a real page_link
+   dressed to read as a group label (Streamlit can't nest a widget inside
+   a raw markdown div, so this targets the wrapping container's key). */
+.st-key-navitem-watchlists-header { margin: var(--space-5) 0 var(--space-1) 0; }
+.st-key-navitem-watchlists-header [data-testid="stPageLink"] a {
+    padding: 0 0.25rem !important; background: transparent !important;
+}
+.st-key-navitem-watchlists-header [data-testid="stPageLink"] a p {
+    font-size: 0.66rem !important; font-weight: 600 !important; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-4) !important;
+}
+.st-key-navitem-watchlists-header [data-testid="stPageLink"] a:hover p { color: var(--text-2) !important; }
+
+/* Watchlist quick-filter links into Signals (four of them, all pointing at
+   the same underlying Page with different query strings) — Streamlit's own
+   page_link "current page" highlight matches by Page identity only, so all
+   four would light up together whenever the user is anywhere on Signals.
+   Strip that native highlight back to the plain nav-link look; hover still
+   works normally. Must come after the plain stPageLink rule above to win. */
+[class*="st-key-navitem-watchlist-"] [data-testid="stPageLink"] a {
+    background: transparent !important;
+}
+[class*="st-key-navitem-watchlist-"] [data-testid="stPageLink"] a:hover {
+    background: var(--surface) !important;
+}
+/* Subtly lower emphasis than Workspace pages (final polish pass) — these
+   are personal filter shortcuts, not primary destinations, and shouldn't
+   read with the same visual weight as Dashboard/Themes/Signals/Research. */
+[class*="st-key-navitem-watchlist-"] [data-testid="stPageLink"] a p {
+    font-size: 0.78rem !important; color: var(--text-3) !important;
+}
+[class*="st-key-navitem-watchlist-"] [data-testid="stPageLink"] a:hover p {
+    color: var(--text-2) !important;
+}
+
+/* Separate unread badge for Signals — a small pill beside the link, not
+   text folded into the label (st.page_link only accepts a plain string). */
+.er-nav-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 0.3rem; border-radius: 999px;
+    background: var(--surface-3); color: var(--text-2);
+    font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+}
+/* Streamlit's own st.columns wraps to a stacked layout below ~640px,
+   which would drop this badge onto its own row under the sidebar's narrow
+   mobile width — force it to stay beside the link at every width. */
+.st-key-navitem-signals [data-testid="stHorizontalBlock"] {
+    flex-wrap: nowrap !important;
+}
 
 /* live-status dot (the one non-breadth-bar permitted motion instance) */
 .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; background: var(--text-3); }
@@ -154,6 +347,30 @@ p, li, span, div { letter-spacing: -0.006em; }
    solid invert fill + glow (one of the app's exactly three glow spots),
    secondary = outlined pill, tertiary = ghost/text link. Full pill radius
    per §5; no hover lift anywhere — the glow alone carries primary's state. */
+/* Streamlit's own default gap between stacked sibling elements is small —
+   noticeably smaller than the space already used between other groups —
+   so a CTA sitting right under a paragraph or card description read as
+   glued to it (final polish follow-up). One rule on the wrapping
+   container itself, rather than a spacer <div> hand-added before every
+   call site, so every action button/link site-wide gets this consistently
+   without per-page upkeep. A CTA that's the first/only child of its
+   parent (nothing above it to separate from) just gets a no-op margin. */
+[class*="st-key-cta-primary-"], [class*="st-key-cta-secondary-"], [class*="st-key-cta-tertiary-"] {
+    margin-top: var(--space-3) !important;
+}
+/* Streamlit gives st.page_link's <a> and st.button's <button> different
+   native padding/line-height (an <a> renders ~11px shorter at the same
+   font size), so the same tier looked a different height depending on
+   which element realized it — standardize both to one explicit box. */
+[class*="st-key-cta-primary-"] [data-testid="stPageLink"] a,
+[class*="st-key-cta-primary-"] [data-testid="stBaseButton-secondary"],
+[class*="st-key-cta-secondary-"] [data-testid="stPageLink"] a,
+[class*="st-key-cta-secondary-"] [data-testid="stBaseButton-secondary"] {
+    box-sizing: border-box !important; min-height: 2.5rem !important;
+    padding: 0.5rem 1.1rem !important;
+    display: inline-flex !important; align-items: center !important; justify-content: center !important;
+}
+
 [class*="st-key-cta-primary-"] [data-testid="stPageLink"] a,
 [class*="st-key-cta-primary-"] [data-testid="stBaseButton-secondary"] {
     background: var(--invert-bg) !important; color: var(--invert-fg) !important;
@@ -181,11 +398,47 @@ p, li, span, div { letter-spacing: -0.006em; }
 [class*="st-key-cta-secondary-"] [data-testid="stBaseButton-secondary"]:hover {
     border-color: var(--text-2) !important; background: var(--surface) !important;
 }
+/* Priority Signals' Review Evidence sits in a tight compact row inside a
+   narrow column — shrink its footprint so it doesn't overpower the row
+   (final polish pass). Scoped to that one call site's key prefix; every
+   other secondary button (Watchlists' Add/Remove, Company's Save, etc.)
+   keeps the standard size. Must come after the general secondary rule
+   above to win (equal specificity, later wins). */
+[class*="st-key-cta-secondary-priority-"] [data-testid="stBaseButton-secondary"] {
+    padding: 0.35rem 0.75rem !important; min-height: 2.1rem !important; font-size: 0.82rem !important;
+}
+/* This one sits beside plain Strength/Horizon text in the same row (not
+   stacked under a paragraph), so the general cta top-margin above would
+   misalign it against its row-mates — cancel it back out here. */
+[class*="st-key-cta-secondary-priority-"] {
+    margin-top: 0 !important;
+}
+/* Signals' two filter-row buttons sit beside plain text/inputs in the same
+   row (one uses Streamlit's own vertical_alignment="bottom" specifically
+   to line up with the filter multiselects above it) — the general cta
+   top-margin would fight that alignment, so cancel it here too. */
+.st-key-cta-tertiary-clear-watchlist-filter,
+.st-key-cta-tertiary-clear-filters {
+    margin-top: 0 !important;
+}
+/* Watchlists' Add/Remove buttons sit beside a selectbox, already lined up
+   with it via an explicit "&nbsp;" spacer matching the selectbox's own
+   label height — same reasoning as above. */
+[class*="st-key-cta-secondary-add-"],
+[class*="st-key-cta-secondary-remove-"] {
+    margin-top: 0 !important;
+}
 
 [class*="st-key-cta-tertiary-"] [data-testid="stPageLink"] a,
 [class*="st-key-cta-tertiary-"] [data-testid="stBaseButton-secondary"] {
     background: transparent !important; border: none !important; color: var(--text-3) !important;
     padding-left: 0 !important; transition: color .15s ease;
+    /* No pill/border like primary+secondary (stays a plain ghost link),
+       but matched to the same row height so it aligns with a secondary
+       button sitting beside it in an action row instead of looking
+       vertically offset. */
+    box-sizing: border-box !important; min-height: 2.5rem !important;
+    display: inline-flex !important; align-items: center !important;
 }
 [class*="st-key-cta-tertiary-"] [data-testid="stPageLink"] a:hover,
 [class*="st-key-cta-tertiary-"] [data-testid="stBaseButton-secondary"]:hover { color: var(--text) !important; }
@@ -206,8 +459,15 @@ p, li, span, div { letter-spacing: -0.006em; }
 [class*="st-key-card-"] {
     border: none !important; border-radius: var(--r-md) !important;
     background: var(--surface) !important; transition: background-color .15s ease;
+    /* Slightly less vertical padding than Streamlit's own default (was a
+       uniform 14px) so cards don't consume unnecessary height, matching
+       the shared spacing scale rather than a per-card override. */
+    padding: var(--space-3) var(--space-4) !important;
 }
 [class*="st-key-card-"]:hover { background: var(--surface-2) !important; }
+/* Subtheme/Map cards don't open anything (UX-refinement pass) — suppress
+   the hover brighten so they don't visually imply they're clickable. */
+[class*="st-key-card-subtheme-"]:hover { background: var(--surface) !important; }
 
 /* ---------- theme icon motifs ---------- */
 .er-theme-icon { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; margin-bottom: 0.5rem; color: var(--text-2); }
@@ -288,10 +548,14 @@ p, li, span, div { letter-spacing: -0.006em; }
 
 /* ---------- diverging bars (rotation leaders/laggards) — static, no
    motion; the breadth strip above is the one animated data bar. ---------- */
-.er-divbar-row { display: flex; align-items: center; gap: 0.6rem; margin: 0.4rem 0; }
+.er-divbar-row { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-2) 0; }
 .er-divbar-label { width: 130px; font-size: 0.78rem; color: var(--text-2); flex-shrink: 0; }
 .er-divbar-track { flex: 1; height: 6px; background: var(--surface-3); border-radius: 3px; position: relative; }
-.er-divbar-zero { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--hairline-2); }
+/* A clear neutral midpoint marker — deliberately stronger than the
+   surrounding hairlines elsewhere in the app (usability follow-up: at
+   --hairline-2 it read as barely-there against the track). Still neutral
+   grey, not a semantic color, since it marks "zero," not a direction. */
+.er-divbar-zero { position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: var(--text-4); }
 .er-divbar-fill { position: absolute; top: 0; bottom: 0; background: var(--text-2); border-radius: 3px; }
 .er-divbar-value { width: 60px; text-align: right; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text); flex-shrink: 0; }
 

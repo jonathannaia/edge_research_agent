@@ -225,3 +225,168 @@ app and found several real gaps the section-by-section pass missed. Fixed:
   860px; layout has zero horizontal overflow at 1440px, 1280px, and
   1024px; no uppercase+mono section-header combination exists anywhere
   (the uppercase rules that do exist are all Inter, not mono).
+
+## UX-refinement pass (post-restructure): navigation, Dashboard/Themes/
+Signals/Research rework, copy layering, visual refinement
+
+- **Copy-swap scope**: the brief gave five exact string replacements
+  (`Demo placeholder interpretation text` → `Illustrative interpretation
+  for this sample signal`, `Demo signal:` → `Sample signal:`, `View
+  details` → `Review evidence`, `Open theme` → `Explore [Theme]`, `No
+  research yet` → `Start a research thread`). Applied those exactly, plus
+  a small number of directly-analogous instances not literally on the
+  list but using the same "demo" vocabulary in the same visible surfaces
+  (`company.py`'s bare badge → `demo_badge("Sample")`, watchlists.py's
+  intro line, signal_drawer.py's "N demo evidence item(s)" line,
+  research.py's "no sources attached" caption). Deliberately did **not**
+  extend the swap to: the three sibling Signal fields
+  (`contrary_evidence`/`validation_criteria`/`invalidation_criteria`,
+  still "Demo placeholder ... — not real."), `chat_demo_answers.json`'s
+  own placeholder prose (`what_happened`/`why_it_matters`/etc.), or the
+  Live/Stale/Demo freshness-state vocabulary in `freshness.py` and
+  methodology.py (that's a real 3-state system name, not throwaway
+  copy). Also left `signal_drawer.py`'s "EevaResearch Demo Data"
+  attribution string untouched — it's the tested source-safeguard
+  string, not placeholder copy.
+- **Streamlit's native page_link "current page" highlight matches by
+  Page object, not query string** — discovered because the four
+  Watchlist quick-filter links (`signals?watchlist=X`) all point at the
+  same underlying Signals `Page`. Being anywhere on Signals lit up all
+  four simultaneously plus the real Signals nav item, falsely implying
+  every watchlist filter was active at once. Fixed by wrapping each in
+  its own keyed container and stripping Streamlit's native highlight via
+  CSS (`ui.py::render_sidebar`, `styles.css`) back to the plain nav-link
+  look; hover still works.
+- **`st.columns` stacks to a single column below ~640px** — this dropped
+  the Signals unread-count badge (rendered via `st.columns([5, 1.4])`
+  beside the page_link) onto its own row under the sidebar's narrow
+  mobile width, since Streamlit's flex-wrap is `wrap` by default.
+  Verified via computed-style inspection, then forced `flex-wrap:
+  nowrap !important` on that one container's key
+  (`.st-key-navitem-signals`) so the badge stays inline at every width.
+- **Pre-existing bug found and fixed, unrelated to this pass's own
+  edits**: three of the five canned Research answers
+  (`chat_demo_answers.json`) had a `Fact`-type claim with empty
+  `evidence`, which crashes `evidence_chips.UnlinkedFactChipError` (a
+  guardrail requiring every Fact chip to cite a source) — so three of
+  five suggested questions threw on click. These three claims are
+  self-referential statements about where the app's own structured data
+  lives ("The Memory theme page's Catalysts tab lists...") rather than
+  sourced market facts, so reclassified them `Interpretation` instead of
+  fabricating evidence — matches the existing working answer's pattern
+  exactly. Verified by clicking all five suggested questions after the
+  fix.
+- **Button-styling inconsistency**: watchlists.py's "Remove" button was
+  a bare `st.button` (Streamlit's own default look) while "Add" right
+  next to it was wrapped in the app's `cta-secondary` styled-pill
+  container. Wrapped Remove the same way so both share identical height/
+  padding/radius.
+- **Tab-jump-links dropped, not fake-implemented**: `st.tabs` can't be
+  pre-selected from an external link/button click (confirmed hard
+  Streamlit limitation, re-confirmed this pass). Themes' Theme Summary
+  names which tab to check in prose ("Check the Rotation tab for the
+  read...") instead of linking to it — user's explicit call over faking
+  jump-buttons or rearchitecting tabs into session-state-driven
+  segmented controls.
+- Watchlists restored as a real standalone page (was folded into
+  Signals-as-filters in the prior phase's plan) — user's explicit call;
+  sidebar's "My Watchlists" group header is a real `st.page_link` to it,
+  styled to read as a label via the same keyed-container CSS-targeting
+  technique used elsewhere in this codebase for the same problem
+  (Streamlit can't nest a widget inside a raw markdown div).
+
+## Small-fix follow-up: sidebar visibility, content width, scan cues, footer/CTA consistency
+
+- **Root cause of "sidebar not visible by default"**: Streamlit persists
+  the sidebar's collapsed/expanded state in the browser's own
+  localStorage, independent of Python session state, and it outlives
+  `initial_sidebar_state="expanded"` — a sidebar collapsed once (in any
+  earlier, unrelated visit to this origin) stays collapsed on every
+  future fresh open, including at desktop widths. `initial_sidebar_state`
+  only governs the very first visit ever to that browser origin. Fixed
+  with a once-per-session check (`ui.py::_correct_sidebar_state_for_width`)
+  that forces the sidebar to match the current viewport on load —
+  expanded at ≥768px, collapsed below it — without re-forcing on every
+  rerun, so a user who deliberately toggles it mid-session isn't fought.
+  Verified by deliberately leaving the browser's localStorage in the
+  "wrong" state for the next width tested and confirming the fresh load
+  corrects it both directions (mobile→desktop and desktop→mobile).
+- Also raised the collapse/expand control's contrast — Streamlit's
+  default renders it at 60% text opacity, easy to miss against `--bg`.
+- Widened `.block-container` from 1240px → 1360px (~10%) — kept short of
+  a radical reflow; column/card layouts are unchanged, just less side
+  margin at large widths.
+- Theme Health cards gained a thin top rail in the same restrained
+  pos/neg/mix accent as the status tag already below it (second, faster
+  scan cue, not a replacement) — same per-instance injected-`<style>`
+  technique `signal_card`/`priority_signal_row` already use to override
+  the global `border: none` card rule.
+- Capital Rotation: zero baseline bumped from `--hairline-2` (nearly
+  invisible against the track) to `--text-4` at 2px; bars now tint
+  pos/neg by sign via inline `style=` (wins over the class's plain
+  `--text-2` without needing `!important`, since inline always beats an
+  external class of equal specificity); added the
+  "Relative performance · sample data" label under the section header.
+  Underlying rotation-metric data/ranking logic untouched.
+- Priority Signals: added the one-line subheading beneath the section
+  header, no new scoring/filtering logic.
+- **CTA sizing bug found and fixed**: `st.page_link`'s `<a>` and
+  `st.button`'s `<button>` have different native padding/line-height, so
+  the same "primary"/"secondary" tier rendered ~11-15px taller as a
+  button than as a page_link, and a tertiary link sitting beside a
+  secondary button in the same action row (e.g. cards.py's action_cols)
+  looked vertically offset. Standardized both realizations of primary and
+  secondary to one explicit box (`min-height`/`padding`/flex-centering);
+  gave tertiary the same row height without giving it a border/pill, so
+  it still reads as the lighter-weight action.
+- Footer: full text now renders only on Methodology/Disclaimer (which
+  already carry the same content in their own page body); every other
+  page gets a one-line `"Evidence-first research · Sample data only ·
+  Not investment advice"` summary instead, with the Disclaimer link still
+  attached. `with_chrome` now threads `nav_key` into `render_footer` to
+  make the branch. Split the old single `test_primary_page_renders_footer`
+  parametrized test into two (full-footer pages vs. compact-footer pages)
+  rather than weakening the assertion, so both variants stay covered.
+
+## Final polish pass: spacing scale, action hierarchy, Dashboard → Market Overview
+
+- Added a shared `--space-1`(4px) through `--space-8`(48px) scale in
+  `:root` and rewired existing ad hoc margins (section labels, page title,
+  footer, sidebar groups, metric label/value pairs, rotation rows, row
+  padding) to reference it, per the user's explicit "use the design
+  system, not per-page hard-coded margins" instruction.
+- Card padding (the shared `[class*="st-key-card-"]` rule, so every card
+  app-wide) tightened from a uniform 14px to `--space-3 --space-4`
+  (12px/16px) — Today's Read specifically asked to not "consume
+  unnecessary height," but a one-off override there would violate the
+  same instruction, so the shared rule moved instead.
+- **"Moving against thesis" treatment** — user gave an explicit
+  clarification mid-pass after the first approval: not tiny low-contrast
+  rose text alone, must use a rail/tag/dot + readable near-white text, no
+  large or bright block. Implemented as `.er-alert-neg`: a 3px rose left
+  rail + the existing `--neg-dim` tint (already used for status-tag pills
+  elsewhere, so not a new color application) as the block background, a
+  small rose dot + rose label, and the quoted invalidation note itself in
+  `--text` (near-white) rather than muted. Verified at both 1280px and
+  375px.
+- Priority Signals' "01"/"02"/"03" order markers and the compact Review
+  Evidence button are scoped to that one call site
+  (`priority_signal_row`'s `order` param; a CSS rule keyed to
+  `st-key-cta-secondary-priority-`) — Signals page's full `signal_card`
+  and Watchlists' Add/Remove buttons, which reuse the same secondary-tier
+  CSS, are intentionally unaffected.
+- Catalyst row date badges gained a fixed `min-width` (`.er-date-badge`)
+  so "Sep 5" and "Dec 25" align the same — shared by `catalyst_timeline_row`,
+  so Dashboard's Next Catalysts, Themes' Catalysts tab, and Company's
+  catalyst list all picked this up from one change.
+- Sidebar: watchlist quick-filter entries get a scoped smaller/dimmer
+  treatment (`text-3` + smaller font vs. Workspace's `text-2`/0.83rem) so
+  they read as secondary to Workspace pages, per the brief; REFERENCE
+  (Methodology, About) and all other IA left untouched, per explicit
+  instruction not to move/hide/rename nav items this pass.
+- "Dashboard" stays the sidebar nav label; only the on-page `<h1>`-style
+  title changed to "Market Overview," matching the brief's own distinction
+  between the nav item and the page heading.
+- Skipped Theme Health's optional "why now" driver hint — no existing
+  demo field supports it without inventing a fact, and the user's
+  follow-up approval explicitly confirmed skipping it was correct.

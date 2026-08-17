@@ -33,15 +33,31 @@ def test_primary_page_renders_without_exception(harness_file):
     assert not at.exception, f"{harness_file} raised: {at.exception}"
 
 
-@pytest.mark.parametrize("harness_file", PRIMARY_PAGES)
-def test_primary_page_renders_footer(harness_file):
-    # Demo status lives in the sidebar (see test_sidebar_status_renders), not
-    # per-page — with_chrome only guarantees the footer.
+_FULL_FOOTER_PAGES = ["methodology_page.py", "disclaimer_page.py"]
+_COMPACT_FOOTER_PAGES = [p for p in PRIMARY_PAGES if p not in _FULL_FOOTER_PAGES]
+
+
+@pytest.mark.parametrize("harness_file", _FULL_FOOTER_PAGES)
+def test_full_footer_page_renders_full_footer(harness_file):
+    # Methodology/Disclaimer keep the long-form footer (UX-refinement
+    # follow-up) — everywhere else gets the compact one-liner instead, see
+    # test_other_pages_render_compact_footer below.
     at = AppTest.from_file(str(HARNESS_DIR / harness_file), default_timeout=10)
     at.run()
     all_html = " ".join(m.value for m in at.markdown)
     assert "does not provide investment advice" in all_html
     assert "EevaResearch AI v" in all_html
+
+
+@pytest.mark.parametrize("harness_file", _COMPACT_FOOTER_PAGES)
+def test_other_pages_render_compact_footer(harness_file):
+    # Demo status lives in the sidebar (see test_sidebar_status_renders), not
+    # per-page — with_chrome only guarantees the footer.
+    at = AppTest.from_file(str(HARNESS_DIR / harness_file), default_timeout=10)
+    at.run()
+    all_html = " ".join(m.value for m in at.markdown)
+    assert "Not investment advice" in all_html
+    assert "does not provide investment advice" not in all_html
 
 
 def test_company_page_receives_demo_symbol_via_query_params():
@@ -78,7 +94,7 @@ def test_sidebar_status_renders():
     assert not at.exception
     all_html = " ".join(m.value for m in at.markdown)
     assert "EevaResearch" in all_html
-    assert "Demo mode" in all_html
+    assert "Demo environment" in all_html
     # Every primary + footer nav item renders as a real st.page_link.
     # (Watchlist entries also render as page_links, filtering into Signals
     # — brief §4 — so this checks a subset, not exact equality.)

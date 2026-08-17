@@ -76,11 +76,22 @@ def render() -> None:
                     del st.query_params["watchlist"]
                     st.rerun()
 
-    filter_cols = st.columns(4)
+    filter_cols = st.columns([3, 3, 3, 3, 2], vertical_alignment="bottom")
     theme_filter = filter_cols[0].multiselect("Theme", sorted(themes.values()), key="signals-filter-theme")
     direction_filter = filter_cols[1].multiselect("Direction", sorted({s.direction.value for s in signals}), key="signals-filter-direction")
     strength_filter = filter_cols[2].multiselect("Strength", sorted({s.strength.value for s in signals}), key="signals-filter-strength")
     horizon_filter = filter_cols[3].multiselect("Time horizon", sorted({s.horizon.value for s in signals}), key="signals-filter-horizon")
+    active_filter_count = len(theme_filter) + len(direction_filter) + len(strength_filter) + len(horizon_filter)
+    with filter_cols[4]:
+        with st.container(key="cta-tertiary-clear-filters"):
+            if st.button("Clear filters", key="clear-filters-visible", width="stretch", disabled=active_filter_count == 0):
+                _clear_filters()
+                st.rerun()
+    if active_filter_count:
+        st.markdown(
+            f'<div class="er-muted" style="font-size:0.78rem; margin-top:-0.5rem;">{active_filter_count} filter{"s" if active_filter_count != 1 else ""} active</div>',
+            unsafe_allow_html=True,
+        )
 
     filtered = signals
     if watchlist_symbols is not None:
@@ -111,7 +122,7 @@ def render() -> None:
     for s in sorted(filtered, key=lambda s: s.last_updated, reverse=True):
         signal_card(
             s, theme_page=theme_page, evidence_repository=ctx.evidence_repository,
-            unread=is_unread(s, prev_last_seen, read_ids),
+            unread=is_unread(s, prev_last_seen, read_ids), theme_name=themes.get(s.theme_slug),
         )
 
     st.session_state[LAST_SEEN_KEY] = datetime.now(timezone.utc).isoformat()

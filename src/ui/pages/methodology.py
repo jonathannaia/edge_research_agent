@@ -2,7 +2,11 @@
 disclaimer/limitations content that used to live here has moved to its own
 Disclaimer page, and the roadmap/what-it-does content that overlapped with
 marketing copy has moved to About (brief §4: Methodology page splits into
-three doc pages)."""
+three doc pages).
+
+UX-refinement pass: Disclaimer is no longer a primary sidebar item, so this
+page's cross-link to it (near the top, not buried at the bottom) plus the
+global footer are now the two ways to reach it."""
 from __future__ import annotations
 
 import streamlit as st
@@ -16,6 +20,11 @@ from src.ui.ui import METHODOLOGY_STATEMENT, get_page
 def render() -> None:
     st.markdown('<div class="er-page-title">Methodology</div>', unsafe_allow_html=True)
     st.write(METHODOLOGY_STATEMENT)
+
+    disclaimer_page = get_page("disclaimer")
+    if disclaimer_page is not None:
+        with st.container(key="cta-secondary-methodology-disclaimer-top"):
+            st.page_link(disclaimer_page, label="Read the full disclaimer →")
 
     section_header("Where the material comes from")
     st.write(
@@ -60,7 +69,3 @@ def render() -> None:
         "phase's default — no live source connected). Demo mode is active everywhere in this build."
     )
 
-    page = get_page("disclaimer")
-    if page is not None:
-        with st.container(key="cta-tertiary-methodology-disclaimer"):
-            st.page_link(page, label="Read the disclaimer →")
