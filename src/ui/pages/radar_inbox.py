@@ -1,0 +1,304 @@
+"""Radar Inbox — automated primary-filing discovery. Korea DART (Samsung
+Electronics + SK Hynix), SEC EDGAR (NVIDIA, Micron Technology, Coherent
+Corp, Rockwell Automation, Rocket Lab), and EDINET (Japan) — SoftBank
+Group, Kioxia Holdings, Furukawa Electric, FANUC, ispace, all tracked as
+of Gate 7 — but EDINET has never had a live scan run against it, so its
+"Scan EDINET now" action is wired and its five companies are configured,
+while its FilingEvent/CandidateSignal counts stay at zero until a
+separately authorized live-scan gate. The only page in this app backed
+by real, live data; every other page reads from the demo AppContext (see
+src/data_access/dart/radar_service.py's module docstring for why sources
+are kept separate).
+
+Deliberately visually and lexically distinct from Signals (the curated,
+published Signal Board): a Radar item is a filing-driven research lead
+under review, never a completed market read. See
+src/ui/components/radar_status.py for the separate status vocabulary.
+
+Each source keeps its own explicit, separately-bounded "Scan ... now"
+action, its own readiness check, and its own on-disk candidate store
+(dart_candidates.json / edgar_candidates.json) — never merged into one
+"scan everything" action. A candidate's source is always distinguished
+via `filing.source_name`, never blended into one undifferentiated
+"live" label.
+"""
+from __future__ import annotations
+
+from datetime import date, datetime
+
+import streamlit as st
+
+from src.config.settings import get_settings
+from src.data_access.dart import candidate_store, radar_service
+from src.data_access.dart import scan_service as dart_scan_service
+from src.data_access.edgar import edgar_pipeline, edgar_service
+from src.data_access.edgar import scan_service as edgar_scan_service
+from src.data_access.edinet import edinet_pipeline, edinet_service
+from src.data_access.edinet import scan_service as edinet_scan_service
+from src.ui.components.empty_state import empty_state
+from src.ui.components.freshness import freshness_chip
+from src.ui.components.radar_card import candidate_row
+from src.ui.components.radar_status import RadarItem, status_label
+
+_DART_SCOPE_LINE = "OpenDART / DART · Samsung Electronics + SK Hynix · Memory + AI Buildout"
+_EDGAR_SCOPE_LINE = "SEC EDGAR · NVIDIA, Micron, Coherent, Rockwell Automation, Rocket Lab · AI Buildout, Memory, Photonics, Humanoids, Space"
+
+
+def _edinet_scope_line(cache_dir) -> str:
+    """Truthful configured-but-not-scanned wording (Gate 7.1) — replaces
+    the earlier, now-stale "no tracked companies yet" line from before
+    the five-company registry addition (Gate 7). Deliberately does not
+    claim EDINET is calibrated, actively monitored, current, autonomous,
+    or producing live signals — it isn't; zero live scans have run."""
+    company_count = len(edinet_service.get_edinet_companies(cache_dir))
+    filing_count = len(edinet_scan_service.load_filing_events(cache_dir))
+    candidate_count = len(candidate_store.load_candidates(cache_dir, edinet_pipeline.CANDIDATE_STORE_FILENAME))
+    return (
+        f"EDINET (Japan) · {company_count} tracked companies configured; no live scan completed yet · "
+        f"FilingEvents: {filing_count} · CandidateSignals: {candidate_count} · last scan: none"
+    )
+
+
+def _render_missing_configuration(
+    dart_readiness: radar_service.RadarReadiness,
+    edgar_readiness: edgar_service.EdgarReadiness,
+    edinet_readiness: edinet_service.EdinetReadiness,
+) -> None:
+    lines: list[str] = []
+    if not dart_readiness.dart_key_configured:
+        lines.append("EDGE_DART_API_KEY is not configured.")
+    if not dart_readiness.translation_key_configured:
+        lines.append("EDGE_TRANSLATION_API_KEY is not configured.")
+    if dart_readiness.unresolved_companies:
+        lines.append(
+            "DART corp code not resolved for: " + ", ".join(dart_readiness.unresolved_companies)
+            + " — run the corp_code_resolver once against a configured DART key."
+        )
+    if not edgar_readiness.user_agent_configured:
+        lines.append("EDGE_EDGAR_USER_AGENT is not configured.")
+    if edgar_readiness.unresolved_companies:
+        lines.append(
+            "SEC CIK not resolved for: " + ", ".join(edgar_readiness.unresolved_companies)
+            + " — run the cik_resolver once against a configured User-Agent."
+        )
+    if not edinet_readiness.subscription_key_configured:
+        lines.append("EDGE_EDINET_SUBSCRIPTION_KEY is not configured.")
+    empty_state(
+        "Radar Inbox is not configured",
+        " ".join(lines) + " Add the missing configuration to your local .env and restart the app.",
+    )
+
+
+def _parse_rcept_date(raw: str) -> date | None:
+    """FilingEvent.rcept_dt is each source's own raw date string — DART's
+    unconverted "YYYYMMDD", EDGAR's dashed ISO "YYYY-MM-DD" — never
+    assume a single format. Stripping dashes before parsing as %Y%m%d
+    handles both without needing to know which source a given item came
+    from (confirmed against real data for both — see scan_service.py in
+    each source's module)."""
+    if not raw:
+        return None
+    try:
+        return datetime.strptime(raw.replace("-", ""), "%Y%m%d").date()
+    except ValueError:
+        return None
+
+
+def _build_items(cache_dir) -> list[RadarItem]:
+    items: list[RadarItem] = []
+
+    dart_filings = dart_scan_service.load_filing_events(cache_dir)
+    dart_candidates = candidate_store.load_candidates(cache_dir)
+    dart_by_rcept_no = {c.filing.rcept_no: c for c in dart_candidates.values()}
+    items += [RadarItem(filing=f, candidate=dart_by_rcept_no.get(f.rcept_no)) for f in dart_filings]
+
+    edgar_filings = edgar_scan_service.load_filing_events(cache_dir)
+    edgar_candidates = candidate_store.load_candidates(cache_dir, edgar_pipeline.CANDIDATE_STORE_FILENAME)
+    edgar_by_accession_no = {c.filing.rcept_no: c for c in edgar_candidates.values()}
+    items += [RadarItem(filing=f, candidate=edgar_by_accession_no.get(f.rcept_no)) for f in edgar_filings]
+
+    edinet_filings = edinet_scan_service.load_filing_events(cache_dir)
+    edinet_candidates = candidate_store.load_candidates(cache_dir, edinet_pipeline.CANDIDATE_STORE_FILENAME)
+    edinet_by_doc_id = {c.filing.rcept_no: c for c in edinet_candidates.values()}
+    items += [RadarItem(filing=f, candidate=edinet_by_doc_id.get(f.rcept_no)) for f in edinet_filings]
+
+    return sorted(items, key=lambda i: i.filing.rcept_dt, reverse=True)
+
+
+def _scan_summary_line(report) -> str:
+    parts = [
+        f"{report.filings_discovered} filings discovered", f"{report.new_filing_events} new",
+        f"{report.candidates_detected} candidates detected", f"{report.candidates_processed} processed",
+        f"{report.candidates_deferred} deferred", f"{report.documents_extracted} extracted",
+    ]
+    # Only DART's ScanReport has a translation step — EDGAR's report has
+    # no such field at all (see edgar_pipeline.ScanReport's own docstring).
+    translations = getattr(report, "translations_completed", None)
+    if translations is not None:
+        parts.append(f"{translations} translated")
+    return " · ".join(parts)
+
+
+def _render_scan_result(session_key_report: str, session_key_error: str) -> None:
+    if st.session_state.get(session_key_report) is not None:
+        report = st.session_state[session_key_report]
+        with st.container(border=True):
+            st.markdown(f'<div class="er-muted">Last scan: {report.scan_id} · {report.started_at}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="margin-top:0.2rem;">{_scan_summary_line(report)}</div>', unsafe_allow_html=True)
+            if report.no_data_count:
+                st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">{report.no_data_count} company(s) had no new disclosures in this window.</div>', unsafe_allow_html=True)
+            if report.errors_by_category:
+                categories = ", ".join(f"{k} ({v})" for k, v in report.errors_by_category.items())
+                st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">Warnings: {categories}</div>', unsafe_allow_html=True)
+    if st.session_state.get(session_key_error):
+        st.markdown(f'<div class="er-muted" style="margin-top:0.4rem;">{st.session_state[session_key_error]}</div>', unsafe_allow_html=True)
+
+
+def render() -> None:
+    settings = get_settings()
+    dart_readiness = radar_service.radar_readiness(settings)
+    edgar_readiness = edgar_service.edgar_readiness(settings)
+    edinet_readiness = edinet_service.edinet_readiness(settings)
+
+    header_cols = st.columns([4, 2])
+    with header_cols[0]:
+        st.markdown('<div class="er-page-title">Radar Inbox</div>', unsafe_allow_html=True)
+        st.markdown('<div class="er-muted">Automated primary-filing discovery</div>', unsafe_allow_html=True)
+    with header_cols[1]:
+        st.markdown('<div style="text-align:right; margin-top:0.8rem;">', unsafe_allow_html=True)
+        freshness_chip("live" if (dart_readiness.ready or edgar_readiness.ready or edinet_readiness.ready) else "demo", key="fresh-radar-head")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    if dart_readiness.ready:
+        st.markdown(f'<div class="er-muted">{_DART_SCOPE_LINE}</div>', unsafe_allow_html=True)
+    if edgar_readiness.ready:
+        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">{_EDGAR_SCOPE_LINE}</div>', unsafe_allow_html=True)
+    if edinet_readiness.ready:
+        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">{_edinet_scope_line(settings.cache_dir)}</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="er-muted" style="margin-top:0.2rem;">Live primary filings · Korea DART + SEC EDGAR pilots '
+        '(EDINET seam present, not yet a live pilot)</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="er-muted" style="margin-top:0.4rem;">Candidate signals are rule-based filing flags, '
+        'not published market interpretations.</div>',
+        unsafe_allow_html=True,
+    )
+
+    if not dart_readiness.ready and not edgar_readiness.ready and not edinet_readiness.ready:
+        _render_missing_configuration(dart_readiness, edgar_readiness, edinet_readiness)
+        return
+
+    st.markdown("<div style='margin-top:0.6rem;'></div>", unsafe_allow_html=True)
+    scan_cols = st.columns([2, 2, 2, 2])
+    with scan_cols[0]:
+        dart_scan_clicked = dart_readiness.ready and st.button(
+            "Scan DART now", type="primary", use_container_width=True, key="scan-dart-btn",
+        )
+    with scan_cols[1]:
+        edgar_scan_clicked = edgar_readiness.ready and st.button(
+            "Scan EDGAR now", type="primary", use_container_width=True, key="scan-edgar-btn",
+        )
+    with scan_cols[2]:
+        edinet_scan_clicked = edinet_readiness.ready and st.button(
+            "Scan EDINET now", type="primary", use_container_width=True, key="scan-edinet-btn",
+        )
+
+    if dart_scan_clicked:
+        with st.spinner("Scanning DART — bounded to the configured lookback window and candidate budget..."):
+            try:
+                st.session_state["radar_last_scan_report"] = radar_service.run_scan(settings)
+            except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
+                st.session_state["radar_last_scan_error"] = "DART scan failed — see server logs for detail."
+    if edgar_scan_clicked:
+        with st.spinner("Scanning EDGAR — bounded to the configured lookback window, candidate budget, and rate limit..."):
+            try:
+                st.session_state["edgar_last_scan_report"] = edgar_service.run_scan(settings)
+            except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
+                st.session_state["edgar_last_scan_error"] = "EDGAR scan failed — see server logs for detail."
+    if edinet_scan_clicked:
+        with st.spinner("Scanning EDINET — no tracked companies configured yet, so this will report zero filings this gate..."):
+            try:
+                st.session_state["edinet_last_scan_report"] = edinet_service.run_scan(settings)
+            except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
+                st.session_state["edinet_last_scan_error"] = "EDINET scan failed — see server logs for detail."
+
+    _render_scan_result("radar_last_scan_report", "radar_last_scan_error")
+    _render_scan_result("edgar_last_scan_report", "edgar_last_scan_error")
+    _render_scan_result("edinet_last_scan_report", "edinet_last_scan_error")
+
+    items = _build_items(settings.cache_dir)
+
+    if not items:
+        empty_state(
+            "No filings scanned yet",
+            "Run a scan above to pull the latest tracked-company disclosures.",
+        )
+        return
+
+    companies = sorted({i.filing.corp_name for i in items})
+    sources = sorted({i.filing.source_name for i in items})
+    themes = sorted({i.filing.theme_slug for i in items if i.filing.theme_slug})
+    statuses = sorted({status_label(i) for i in items})
+    parsed_dates = sorted(d for d in (_parse_rcept_date(i.filing.rcept_dt) for i in items) if d is not None)
+    min_date = parsed_dates[0] if parsed_dates else date.today()
+    max_date = parsed_dates[-1] if parsed_dates else date.today()
+
+    filter_cols = st.columns([2, 2, 2, 2, 2, 2, 2])
+    source_filter = filter_cols[0].multiselect("Source", sources, key="radar-filter-source")
+    company_filter = filter_cols[1].multiselect("Company", companies, key="radar-filter-company")
+    theme_filter = filter_cols[2].multiselect("Theme", themes, key="radar-filter-theme")
+    status_filter = filter_cols[3].multiselect("Status", statuses, key="radar-filter-status")
+    date_range = filter_cols[4].date_input(
+        "Filed between", value=(min_date, max_date), min_value=min_date, max_value=max_date, key="radar-filter-dates",
+    )
+    language_filter = filter_cols[5].selectbox(
+        "Language", ["All", "Korean original", "Korean + English translation", "Translation unavailable"],
+        key="radar-filter-language",
+    )
+    confidence_filter = filter_cols[6].multiselect("Detection confidence", ["Moderate", "High"], key="radar-filter-confidence")
+
+    filtered = items
+    if source_filter:
+        filtered = [i for i in filtered if i.filing.source_name in source_filter]
+    if company_filter:
+        filtered = [i for i in filtered if i.filing.corp_name in company_filter]
+    if theme_filter:
+        filtered = [i for i in filtered if i.filing.theme_slug in theme_filter]
+    if status_filter:
+        filtered = [i for i in filtered if status_label(i) in status_filter]
+    if isinstance(date_range, tuple) and len(date_range) == 2:
+        start, end = date_range
+        filtered = [i for i in filtered if (d := _parse_rcept_date(i.filing.rcept_dt)) is not None and start <= d <= end]
+    if language_filter == "Korean + English translation":
+        filtered = [i for i in filtered if i.candidate is not None and i.candidate.excerpt_translation is not None]
+    elif language_filter == "Translation unavailable":
+        filtered = [i for i in filtered if i.candidate is not None and i.candidate.translation_state.value == "Translation unavailable"]
+    elif language_filter == "Korean original":
+        filtered = [i for i in filtered if i.candidate is None or i.candidate.excerpt_translation is None]
+    if confidence_filter:
+        filtered = [i for i in filtered if i.candidate is not None and i.candidate.confidence in confidence_filter]
+
+    st.markdown(f'<div class="er-muted" style="margin-top:0.4rem;">{len(filtered)} of {len(items)} items</div>', unsafe_allow_html=True)
+
+    def _on_process(candidate_id: str) -> None:
+        # Routed by the candidate's own id prefix ("edgar-cand-",
+        # "edinet-cand-", vs "cand-") — reliable since each source's
+        # scan_service mints its own ids, and each source's action must
+        # stay independently bounded, never a merged "process anything"
+        # seam.
+        if candidate_id.startswith("edgar-cand-"):
+            edgar_service.process_candidate_now(settings, candidate_id)
+        elif candidate_id.startswith("edinet-cand-"):
+            edinet_service.process_candidate_now(settings, candidate_id)
+        else:
+            radar_service.process_candidate_now(settings, candidate_id)
+        st.rerun()
+
+    if not filtered:
+        empty_state("No items match these filters", "Clear a filter to see more results.")
+        return
+
+    for item in filtered:
+        candidate_row(item, on_process=_on_process)

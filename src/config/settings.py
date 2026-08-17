@@ -30,6 +30,24 @@ class Settings:
     # real "live" mode without a UI rewrite.
     data_mode: str = field(default_factory=lambda: os.getenv("EDGE_DATA_MODE", "demo"))
     seed_data_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "seed")
+    # Korea DART radar pilot — narrowly scoped, not a general "live mode"
+    # switch (see design/DECISIONS.md). None means unconfigured; callers
+    # must show a clear missing-key state rather than guessing or crashing.
+    dart_api_key: str | None = field(default_factory=lambda: os.getenv("EDGE_DART_API_KEY") or None)
+    translation_api_key: str | None = field(default_factory=lambda: os.getenv("EDGE_TRANSLATION_API_KEY") or None)
+    # SEC EDGAR radar pilot — not a secret (EDGAR needs no API key at all),
+    # but still a required, non-empty identifying contact string per SEC's
+    # own access policy. None means unconfigured; callers must fail closed
+    # with a typed config error rather than sending an unidentified request
+    # EDGAR would reject anyway. Never logged/printed/exposed — only ever
+    # checked for presence (see edgar_service.edgar_readiness).
+    edgar_user_agent: str | None = field(default_factory=lambda: os.getenv("EDGE_EDGAR_USER_AGENT") or None)
+    # EDINET (Japan) radar pilot — planning Gate 1, fixture-only. This
+    # gate never reads/validates the real value beyond presence-checking
+    # (see edinet_service.edinet_readiness); no live request uses it yet.
+    # Exactly one env var, no competing aliases, per the Gate 1 brief.
+    edinet_subscription_key: str | None = field(default_factory=lambda: os.getenv("EDGE_EDINET_SUBSCRIPTION_KEY") or None)
+    cache_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "cache")
 
 
 def get_settings() -> Settings:

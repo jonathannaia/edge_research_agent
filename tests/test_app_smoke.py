@@ -17,6 +17,7 @@ HARNESS_DIR = Path(__file__).parent / "apptest_pages"
 PRIMARY_PAGES = [
     "home_page.py",
     "dashboard_page.py",
+    "radar_inbox_page.py",
     "themes_page.py",
     "signals_page.py",
     "research_page.py",

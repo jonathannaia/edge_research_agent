@@ -227,3 +227,234 @@ class WatchlistEntry:
     added_at: str
     note: str = ""
     invalidates_if: str = ""
+
+
+class CandidateStatus(str, Enum):
+    """Radar Inbox processing lifecycle (Korea DART pilot, milestone 4
+    orchestration) — one authoritative "where is this candidate right
+    now" progression from first detection through document retrieval,
+    extraction, and translation to human review. Detection confidence,
+    extraction state, and translation state are tracked *separately* on
+    CandidateSignal (see their own fields) — this status is the single
+    summary value a Radar Inbox would primarily filter/display by, not a
+    replacement for those more detailed sub-states."""
+
+    NEW_FILING_EVENT = "New filing event"
+    CANDIDATE_DETECTED = "Candidate detected"
+    QUEUED_FOR_PROCESSING = "Queued for document processing"
+    RETRIEVAL_IN_PROGRESS = "Document retrieval in progress"
+    EXTRACTION_PENDING = "Extraction pending"
+    EXTRACTED = "Extracted"
+    TRANSLATION_PENDING = "Translation pending"
+    TRANSLATED = "Translated"
+    NEEDS_REVIEW = "Needs review"
+    PROCESSING_DEFERRED = "Processing deferred"
+    PARSE_FAILED = "Parse failed"
+    RETRIEVAL_FAILED = "Retrieval failed"
+    TRANSLATION_UNAVAILABLE = "Translation unavailable"
+    PUBLISHED = "Published"
+    DISMISSED = "Dismissed"
+    NOT_MATERIAL = "Not material"
+
+
+class TranslationState(str, Enum):
+    """Tracks the *excerpt's* translation specifically (title translation
+    is attempted independently — see CandidateSignal.title_translation —
+    and doesn't have its own state enum to keep this milestone's model
+    additions bounded). Every failure mode (missing key, network error,
+    rate limit, timeout, malformed response) collapses to UNAVAILABLE, per
+    the explicit "retain source text and transition to Translation
+    unavailable" behavior — there is no separate terminal "failed" state
+    distinct from "unavailable", since the user-facing handling is
+    identical either way."""
+
+    NOT_REQUESTED = "Not requested"
+    PENDING = "Translation pending"
+    TRANSLATED = "Translated"
+    UNAVAILABLE = "Translation unavailable"
+
+
+class ExcerptQuality(str, Enum):
+    """Descriptive metadata about the *shape* of an extracted excerpt —
+    never a materiality signal. Grounded in the real document pattern
+    verified in milestone 3 (numbered, table-heavy major-event reports),
+    not a general-purpose text-quality classifier."""
+
+    VERY_SHORT_OR_EMPTY = "Very short or empty"
+    LIKELY_BOILERPLATE = "Likely boilerplate"
+    TABLE_HEAVY = "Table-heavy"
+    USABLE_TEXT = "Usable text"
+    UNKNOWN = "Unknown"
+
+
+@dataclass(frozen=True)
+class StateTransition:
+    """One entry in a CandidateSignal's audit trail. Transitions are
+    appended, never overwritten or replaced — a failed attempt stays
+    visible in the history even after a later retry succeeds."""
+
+    status: CandidateStatus
+    at: str  # ISO 8601
+    detail: str = ""  # safe, human-readable — never a raw exception/stack trace or a secret
+
+
+@dataclass
+class FilingEvent:
+    """A deduplicated primary-source disclosure — the radar pipeline's
+    "filing event" tier (raw primary disclosure -> filing event). Always
+    real data when it exists; there is no demo FilingEvent.
+
+    Shared across both Korea DART and SEC EDGAR pilots via the existing
+    `source_name` field (already present, already defaulting to
+    "OpenDART / DART" — no new field was added for this). The identifier
+    fields carry source-dependent meaning, documented here rather than
+    renamed, to keep DART's existing field names/behavior completely
+    unchanged (see design/DECISIONS.md, milestone 8):
+
+        source_name == "OpenDART / DART":
+            corp_code   = DART issuer identifier (internal 8-digit corp_code)
+            stock_code  = public KRX stock code
+            rcept_no    = DART receipt number (dedup key)
+
+        source_name == "SEC EDGAR":
+            corp_code   = normalized 10-digit SEC CIK (zero-padded string)
+            stock_code  = ticker
+            rcept_no    = canonical dashed SEC accession number, e.g.
+                          "0000320193-25-000079" (dedup key; a no-dash
+                          form is derived only at archive-URL-construction
+                          time, never stored)
+
+    Deduplicated by (source_name, corp_code, rcept_no) — never by title,
+    ticker, name, date, or form type alone, since none of those are
+    guaranteed unique or stable across a source's own filing history."""
+
+    rcept_no: str
+    corp_code: str
+    corp_name: str
+    stock_code: str
+    report_nm: str  # DART: Korean disclosure title, verbatim. EDGAR: primary document description/title.
+    rcept_dt: str  # ISO 8601 date
+    flr_nm: str  # filer name, as returned by the source
+    # DART's disclosure-list response does NOT echo back a type code per
+    # row (pblntf_ty/pblntf_detail_ty are search *filters*, not response
+    # fields — confirmed against a live pull, not assumed). Both stay
+    # empty for DART filings pulled via an unfiltered scan.
+    # EDGAR reuses this same slot for its own, real, per-filing type code:
+    # pblntf_ty holds the SEC form type (e.g. "8-K", "10-Q", "SC 13D"),
+    # which — unlike DART's pblntf_ty — genuinely is present per filing in
+    # EDGAR's submissions data. pblntf_detail_ty stays unused for EDGAR
+    # (8-K item-number detail lives on the resulting CandidateSignal's
+    # matched_rules instead, same place DART puts its own rule-match
+    # detail).
+    #
+    # EDINET (Gate 8.1) reuses BOTH slots for its own two real per-filing
+    # codes, confirmed live (Gate 4/6/8): pblntf_ty holds EDINET's
+    # `formCode` (its closest analog to "form type" — unchanged since
+    # Gate 1), and pblntf_detail_ty — unused by DART/EDGAR — holds
+    # EDINET's `docTypeCode`. EDINET's third real code, `ordinanceCode`
+    # (the government ordinance/regulation a filing was made under, e.g.
+    # "010" for the Financial Instruments and Exchange Act), has no
+    # natural DART/EDGAR analog and no free slot to reuse — see
+    # `ordinance_code` below.
+    pblntf_ty: str = ""
+    pblntf_detail_ty: str = ""
+    theme_slug: str = ""
+    subtheme_slug: str | None = None
+    source_url: str = ""  # real DART viewer link built from rcept_no, or EDGAR filing-index URL
+    retrieved_at: str = ""  # ISO 8601 — when EevaResearch fetched this
+    source_name: str = "OpenDART / DART"
+    original_language: str = "Korean"
+    is_demo: bool = False
+    # Additive, EDGAR-only (milestone 8) — SEC's own `primaryDocument`
+    # filename for this filing, needed to fetch the actual document later
+    # (EdgarClient.fetch_document requires cik + accession_no + filename).
+    # Stays empty for DART, which has no equivalent concept (DART's
+    # document.xml endpoint needs only rcept_no).
+    primary_document: str = ""
+    # Additive, EDINET-only (Gate 8.1) — see pblntf_ty/pblntf_detail_ty's
+    # docstring above for why this is a new field rather than a reused
+    # slot: EDINET's ordinanceCode has no DART/EDGAR analog. Stays empty
+    # for DART/EDGAR.
+    ordinance_code: str = ""
+
+
+@dataclass
+class Translation:
+    """A machine translation of one bounded excerpt or title — never
+    itself a Fact, and never substituted for the Korean original. Cached
+    by (document id, excerpt hash) so the same text is never re-sent to
+    the translation provider twice."""
+
+    translated_text: str
+    provider: str  # e.g. "DeepL"
+    source_lang: str  # "ko"
+    target_lang: str  # "en"
+    translated_at: str  # ISO 8601
+    model: str | None = None
+
+
+class ExtractionState(str, Enum):
+    """Where a CandidateSignal's document-evidence extraction stands —
+    always shown explicitly rather than left implicit in whether
+    `excerpt_original` happens to be populated (milestone 3, Korea DART
+    pilot document retrieval)."""
+
+    NOT_FETCHED = "Not fetched"
+    PENDING = "Document available; extraction pending"
+    EXTRACTED = "Extracted"
+    UNSUPPORTED_FORMAT = "Unsupported format"
+    PARSE_FAILED = "Parse failed"
+    RETRIEVAL_FAILED = "Retrieval failed"
+
+
+@dataclass
+class CandidateSignal:
+    """The radar pipeline's "candidate signal" tier: a transparent,
+    rule-based flag on top of a FilingEvent explaining *why* it might
+    matter — never a market interpretation or a confident conclusion on
+    its own. `matched_rules` names every rule that fired (see
+    src/data_access/dart/dart_rules.py); an empty list means this stays a
+    plain FilingEvent and should not be surfaced as a candidate at all.
+    Promotion to the curated Signal Board (the Signal model above) is a
+    separate, human review step tracked via `status`, not automatic.
+
+    `confidence` here is a pilot-stage *detection* confidence only — how
+    confidently the keyword rules classified the filing's title, not a
+    judgment about business materiality. It should not be read as
+    "High confidence this matters"; a later milestone that adds real
+    document context is expected to separate detection confidence,
+    evidence completeness, and materiality into distinct fields rather
+    than overload this one value further."""
+
+    id: str
+    filing: FilingEvent
+    matched_rules: list[str]
+    confidence: str  # "Low" / "Moderate" / "High" — keyword-match-count only; see class docstring
+    status: CandidateStatus
+    extraction_state: ExtractionState = ExtractionState.NOT_FETCHED
+    translation_state: TranslationState = TranslationState.NOT_REQUESTED
+    excerpt_quality: ExcerptQuality = ExcerptQuality.UNKNOWN
+    # None means document parsing hasn't succeeded (or hasn't run) yet —
+    # the UI shows extraction_state's PENDING message in that case rather
+    # than an empty-looking field. Bounded to a short excerpt, never a
+    # full-document summary.
+    excerpt_original: str | None = None
+    # Machine translations of the *title* and the *excerpt* are tracked
+    # separately since they're different source texts with independent
+    # cache keys/failure states — either can succeed while the other
+    # fails or hasn't run yet.
+    title_translation: Translation | None = None
+    excerpt_translation: Translation | None = None
+    reviewed_at: str | None = None
+    reviewed_note: str = ""
+    # Audit trail — see StateTransition. Every status change during
+    # orchestration appends here rather than silently overwriting.
+    state_history: list[StateTransition] = field(default_factory=list)
+    # Radar Calibration milestone: a narrow, deliberately non-numeric
+    # note from the ownership-change materiality gate
+    # (src/data_access/dart/ownership_materiality.py) only — never a
+    # general materiality score, and never set for any non-ownership
+    # candidate (stays "Not assessed" for earnings/capex/financing/
+    # rumor-response/etc). Distinct from `confidence`, which measures
+    # keyword-detection confidence, not materiality.
+    materiality_assessment: str = "Not assessed"

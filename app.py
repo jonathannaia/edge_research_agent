@@ -26,6 +26,7 @@ from src.ui.pages import (
     disclaimer,
     home,
     methodology,
+    radar_inbox,
     research,
     signals,
     themes,
@@ -44,6 +45,7 @@ st.set_page_config(
 
 _RENDER_FNS = {
     "dashboard": dashboard.render,
+    "radar_inbox": radar_inbox.render,
     "themes": themes.render,
     "signals": signals.render,
     "research": research.render,
@@ -53,6 +55,7 @@ _RENDER_FNS = {
 
 _URL_PATHS = {
     "dashboard": "dashboard",
+    "radar_inbox": "radar-inbox",
     "themes": "themes",
     "signals": "signals",
     "research": "research",

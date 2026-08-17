@@ -25,6 +25,7 @@ METHODOLOGY_STATEMENT = (
 # sidebar at all; Company is reached only by clicking a ticker).
 PRIMARY_NAV: list[tuple[str, str]] = [
     ("dashboard", "Dashboard"),
+    ("radar_inbox", "Radar Inbox"),
     ("themes", "Themes"),
     ("signals", "Signals"),
     ("research", "Research"),

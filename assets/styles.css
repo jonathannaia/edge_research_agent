@@ -208,6 +208,12 @@ p, li, span, div { letter-spacing: -0.006em; }
 .er-status-tag.er-tag-pos { background: var(--pos-dim); color: var(--pos); }
 .er-status-tag.er-tag-neg { background: var(--neg-dim); color: var(--neg); }
 .er-status-tag.er-tag-mix { background: var(--mix-dim); color: var(--mix); }
+/* Two additional, deliberately colorless buckets for Radar Inbox's
+   status vocabulary (New filing / Processing deferred / Dismissed, and
+   Candidate signal) — built only from existing neutral tokens, no new
+   hues, staying inside the zero-accent-color rule. */
+.er-status-tag.er-tag-neutral { background: var(--surface-2); color: var(--text-4); }
+.er-status-tag.er-tag-info { background: transparent; color: var(--text-2); border: 1px solid var(--hairline-2); }
 
 /* Small mono order marker ("01", "02"...) — Priority Signals only, a
    restrained way to read the row as ranked rather than an arbitrary list. */
