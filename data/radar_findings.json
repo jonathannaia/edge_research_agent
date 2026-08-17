@@ -1,6 +1,20 @@
 [
   {
     "niche": "Space",
+    "headline": "Satellite operators emphasize launch deals in a constrained market",
+    "summary": "Satellite operators are highlighting to investors and customers that they have secured launch capacity amid tight market conditions, though availability timing remains uncertain.",
+    "source_url": "https://spacenews.com/satellite-operators-emphasize-launch-deals-in-a-constrained-market/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sun, 16 Aug 2026 23:05:35 +0000",
+    "retrieved_at": "2026-08-17T00:42:35+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses satellite operators securing launch capacity in a constrained market, directly addressing space launch infrastructure and commercial satellite deployment.",
+    "url_hash": "14a09adfb895155a",
+    "id": "14a09adfb895155a"
+  },
+  {
+    "niche": "Space",
     "headline": "NASA funds spherical 'Aerobots' that could explore the caves of Saturn's moon Titan",
     "summary": "NASA has awarded an early-stage grant to develop spherical 'Aerobots' that could explore caves on Saturn's moon Titan, with a planned demonstration mission similar to the Mars Ingenuity rover.",
     "source_url": "https://www.space.com/technology/nasa-funds-spherical-aerobots-that-could-explore-the-caves-of-saturns-moon-titan",
