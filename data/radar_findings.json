@@ -1,5 +1,75 @@
 [
   {
+    "niche": "Space",
+    "headline": "NASA astronaut and 1st female French spacewalker remove failed ISS antenna but run out of time for replacement",
+    "summary": "NASA astronaut Anil Menon and French spacewalker Sophie Adenot removed a failed antenna from the International Space Station on August 18, 2026, but did not complete the scheduled replacement due to time constraints.",
+    "source_url": "https://www.space.com/space-exploration/international-space-station/nasa-astronaut-and-1st-female-french-spacewalker-remove-failed-iss-antenna-but-run-out-of-time-for-replacement",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 19:36:40 +0000",
+    "retrieved_at": "2026-08-18T20:14:01+00:00",
+    "tickers": [],
+    "relevance_reason": "Article reports on ISS maintenance operations performed by astronauts, which is substantive space infrastructure activity.",
+    "url_hash": "2abb5d91db99d27b",
+    "id": "2abb5d91db99d27b"
+  },
+  {
+    "niche": "Space",
+    "headline": "The United States is about to wake up to the threat from China's space program",
+    "summary": "The article discusses China's space program as an emerging strategic threat to the United States, with particular focus on questions about whether China will assert territorial rights in areas explored by its rovers.",
+    "source_url": "https://arstechnica.com/space/2026/08/the-united-states-is-about-to-wake-up-to-the-threat-from-chinas-space-program/",
+    "source_name": "Ars Technica — Space",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 16:30:07 +0000",
+    "retrieved_at": "2026-08-18T20:13:59+00:00",
+    "tickers": [],
+    "relevance_reason": "Article substantively addresses China's space program activities and geopolitical implications in space exploration.",
+    "url_hash": "c3fcb4fd169dcb64",
+    "id": "c3fcb4fd169dcb64"
+  },
+  {
+    "niche": "Space",
+    "headline": "NASA’s LRO Images Falcon 9 Crater on Moon, Learns New Details",
+    "summary": "NASA's Lunar Reconnaissance Orbiter captured images of a new crater on the Moon formed by a SpaceX Falcon 9 upper stage that impacted the surface on August 5 following its January 2025 launch of the Firefly Blue Ghost 1 mission.",
+    "source_url": "https://science.nasa.gov/solar-system/moon/nasas-lro-images-falcon-9-crater-on-moon-learns-new-details/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Tue, 18 Aug 2026 18:49:50 +0000",
+    "retrieved_at": "2026-08-18T20:13:53+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "SpaceX (Tesla parent)",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "NASA's LRO documented impact from a SpaceX Falcon 9 rocket stage on the lunar surface, directly concerning space launch and spacecraft operations.",
+    "url_hash": "f0639f25fcdf1465",
+    "id": "f0639f25fcdf1465"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Application filed for data center campus near QTS' site in Northumberland, UK",
+    "summary": "A UK family office has filed an application to develop a data center campus in Cambois on a former GSK manufacturing site near an existing QTS facility in Northumberland.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/application-filed-for-data-center-campus-near-qts-site-in-northumberland-uk/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 16:30:25 +0000",
+    "retrieved_at": "2026-08-18T20:13:25+00:00",
+    "tickers": [
+      {
+        "ticker": "QTS",
+        "company_name": "QTS Realty Trust",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly concerns new data center campus development, a core AI Buildout infrastructure component.",
+    "url_hash": "2155a4e825142a89",
+    "id": "2155a4e825142a89"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Etched’s valuation doubles to $21B in a month",
     "summary": "Etched raised a funding round led by Jane Street, which installed Etched's first AI cluster system and was impressed enough to lead the investment, pushing the startup's valuation to $21B.",
