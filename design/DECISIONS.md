@@ -2139,3 +2139,56 @@ steps established repeatedly.
   attribution, cost, and quality policy — not a technical gap to be
   quietly closed, a scope boundary requiring its own review before any
   image-to-text pipeline is considered for this pilot.
+
+## Private-beta access foundation — Phase 1 (configuration + gating only, no live sign-in)
+
+- **Scope**: this phase adds a disabled-by-default feature flag
+  (`EDGE_PRIVATE_BETA_AUTH_ENABLED`) and a non-secret comma-separated
+  beta-tester email allowlist (`EDGE_PRIVATE_BETA_ALLOWED_EMAILS`) to
+  `Settings`, plus a new pure decision module
+  (`src/ui/beta_gate.py::evaluate_beta_gate`) and a non-blocking check
+  in `app.py` before page dispatch. **No Google/OIDC login is
+  implemented in this phase** — no `st.login()`, no `st.user`, no
+  Authlib dependency, no OAuth/client/cookie secrets anywhere in this
+  change.
+- **Default stays open**: absent, blank, or an unrecognized value for
+  `EDGE_PRIVATE_BETA_AUTH_ENABLED` always resolves to disabled — every
+  existing page continues to render exactly as before, with zero
+  required configuration, preserving this repo's existing "Phase 1
+  needs no environment variables to run" invariant
+  (`src/config/settings.py`'s own module docstring). Only the exact
+  case-insensitive, trimmed values `1`, `true`, `yes`, `on` enable it.
+- **Fails closed if enabled early**: if a deployment sets the flag to
+  true before any real identity/sign-in exists, `app.py` does not call
+  `selected.run()` unauthenticated and does not attempt any login flow
+  — it renders a neutral placeholder ("Private beta access is being
+  configured. Sign-in is not enabled on this deployment yet.") and
+  calls `st.stop()`. The placeholder text names no internal
+  configuration value, email, or OAuth detail.
+  `src/ui/beta_gate.py::evaluate_beta_gate` is called with `email=None`
+  this phase (no identity source exists yet), which — when the flag is
+  true — always yields `SIGN_IN_REQUIRED`, never an accidental allow.
+  `app.py` picks between two exact placeholder wordings purely by
+  checking whether `private_beta_allowed_emails` is empty (an
+  unconfigured-allowlist variant vs. the sign-in-not-enabled variant
+  above), without ever rendering the allowlist, its size, or the gate's
+  internal reason value.
+- **The allowlist is authorization only, not authentication**: matching
+  a normalized (trimmed, lowercased) email against
+  `private_beta_allowed_emails` is a necessary but not sufficient
+  condition for future access — this module has no way to verify that a
+  caller-supplied email actually belongs to the caller, since no
+  identity/session/sign-in mechanism exists yet. `ALLOWED_EMAIL` is a
+  reachable decision value in `evaluate_beta_gate`'s pure logic (and is
+  fixture-tested), but no code path in this phase can actually produce
+  a real, verified email to check it against.
+  `EMPTY_ALLOWLIST` is returned separately from `INVITE_REQUIRED` so an
+  operator who enables the flag but forgets to configure any allowed
+  emails gets a distinguishable, honest reason rather than a
+  misleading "not invited" message.
+- **Google/OIDC/Authlib/secrets wiring is intentionally deferred** to a
+  later phase, once real sign-in is actually being built.
+  `.streamlit/secrets.toml` was not created, read, or modified by this
+  phase, and `.env.example`'s new entries explicitly state that OAuth
+  client/cookie secrets must never be added there — only to the
+  gitignored `.streamlit/secrets.toml`, when that later phase begins.

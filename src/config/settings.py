@@ -20,6 +20,21 @@ load_dotenv(PROJECT_ROOT / ".env")
 APP_VERSION = "0.1.0-foundation"
 APP_NAME = "EevaResearch AI"
 
+# Private-beta access foundation, Phase 1 (configuration + gating only — see
+# design/DECISIONS.md; no Google/OIDC login is implemented yet). Defaults
+# preserve today's fully-open local-dev behavior: absent, blank, or an
+# unrecognized value always resolves to disabled/empty, never enabled.
+_PRIVATE_BETA_TRUE_VALUES = frozenset({"1", "true", "yes", "on"})
+
+
+def _parse_beta_auth_enabled(var_name: str) -> bool:
+    return (os.getenv(var_name) or "").strip().lower() in _PRIVATE_BETA_TRUE_VALUES
+
+
+def _parse_beta_allowed_emails(var_name: str) -> frozenset[str]:
+    raw = os.getenv(var_name) or ""
+    return frozenset(email for email in (part.strip().lower() for part in raw.split(",")) if email)
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -48,6 +63,12 @@ class Settings:
     # Exactly one env var, no competing aliases, per the Gate 1 brief.
     edinet_subscription_key: str | None = field(default_factory=lambda: os.getenv("EDGE_EDINET_SUBSCRIPTION_KEY") or None)
     cache_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "cache")
+    # Private-beta access foundation, Phase 1 — disabled by default so every
+    # existing page keeps working with no configuration at all. The
+    # allowlist alone is authorization, not authentication (see
+    # src/ui/beta_gate.py); no identity/sign-in exists yet this phase.
+    private_beta_auth_enabled: bool = field(default_factory=lambda: _parse_beta_auth_enabled("EDGE_PRIVATE_BETA_AUTH_ENABLED"))
+    private_beta_allowed_emails: frozenset[str] = field(default_factory=lambda: _parse_beta_allowed_emails("EDGE_PRIVATE_BETA_ALLOWED_EMAILS"))
 
 
 def get_settings() -> Settings:

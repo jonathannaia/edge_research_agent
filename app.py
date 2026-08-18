@@ -17,8 +17,10 @@ from pathlib import Path
 
 import streamlit as st
 
+from src.config.settings import get_settings
 from src.data_access.container import get_repositories
 from src.logic.unread import seed_initial_last_seen
+from src.ui.beta_gate import evaluate_beta_gate
 from src.ui.pages import (
     about,
     company,
@@ -103,6 +105,26 @@ if LAST_SEEN_KEY not in st.session_state:
     # real Signals visit. Only Signals itself advances this afterward.
     st.session_state[LAST_SEEN_KEY] = seed_initial_last_seen(get_repositories().signal_repository.get_all_signals())
 st.session_state.setdefault(READ_IDS_KEY, set())
+
+# Private-beta access foundation, Phase 1 (design/DECISIONS.md) — no
+# identity/sign-in exists yet, so `email` is always None; the flag defaults
+# to disabled, which keeps this a no-op and every page working exactly as
+# before. If a deployment enables the flag ahead of real sign-in wiring,
+# this fails closed with a neutral placeholder rather than ever running
+# `selected.run()` unauthenticated. The placeholder wording distinguishes
+# an unconfigured allowlist from "sign-in just isn't wired up yet" purely
+# to be honest with whoever operates the deployment — it never displays
+# the allowlist itself, its size, any email, or the gate's internal reason
+# value.
+_beta_settings = get_settings()
+_beta_gate_decision = evaluate_beta_gate(_beta_settings, email=None)
+if not _beta_gate_decision.allowed:
+    st.title("Private beta")
+    if _beta_settings.private_beta_allowed_emails:
+        st.info("Private beta access is being configured. Sign-in is not enabled on this deployment yet.")
+    else:
+        st.info("Private beta access is being configured. Approved beta accounts have not been configured on this deployment yet.")
+    st.stop()
 
 selected = st.navigation(list(pages.values()), position="hidden")
 selected.run()
