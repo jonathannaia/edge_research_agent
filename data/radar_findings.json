@@ -1,6 +1,104 @@
 [
   {
     "niche": "Space",
+    "headline": "New report takes closer look at the Space Force spending surge",
+    "summary": "Aerospace Corp. analysis identifies that most growth in Space Force spending is concentrated in classified programs, target tracking, missile warning, and command and control capabilities.",
+    "source_url": "https://spacenews.com/new-report-takes-closer-look-at-the-space-force-spending-surge/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 12:00:00 +0000",
+    "retrieved_at": "2026-08-18T14:24:18+00:00",
+    "tickers": [],
+    "relevance_reason": "Report on U.S. Space Force spending trends directly falls within the Space scope.",
+    "url_hash": "ad3fb268dc7fe8a7",
+    "id": "ad3fb268dc7fe8a7"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Unichem acquires Loomia to accelerate entry into the humanoid ‘skin’ market",
+    "summary": "Automotive supplier Unichem has acquired Loomia to accelerate development of tactile sensors for humanoid robotics and automotive applications, working with partner R&Y.",
+    "source_url": "https://www.therobotreport.com/unichem-acquires-loomia-accelerate-entry-humanoid-skin-market/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 12:49:41 +0000",
+    "retrieved_at": "2026-08-18T14:24:10+00:00",
+    "tickers": [],
+    "relevance_reason": "Article directly addresses acquisition in humanoid robotics sector, specifically for developing tactile sensors for humanoid skin applications.",
+    "url_hash": "8501995258356068",
+    "id": "8501995258356068"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "For High-Density AI, Available Data Center Space May Not Be Usable",
+    "summary": "North American data center vacancy remains at 1%, but most of that available space lacks the capability to support high-density AI deployments according to JLL analysis.",
+    "source_url": "https://www.datacenterknowledge.com/cooling/for-high-density-ai-available-data-center-space-may-not-be-usable",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 13:00:00 GMT",
+    "retrieved_at": "2026-08-18T14:23:58+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses constraints in AI data center infrastructure availability for AI workloads.",
+    "url_hash": "099c218c1451c56c",
+    "id": "099c218c1451c56c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Sunrun to supply residential solar + storage capacity to Voltus for AI data centers",
+    "summary": "Sunrun will supply residential solar and storage capacity to Voltus for use in AI data centers through Voltus' Bring Your Own Capacity program.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/sunrun-to-supply-residential-solar-storage-capacity-to-voltus-for-ai-data-centers/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 12:10:28 +0000",
+    "retrieved_at": "2026-08-18T14:23:42+00:00",
+    "tickers": [
+      {
+        "ticker": "RUN",
+        "company_name": "Sunrun Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly addresses power/energy supply infrastructure for AI data centers, a core AI Buildout component.",
+    "url_hash": "89398a1c34cfe692",
+    "id": "89398a1c34cfe692"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Alibaba Cloud launches third data center in South Korea",
+    "summary": "Alibaba Cloud launched its third data center in South Korea, expanding its presence in the country where it has operated since 2016.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/alibaba-cloud-launches-third-data-center-in-south-korea/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 13:56:38 +0000",
+    "retrieved_at": "2026-08-18T14:23:41+00:00",
+    "tickers": [
+      {
+        "ticker": "BABA",
+        "company_name": "Alibaba Group Holding Limited",
+        "jurisdiction": "China",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Direct expansion of data center infrastructure by a major cloud provider, directly relevant to AI Buildout scope.",
+    "url_hash": "75ea97a5e8f4803e",
+    "id": "75ea97a5e8f4803e"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Helios looks to build data center on 860 hectares in Finnish Lapland",
+    "summary": "Helios, a renewable energy company, is pursuing a third data center project on 860 hectares of land in Finnish Lapland.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/helios-looks-to-build-data-center-on-860-hectares-in-finnish-lapland/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 14:02:14 +0000",
+    "retrieved_at": "2026-08-18T14:23:39+00:00",
+    "tickers": [],
+    "relevance_reason": "Data center development is directly within the AI Buildout scope",
+    "url_hash": "ad06d996e79eed1c",
+    "id": "ad06d996e79eed1c"
+  },
+  {
+    "niche": "Space",
     "headline": "Eoptic, Inc. Selected to Supply DeepScan™ Imaging Payloads Scheduled for Launch in 2027",
     "summary": "Eoptic, Inc. has been selected as an approved supplier to provide DeepScan™ imaging payloads for a launch scheduled in 2027.",
     "source_url": "https://spacenews.com/eoptic-inc-selected-to-supply-deepscan-imaging-payloads-scheduled-for-launch-in-2027/",
