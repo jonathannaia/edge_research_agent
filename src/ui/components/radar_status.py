@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 import streamlit as st
 
-from src.models.models import CandidateSignal, CandidateStatus, FilingEvent, TranslationState
+from src.models.models import CandidateSignal, CandidateStatus, ExtractionState, FilingEvent, TranslationState
 
 
 @dataclass(frozen=True)
@@ -87,3 +87,62 @@ def translation_unavailable_tag_html(item: RadarItem) -> str | None:
     if item.candidate is not None and item.candidate.translation_state == TranslationState.UNAVAILABLE:
         return '<span class="er-status-tag er-tag-neg">Translation unavailable</span>'
     return None
+
+
+# --- Evidence-status panel label mapping (Radar Inbox "Evidence status"
+# section) — plain-language, source-neutral labels, kept alongside the
+# existing status vocabulary above rather than inlined in radar_card.py.
+# Every mapping is deliberately explicit (not derived from `.value`) so
+# raw enum wording never reaches this user-facing panel; the existing,
+# separate "Details" technical rows in radar_card.py still show the raw
+# `.value` strings unchanged, for anyone who wants them.
+
+_EXTRACTION_STATE_EVIDENCE_LABELS: dict[ExtractionState, str] = {
+    ExtractionState.EXTRACTED: "Native text extracted",
+    ExtractionState.NOT_FETCHED: "Document not fetched",
+    ExtractionState.PENDING: "Native text processing",
+    ExtractionState.UNSUPPORTED_FORMAT: "Unsupported document format",
+    ExtractionState.PARSE_FAILED: "Native text unavailable",
+    ExtractionState.RETRIEVAL_FAILED: "Document retrieval failed",
+}
+
+_TRANSLATION_STATE_EVIDENCE_LABELS: dict[TranslationState, str] = {
+    TranslationState.NOT_REQUESTED: "Not requested",
+    TranslationState.PENDING: "Translation processing",
+    TranslationState.TRANSLATED: "English translation available",
+    TranslationState.UNAVAILABLE: "Translation unavailable",
+}
+
+# Keyed on the real FilingEvent.source_name values each source's own
+# scan_service sets — "OpenDART / DART", "SEC EDGAR", "EDINET" (see each
+# source's scan_service.py). Any other/future source falls back to the
+# generic "Document ID" rather than guessing a label.
+_SOURCE_DOCUMENT_ID_LABELS: dict[str, str] = {
+    "OpenDART / DART": "DART receipt number",
+    "SEC EDGAR": "SEC accession number",
+    "EDINET": "EDINET document ID",
+}
+
+
+def evidence_source_link_label(filing: FilingEvent) -> str:
+    return "Linked source" if filing.source_url else "No source link"
+
+
+def evidence_native_text_label(extraction_state: ExtractionState) -> str:
+    return _EXTRACTION_STATE_EVIDENCE_LABELS.get(extraction_state, extraction_state.value)
+
+
+def evidence_translation_label(translation_state: TranslationState) -> str:
+    return _TRANSLATION_STATE_EVIDENCE_LABELS.get(translation_state, translation_state.value)
+
+
+def evidence_review_label(candidate: CandidateSignal) -> str:
+    if candidate.status == CandidateStatus.NEEDS_REVIEW:
+        return "Manual review needed"
+    if candidate.reviewed_at:
+        return "Reviewed"
+    return "Not yet reviewed"
+
+
+def evidence_document_id_label(source_name: str) -> str:
+    return _SOURCE_DOCUMENT_ID_LABELS.get(source_name, "Document ID")

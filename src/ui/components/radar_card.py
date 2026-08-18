@@ -12,10 +12,19 @@ from typing import Callable
 import streamlit as st
 
 from src.data_access.dart import dart_rules, retry_policy
-from src.models.models import CandidateStatus
-from src.ui.components.radar_status import RadarItem, status_pill, translation_unavailable_tag_html
+from src.models.models import CandidateSignal, CandidateStatus, FilingEvent
+from src.ui.components.radar_status import (
+    RadarItem,
+    evidence_document_id_label,
+    evidence_native_text_label,
+    evidence_review_label,
+    evidence_source_link_label,
+    evidence_translation_label,
+    status_pill,
+    translation_unavailable_tag_html,
+)
 
-_TRANSLATION_LABEL = "Machine translation · For convenience · Verify against original Korean"
+_TRANSLATION_LABEL = "Machine translation · For convenience · Verify against the original-language source"
 
 
 def _why_flagged_phrases(matched_rules: list[str]) -> list[str]:
@@ -49,6 +58,23 @@ def _detail_row(label: str, value: str) -> None:
         f'<div class="er-muted" style="margin-top:0.15rem;"><strong>{label}:</strong> {value}</div>',
         unsafe_allow_html=True,
     )
+
+
+def _evidence_status_panel(filing: FilingEvent, candidate: CandidateSignal | None) -> None:
+    """Compact, honest, source-neutral evidence summary — plain-language
+    labels only (see radar_status.py's evidence_* helpers), never a raw
+    enum `.value`. Shown for every item, with or without a CandidateSignal
+    yet; the existing raw technical rows further below are untouched and
+    still show `.value` strings for anyone who wants them."""
+    st.markdown('<div class="er-muted" style="margin-top:0.2rem;"><strong>Evidence status</strong></div>', unsafe_allow_html=True)
+    _detail_row("Original document", evidence_source_link_label(filing))
+    if candidate is not None:
+        _detail_row("Native text", evidence_native_text_label(candidate.extraction_state))
+        _detail_row("Translation", evidence_translation_label(candidate.translation_state))
+        _detail_row("Review", evidence_review_label(candidate))
+    else:
+        _detail_row("Document processing", "Not started")
+    _detail_row(evidence_document_id_label(filing.source_name), filing.rcept_no)
 
 
 def candidate_row(item: RadarItem, on_process: Callable[[str], None] | None = None) -> None:
@@ -137,9 +163,10 @@ def candidate_row(item: RadarItem, on_process: Callable[[str], None] | None = No
                         )
 
         if candidate is not None:
-            is_dart = filing.source_name == "OpenDART / DART"
             with st.expander("Details"):
-                _detail_row("DART receipt number" if is_dart else "SEC accession number", filing.rcept_no)
+                _evidence_status_panel(filing, candidate)
+                st.markdown('<div class="er-muted" style="margin-top:0.6rem;"><strong>Technical detail</strong></div>', unsafe_allow_html=True)
+                _detail_row(evidence_document_id_label(filing.source_name), filing.rcept_no)
                 _detail_row("Filer", filing.flr_nm)
                 _detail_row("Filed", filing.rcept_dt)
                 _detail_row("Retrieved", filing.retrieved_at)
@@ -147,15 +174,14 @@ def candidate_row(item: RadarItem, on_process: Callable[[str], None] | None = No
                 _detail_row("Translation state", candidate.translation_state.value)
                 _detail_row("Excerpt quality", candidate.excerpt_quality.value)
                 if candidate.excerpt_original:
-                    excerpt_label = "Korean original excerpt" if is_dart else "Original excerpt (English)"
-                    st.markdown(f'<div class="er-muted" style="margin-top:0.4rem;"><strong>{excerpt_label}</strong></div>', unsafe_allow_html=True)
+                    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Original-language excerpt</strong></div>', unsafe_allow_html=True)
                     st.markdown(f'<div>{candidate.excerpt_original}</div>', unsafe_allow_html=True)
                 if candidate.excerpt_translation is not None:
                     st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>English translation</strong></div>', unsafe_allow_html=True)
                     st.markdown(f'<div>{candidate.excerpt_translation.translated_text}</div>', unsafe_allow_html=True)
                     st.markdown(
                         f'<div class="er-muted" style="margin-top:0.2rem;">'
-                        f'{candidate.excerpt_translation.provider} · Korean → English · translated at {candidate.excerpt_translation.translated_at}</div>',
+                        f'{candidate.excerpt_translation.provider} · English translation · translated at {candidate.excerpt_translation.translated_at}</div>',
                         unsafe_allow_html=True,
                     )
                 if candidate.state_history:
@@ -166,3 +192,6 @@ def candidate_row(item: RadarItem, on_process: Callable[[str], None] | None = No
                             f'<div class="er-muted" style="margin-left:0.8rem;">{transition.at} · {transition.status.value}{detail}</div>',
                             unsafe_allow_html=True,
                         )
+        else:
+            with st.expander("Details"):
+                _evidence_status_panel(filing, None)
