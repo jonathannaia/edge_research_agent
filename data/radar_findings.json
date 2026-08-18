@@ -1,5 +1,33 @@
 [
   {
+    "niche": "Space",
+    "headline": "Watch European astronaut make history during spacewalk today",
+    "summary": "On August 18, European Space Agency astronaut Sophie Adenot will become the first French woman to conduct a spacewalk, with the event available to watch live.",
+    "source_url": "https://www.space.com/space-exploration/international-space-station/watch-european-astronaut-make-history-during-spacewalk-today",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 04:05:00 +0000",
+    "retrieved_at": "2026-08-18T04:26:31+00:00",
+    "tickers": [],
+    "relevance_reason": "Article is about a spacewalk, which directly involves space exploration activities.",
+    "url_hash": "cc66e54af2e5d204",
+    "id": "cc66e54af2e5d204"
+  },
+  {
+    "niche": "Space",
+    "headline": "NASA Selects Companies to Provide Payload Processing Services",
+    "summary": "NASA has selected four companies to provide payload processing facilities under the Spacecraft Processing Operations Contract on-ramp provision, enabling commercial payload processing services for agency missions launching from multiple locations.",
+    "source_url": "https://www.nasa.gov/news-release/nasa-selects-companies-to-provide-payload-processing-services/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Mon, 17 Aug 2026 20:17:20 +0000",
+    "retrieved_at": "2026-08-18T04:26:26+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly concerns NASA payload processing services contracts for spacecraft missions, which falls within the Space scope.",
+    "url_hash": "e185dc25a2c3e6ee",
+    "id": "e185dc25a2c3e6ee"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Iren delivers first phase of AI capacity to Microsoft in Texas",
     "summary": "Iren has delivered the first phase of AI capacity to Microsoft at a facility in Texas.",
