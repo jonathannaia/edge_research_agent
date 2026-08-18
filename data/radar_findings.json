@@ -1,6 +1,41 @@
 [
   {
     "niche": "Space",
+    "headline": "Starship lives! SpaceX craft arrives at Christmas Island after 24-day ocean ordeal",
+    "summary": "SpaceX recovery teams successfully towed the Starship vehicle across the Indian Ocean and arrived at Christmas Island after a 24-day operation following the craft's test launch and splashdown.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/starship-lives-spacex-craft-arrives-at-christmas-island-after-24-day-ocean-ordeal",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 17:29:19 +0000",
+    "retrieved_at": "2026-08-18T22:13:49+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla, Inc. (SpaceX parent)",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Reports on SpaceX's Starship recovery operations following a test launch and ocean transit, directly relevant to space launch infrastructure.",
+    "url_hash": "3a6fca4e56f034aa",
+    "id": "3a6fca4e56f034aa"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Data Center Hardware Highlights: August 2026",
+    "summary": "An overview of data center infrastructure trends highlights shifts toward energy efficiency, interconnects, and end-to-end system optimization across power, networking, and AI hardware components.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-hardware/data-center-hardware-highlights-august-2026",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 14:52:54 GMT",
+    "retrieved_at": "2026-08-18T22:13:32+00:00",
+    "tickers": [],
+    "relevance_reason": "Article explicitly addresses data center hardware infrastructure trends including power, CPUs, and AI systems directly relevant to AI buildout scope.",
+    "url_hash": "dd6a17d27c3d8a37",
+    "id": "dd6a17d27c3d8a37"
+  },
+  {
+    "niche": "Space",
     "headline": "NASA astronaut and 1st female French spacewalker remove failed ISS antenna but run out of time for replacement",
     "summary": "NASA astronaut Anil Menon and French spacewalker Sophie Adenot removed a failed antenna from the International Space Station on August 18, 2026, but did not complete the scheduled replacement due to time constraints.",
     "source_url": "https://www.space.com/space-exploration/international-space-station/nasa-astronaut-and-1st-female-french-spacewalker-remove-failed-iss-antenna-but-run-out-of-time-for-replacement",
