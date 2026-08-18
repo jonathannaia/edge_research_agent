@@ -1,5 +1,32 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "Iren delivers first phase of AI capacity to Microsoft in Texas",
+    "summary": "Iren has delivered the first phase of AI capacity to Microsoft at a facility in Texas.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/iren-delivers-first-phase-of-ai-capacity-to-microsoft-in-texas/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Mon, 17 Aug 2026 11:50:18 +0000",
+    "retrieved_at": "2026-08-18T00:41:39+00:00",
+    "tickers": [
+      {
+        "ticker": "MSFT",
+        "company_name": "Microsoft Corporation",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "IRN",
+        "company_name": "Iren",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Concerns AI infrastructure buildout specifically involving a hyperscaler's data center capacity expansion",
+    "url_hash": "5fc8f31b557a499f",
+    "id": "5fc8f31b557a499f"
+  },
+  {
     "niche": "Space",
     "headline": "New EU sanctions target leaders of Russia’s space industry",
     "summary": "The European Union has imposed sanctions on the head of a Roscosmos subsidiary that is developing a synthetic aperture radar satellite system for the Russian military.",

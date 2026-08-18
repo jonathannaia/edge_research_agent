@@ -29,6 +29,7 @@
     "56abb1add00f7d18",
     "5e91cb16c0723c77",
     "5f58cfa807d1bcf5",
+    "5fc8f31b557a499f",
     "6240877718987147",
     "6bf89a9becd06e0f",
     "72bafb98f257c5c2",
@@ -86,6 +87,21 @@
     "fbd5c7f2369a30b9"
   ],
   "run_history": [
+    {
+      "started_at": "2026-08-18T00:41:19+00:00",
+      "finished_at": "2026-08-18T00:42:00+00:00",
+      "status": "partial_error",
+      "feeds_checked": 16,
+      "items_seen": 431,
+      "items_after_freshness_filter": 77,
+      "items_after_keyword_filter": 23,
+      "items_sent_to_llm": 23,
+      "items_saved": 1,
+      "items_rejected_by_guardrail": 0,
+      "errors": [
+        "SEC EDGAR Full-Text Search — 8-K capex filings: Request to https://efts.sec.gov/LATEST/search-index?q=data+center+capital+expenditure&forms=8-K&dateRange=custom&startdt=2026-08-16&enddt=2026-08-18 failed: HTTP Error 500: Internal Server Error"
+      ]
+    },
     {
       "started_at": "2026-08-17T22:15:16+00:00",
       "finished_at": "2026-08-17T22:16:10+00:00",
