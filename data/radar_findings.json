@@ -1,5 +1,40 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "Etched’s valuation doubles to $21B in a month",
+    "summary": "Etched raised a funding round led by Jane Street, which installed Etched's first AI cluster system and was impressed enough to lead the investment, pushing the startup's valuation to $21B.",
+    "source_url": "https://techcrunch.com/2026/08/18/etcheds-valuation-doubles-to-21b-in-a-month/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 17:21:58 +0000",
+    "retrieved_at": "2026-08-18T18:24:03+00:00",
+    "tickers": [],
+    "relevance_reason": "Etched develops custom AI chips and systems for AI inference infrastructure, directly relevant to AI Buildout's chip supply chain and hyperscaler deployments.",
+    "url_hash": "9f1fb4617b322f70",
+    "id": "9f1fb4617b322f70"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "ABB launches ultracapacitor storage system to meet Ireland's grid code for data centers",
+    "summary": "ABB has launched an ultracapacitor storage system combined with grid-forming power conversion designed to meet Ireland's grid code requirements for data centers.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/abb-launches-ultracapacitor-storage-system-to-meet-irelands-grid-code-for-data-centers/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 16:20:21 +0000",
+    "retrieved_at": "2026-08-18T18:23:47+00:00",
+    "tickers": [
+      {
+        "ticker": "ABB",
+        "company_name": "ABB Ltd",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly addresses power infrastructure solutions for data centers, a core AI Buildout component.",
+    "url_hash": "b2ec37ea00b06ca0",
+    "id": "b2ec37ea00b06ca0"
+  },
+  {
     "niche": "Space",
     "headline": "Watch SpaceX launch its 100th mission of the year tonight",
     "summary": "SpaceX is launching its 100th mission of the year on August 18, with a live broadcast available to viewers.",
