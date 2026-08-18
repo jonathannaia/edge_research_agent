@@ -1,6 +1,55 @@
 [
   {
     "niche": "Space",
+    "headline": "NRO to expand use of HawkEye 360’s satellite intelligence",
+    "summary": "The National Reconnaissance Office (NRO) has increased its use of HawkEye 360's satellite data to locate radars, ships, and other electronic emitters.",
+    "source_url": "https://spacenews.com/nro-to-expand-use-of-hawkeye-360s-satellite-intelligence/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 09:00:00 +0000",
+    "retrieved_at": "2026-08-18T10:19:56+00:00",
+    "tickers": [
+      {
+        "ticker": "HE360",
+        "company_name": "HawkEye 360",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Article concerns NRO expansion of satellite intelligence services, which is directly within Space scope.",
+    "url_hash": "3c31e82004ba35c4",
+    "id": "3c31e82004ba35c4"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Home-Based GPU Networks: Viable Supplements to AI Data Centers?",
+    "summary": "Pilot programs are emerging that pay homeowners to host GPU capacity through wall-mounted devices, raising questions about whether residential nodes can meet the speed, reliability, security, and scale requirements of traditional AI data centers.",
+    "source_url": "https://www.datacenterknowledge.com/edge-data-centers/home-based-gpu-networks-viable-supplements-to-ai-data-centers-",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 09:00:00 GMT",
+    "retrieved_at": "2026-08-18T10:19:47+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses home-based GPU networks as potential supplements to AI data centers, directly addressing GPU and AI infrastructure scaling approaches.",
+    "url_hash": "f489c2f39fe8fe76",
+    "id": "f489c2f39fe8fe76"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "The retrofitting roadmap: An evolution of liquid cooling",
+    "summary": "The article discusses strategic considerations and planning for retrofitting existing data center facilities with liquid cooling systems.",
+    "source_url": "https://www.datacenterdynamics.com/en/whitepapers/the-retrofitting-roadmap-an-evolution-of-liquid-cooling/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 09:37:19 +0000",
+    "retrieved_at": "2026-08-18T10:19:29+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses liquid cooling infrastructure for data centers, a core component of AI buildout power/cooling systems.",
+    "url_hash": "26decce38bd8cc84",
+    "id": "26decce38bd8cc84"
+  },
+  {
+    "niche": "Space",
     "headline": "Watch European astronaut make history during spacewalk today",
     "summary": "On August 18, European Space Agency astronaut Sophie Adenot will become the first French woman to conduct a spacewalk, with the event available to watch live.",
     "source_url": "https://www.space.com/space-exploration/international-space-station/watch-european-astronaut-make-history-during-spacewalk-today",
