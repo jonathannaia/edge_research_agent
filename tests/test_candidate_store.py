@@ -102,7 +102,7 @@ def test_round_trips_full_processing_state_including_translations_and_history(tm
 
 def test_load_candidates_handles_corrupt_file_without_raising(tmp_path):
     tmp_path.mkdir(exist_ok=True)
-    (tmp_path / "dart_candidates.json").write_text("{not valid json")
+    (tmp_path / "dart_candidates.json").write_text("{not valid json", encoding="utf-8")
     assert candidate_store.load_candidates(tmp_path) == {}
 
 
@@ -110,9 +110,9 @@ def test_load_candidates_skips_one_corrupt_entry_without_losing_the_rest(tmp_pat
     candidate_store.upsert_new_candidates(tmp_path, [_candidate("20260810000001")])
     import json
     path = tmp_path / "dart_candidates.json"
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     data["cand-broken"] = {"missing": "required fields"}
-    path.write_text(json.dumps(data, ensure_ascii=False))
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
     store = candidate_store.load_candidates(tmp_path)
 

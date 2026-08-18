@@ -21,7 +21,7 @@ def _seed_ciks(cache_dir, tickers: list[str]) -> None:
         t: {"cik": f"000{i}045810", "company_name": "Test Co", "source": "test", "retrieved_at": "2026-08-17T00:00:00+00:00"}
         for i, t in enumerate(tickers)
     }
-    (cache_dir / "edgar_ciks.json").write_text(json.dumps(payload))
+    (cache_dir / "edgar_ciks.json").write_text(json.dumps(payload), encoding="utf-8")
 
 
 def test_readiness_reports_missing_user_agent_and_unresolved_companies(tmp_path):

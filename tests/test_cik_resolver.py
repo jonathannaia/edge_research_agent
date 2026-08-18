@@ -86,7 +86,7 @@ def test_load_cached_ciks_empty_when_no_cache(tmp_path):
 
 def test_load_cached_ciks_tolerates_corrupt_file(tmp_path):
     tmp_path.mkdir(exist_ok=True)
-    (tmp_path / "edgar_ciks.json").write_text("{not valid json")
+    (tmp_path / "edgar_ciks.json").write_text("{not valid json", encoding="utf-8")
     assert load_cached_ciks(tmp_path) == {}
 
 

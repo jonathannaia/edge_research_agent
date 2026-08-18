@@ -55,7 +55,7 @@ def _seed_corp_codes(cache_dir) -> None:
         "005930": {"corp_code": "00126380", "corp_name": "삼성전자", "source": "OpenDART corpCode.xml", "retrieved_at": "2026-08-01T00:00:00+00:00"},
         "000660": {"corp_code": "00164779", "corp_name": "SK 하이닉스", "source": "OpenDART corpCode.xml", "retrieved_at": "2026-08-01T00:00:00+00:00"},
     }
-    (cache_dir / "dart_corp_codes.json").write_text(json.dumps(payload))
+    (cache_dir / "dart_corp_codes.json").write_text(json.dumps(payload), encoding="utf-8")
 
 
 def _filing(rcept_no: str, report_nm: str) -> FilingEvent:
@@ -71,7 +71,7 @@ def _seed_filing_events(cache_dir, filings: list[FilingEvent]) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     from dataclasses import asdict
     payload = {"seen_receipt_numbers": [f.rcept_no for f in filings], "filing_events": [asdict(f) for f in filings], "candidate_signals": []}
-    (cache_dir / "dart_filing_events.json").write_text(json.dumps(payload, ensure_ascii=False))
+    (cache_dir / "dart_filing_events.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
 
 def _now_iso() -> str:
@@ -131,7 +131,7 @@ def _seed_edinet_filing_events(cache_dir, filings: list[FilingEvent]) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     from dataclasses import asdict
     payload = {"seen_keys": [f"EDINET:{f.corp_code}:{f.rcept_no}" for f in filings], "filing_events": [asdict(f) for f in filings], "candidate_signals": []}
-    (cache_dir / "edinet_filing_events.json").write_text(json.dumps(payload, ensure_ascii=False))
+    (cache_dir / "edinet_filing_events.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
 
 def test_radar_inbox_shows_all_three_edinet_form_codes_for_a_softbank_shaped_event(tmp_path):
@@ -305,7 +305,7 @@ def _seed_edgar_ciks(cache_dir) -> None:
         "ROK": {"cik": "0001024478", "company_name": "ROCKWELL AUTOMATION INC", "source": "test", "retrieved_at": "2026-08-01T00:00:00+00:00"},
         "RKLB": {"cik": "0001819994", "company_name": "ROCKET LAB USA INC", "source": "test", "retrieved_at": "2026-08-01T00:00:00+00:00"},
     }
-    (cache_dir / "edgar_ciks.json").write_text(json.dumps(payload))
+    (cache_dir / "edgar_ciks.json").write_text(json.dumps(payload), encoding="utf-8")
 
 
 def test_radar_inbox_edgar_only_configured_renders_edgar_candidates(tmp_path):
@@ -332,7 +332,7 @@ def test_radar_inbox_edgar_only_configured_renders_edgar_candidates(tmp_path):
         ],
         "candidate_signals": [],
     }
-    (tmp_path / "edgar_filing_events.json").write_text(json.dumps(payload))
+    (tmp_path / "edgar_filing_events.json").write_text(json.dumps(payload), encoding="utf-8")
 
     edgar_candidate = CandidateSignal(
         id="edgar-cand-0001045810-26-000001", filing=edgar_filing,
@@ -528,7 +528,7 @@ def test_radar_inbox_source_filter_narrows_across_configured_sources(tmp_path):
         ],
         "candidate_signals": [],
     }
-    (tmp_path / "edgar_filing_events.json").write_text(json.dumps(edgar_payload))
+    (tmp_path / "edgar_filing_events.json").write_text(json.dumps(edgar_payload), encoding="utf-8")
     edgar_candidate = CandidateSignal(
         id="edgar-cand-src", filing=edgar_filing, matched_rules=["earnings_or_results:8-K item 2.02"], confidence="Moderate",
         status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],

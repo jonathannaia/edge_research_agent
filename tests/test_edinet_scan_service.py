@@ -700,7 +700,7 @@ def _seed_existing_filing_event(cache_dir, doc_id, edinet_code="E02778", sec_cod
     path = cache_dir / "edinet_filing_events.json"
     existing = {"seen_keys": [], "filing_events": [], "candidate_signals": []}
     if path.exists():
-        existing = json.loads(path.read_text())
+        existing = json.loads(path.read_text(encoding="utf-8"))
     existing["seen_keys"].append(f"EDINET:{edinet_code}:{doc_id}")
     existing["filing_events"].append({
         "rcept_no": doc_id, "corp_code": edinet_code, "corp_name": "SoftBank Group Corp.", "stock_code": sec_code,
@@ -711,7 +711,7 @@ def _seed_existing_filing_event(cache_dir, doc_id, edinet_code="E02778", sec_cod
         "retrieved_at": "2026-06-22T09:00:00+00:00", "source_name": "EDINET", "original_language": "Japanese",
         "is_demo": False, "primary_document": "",
     })
-    path.write_text(json.dumps(existing, ensure_ascii=False))
+    path.write_text(json.dumps(existing, ensure_ascii=False), encoding="utf-8")
 
 
 def _backfill_client(results_by_date: dict):
@@ -759,14 +759,14 @@ def test_backfill_target_absent_from_live_response_stops_without_writing(tmp_pat
         _seed_existing_filing_event(tmp_path, doc_id, form_code=form_code)
     live_rows = _softbank_live_rows()[:2]  # S100YFH8 missing from this day's response
     client = _backfill_client({_BACKFILL_DATE.isoformat(): _envelope(live_rows)})
-    before = (tmp_path / "edinet_filing_events.json").read_text()
+    before = (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8")
 
     result = scan_service.backfill_form_codes(client, tmp_path, _SOFTBANK_TARGETS, _BACKFILL_DATE, "E02778")
 
     assert result.error is not None
     assert "S100YFH8" in result.error and "not found" in result.error
     assert result.updated == ()
-    assert (tmp_path / "edinet_filing_events.json").read_text() == before  # byte-identical — no write
+    assert (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8") == before  # byte-identical — no write
 
 
 def test_backfill_target_wrong_edinet_code_stops_without_writing(tmp_path):
@@ -775,13 +775,13 @@ def test_backfill_target_wrong_edinet_code_stops_without_writing(tmp_path):
     live_rows = _softbank_live_rows()
     live_rows[1] = {**live_rows[1], "edinetCode": "E99999"}  # S100YFHB attributed to a different filer
     client = _backfill_client({_BACKFILL_DATE.isoformat(): _envelope(live_rows)})
-    before = (tmp_path / "edinet_filing_events.json").read_text()
+    before = (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8")
 
     result = scan_service.backfill_form_codes(client, tmp_path, _SOFTBANK_TARGETS, _BACKFILL_DATE, "E02778")
 
     assert result.error is not None
     assert "S100YFHB" in result.error and "edinetCode mismatch" in result.error
-    assert (tmp_path / "edinet_filing_events.json").read_text() == before
+    assert (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8") == before
 
 
 def test_backfill_duplicate_target_doc_id_stops_without_writing(tmp_path):
@@ -789,13 +789,13 @@ def test_backfill_duplicate_target_doc_id_stops_without_writing(tmp_path):
         _seed_existing_filing_event(tmp_path, doc_id)
     live_rows = _softbank_live_rows() + [_result(doc_id="S100YGH5", edinet_code="E02778", sec_code="99840")]  # duplicate
     client = _backfill_client({_BACKFILL_DATE.isoformat(): _envelope(live_rows)})
-    before = (tmp_path / "edinet_filing_events.json").read_text()
+    before = (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8")
 
     result = scan_service.backfill_form_codes(client, tmp_path, _SOFTBANK_TARGETS, _BACKFILL_DATE, "E02778")
 
     assert result.error is not None
     assert "S100YGH5" in result.error and "ambiguous" in result.error
-    assert (tmp_path / "edinet_filing_events.json").read_text() == before
+    assert (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8") == before
 
 
 def test_backfill_form_code_mismatch_stops_without_overwriting(tmp_path):
@@ -804,13 +804,13 @@ def test_backfill_form_code_mismatch_stops_without_overwriting(tmp_path):
     # which one is right.
     _seed_existing_filing_event(tmp_path, "S100YGH5", form_code="999999")
     client = _backfill_client({_BACKFILL_DATE.isoformat(): _envelope([_result(doc_id="S100YGH5", edinet_code="E02778", sec_code="99840", form="030000")])})
-    before = (tmp_path / "edinet_filing_events.json").read_text()
+    before = (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8")
 
     result = scan_service.backfill_form_codes(client, tmp_path, ("S100YGH5",), _BACKFILL_DATE, "E02778")
 
     assert result.error is not None
     assert "formCode mismatch" in result.error
-    assert (tmp_path / "edinet_filing_events.json").read_text() == before
+    assert (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8") == before
 
 
 def test_backfill_target_with_no_existing_cached_record_stops_without_writing(tmp_path):
@@ -833,13 +833,13 @@ def test_backfill_rerun_is_idempotent_and_makes_no_change(tmp_path):
     first = scan_service.backfill_form_codes(client, tmp_path, _SOFTBANK_TARGETS, _BACKFILL_DATE, "E02778")
     assert set(first.updated) == set(_SOFTBANK_TARGETS)
 
-    after_first_write = (tmp_path / "edinet_filing_events.json").read_text()
+    after_first_write = (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8")
     second = scan_service.backfill_form_codes(client, tmp_path, _SOFTBANK_TARGETS, _BACKFILL_DATE, "E02778")
 
     assert second.error is None
     assert second.updated == ()
     assert set(second.already_complete) == set(_SOFTBANK_TARGETS)
-    assert (tmp_path / "edinet_filing_events.json").read_text() == after_first_write  # no-op — byte-identical
+    assert (tmp_path / "edinet_filing_events.json").read_text(encoding="utf-8") == after_first_write  # no-op — byte-identical
 
 
 def test_backfill_empty_target_tuple_raises_typed_error(tmp_path):

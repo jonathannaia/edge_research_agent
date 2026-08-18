@@ -325,7 +325,7 @@ def test_load_cached_codes_empty_when_no_cache(tmp_path):
 
 
 def test_load_cached_codes_tolerates_corrupt_cache_file(tmp_path):
-    (tmp_path / "edinet_codes.json").write_text("{not valid json")
+    (tmp_path / "edinet_codes.json").write_text("{not valid json", encoding="utf-8")
     assert edinet_code_resolver.load_cached_codes(tmp_path) == {}
 
 

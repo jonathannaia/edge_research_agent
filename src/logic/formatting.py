@@ -20,7 +20,8 @@ def fmt_date(iso_str: str) -> str:
     original string unparsed rather than raising on bad input."""
     for parser in (lambda s: datetime.fromisoformat(s), lambda s: datetime.strptime(s, "%Y-%m-%d")):
         try:
-            return parser(iso_str).strftime("%b %-d, %Y")
+            dt = parser(iso_str)
+            return f"{dt:%b} {dt.day}, {dt.year}"
         except (ValueError, TypeError):
             continue
     return iso_str
@@ -29,7 +30,7 @@ def fmt_date(iso_str: str) -> str:
 def fmt_datetime(iso_str: str) -> str:
     try:
         dt = datetime.fromisoformat(iso_str)
-        return dt.strftime("%b %-d, %Y, %H:%M UTC")
+        return f"{dt:%b} {dt.day}, {dt.year}, {dt:%H:%M} UTC"
     except (ValueError, TypeError):
         return iso_str
 

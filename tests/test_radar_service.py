@@ -20,7 +20,7 @@ def _seed_corp_codes(cache_dir, krx_codes: list[str]) -> None:
         krx: {"corp_code": f"corp-{krx}", "corp_name": "Test Co", "source": "OpenDART corpCode.xml", "retrieved_at": "2026-08-10T00:00:00+00:00"}
         for krx in krx_codes
     }
-    (cache_dir / "dart_corp_codes.json").write_text(json.dumps(payload))
+    (cache_dir / "dart_corp_codes.json").write_text(json.dumps(payload), encoding="utf-8")
 
 
 def test_readiness_reports_missing_keys_and_unresolved_companies(tmp_path):

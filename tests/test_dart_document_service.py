@@ -100,7 +100,7 @@ def test_gives_up_after_max_retries_on_persistent_timeout(tmp_path, monkeypatch)
 
 def test_handles_corrupt_cache_file_without_raising(tmp_path):
     tmp_path.mkdir(exist_ok=True)
-    (tmp_path / "dart_document_excerpts.json").write_text("{not valid json")
+    (tmp_path / "dart_document_excerpts.json").write_text("{not valid json", encoding="utf-8")
     client = MagicMock()
     client.fetch_document_zip.return_value = _valid_document_zip()
 

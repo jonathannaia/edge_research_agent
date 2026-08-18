@@ -126,7 +126,7 @@ def load_cached_codes(cache_dir: Path) -> dict[str, EdinetCodeEntry]:
     if not path.exists():
         return {}
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
     required_keys = {
@@ -143,7 +143,7 @@ def load_cached_codes(cache_dir: Path) -> dict[str, EdinetCodeEntry]:
 def _save_cache(cache_dir: Path, resolved: dict[str, EdinetCodeEntry]) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     payload = {code: record.__dict__ for code, record in resolved.items()}
-    _cache_path(cache_dir).write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+    _cache_path(cache_dir).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def _extract_csv_text(zip_bytes: bytes) -> str:

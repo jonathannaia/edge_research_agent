@@ -100,6 +100,6 @@ def test_load_cached_corp_codes_returns_empty_when_no_cache_file(tmp_path):
 
 def test_load_cached_corp_codes_returns_empty_on_corrupt_cache_file(tmp_path):
     tmp_path.mkdir(exist_ok=True)
-    (tmp_path / "dart_corp_codes.json").write_text("{not valid json")
+    (tmp_path / "dart_corp_codes.json").write_text("{not valid json", encoding="utf-8")
 
     assert load_cached_corp_codes(tmp_path) == {}

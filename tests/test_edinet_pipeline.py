@@ -239,7 +239,7 @@ def _seed_softbank_filing_event(cache_dir, doc_id, ordinance_code, form_code, do
     path = cache_dir / "edinet_filing_events.json"
     existing = {"seen_keys": [], "filing_events": [], "candidate_signals": []}
     if path.exists():
-        existing = json.loads(path.read_text())
+        existing = json.loads(path.read_text(encoding="utf-8"))
     existing["seen_keys"].append(f"EDINET:E02778:{doc_id}")
     existing["filing_events"].append({
         "rcept_no": doc_id, "corp_code": "E02778", "corp_name": "SoftBank Group Corp.", "stock_code": "99840",
@@ -250,7 +250,7 @@ def _seed_softbank_filing_event(cache_dir, doc_id, ordinance_code, form_code, do
         "retrieved_at": "2026-08-17T22:56:26.469712+00:00", "source_name": "EDINET", "original_language": "Japanese",
         "is_demo": False, "primary_document": "",
     })
-    path.write_text(json.dumps(existing, ensure_ascii=False))
+    path.write_text(json.dumps(existing, ensure_ascii=False), encoding="utf-8")
 
 
 def test_backfill_candidate_creates_exactly_one_candidate_for_the_annual_report(tmp_path):

@@ -114,7 +114,7 @@ def test_flag_enabled_non_allowlisted_email_requires_invite():
 def test_beta_gate_module_has_no_streamlit_import():
     import src.ui.beta_gate as beta_gate_module
 
-    source = Path(beta_gate_module.__file__).read_text()
+    source = Path(beta_gate_module.__file__).read_text(encoding="utf-8")
     tree = ast.parse(source)
     imported_names = []
     for node in ast.walk(tree):

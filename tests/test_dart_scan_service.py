@@ -253,7 +253,7 @@ def test_load_seen_receipt_numbers_empty_when_no_cache(tmp_path):
 
 def test_scan_handles_corrupt_cache_file_without_raising(tmp_path):
     tmp_path.mkdir(exist_ok=True)
-    (tmp_path / "dart_filing_events.json").write_text("{not valid json")
+    (tmp_path / "dart_filing_events.json").write_text("{not valid json", encoding="utf-8")
     client = _make_client({1: ([_record("20260810000001", "신규시설투자등")], 1)})
 
     result = scan_service.scan(client, [_SAMSUNG], tmp_path)
@@ -286,6 +286,7 @@ def test_load_filing_events_returns_every_scanned_filing_including_unpromoted(tm
 def test_load_filing_events_skips_individually_corrupt_entries(tmp_path):
     tmp_path.mkdir(exist_ok=True)
     (tmp_path / "dart_filing_events.json").write_text(
-        '{"seen_receipt_numbers": [], "filing_events": [{"not_a_real_field": true}], "candidate_signals": []}'
+        '{"seen_receipt_numbers": [], "filing_events": [{"not_a_real_field": true}], "candidate_signals": []}',
+        encoding="utf-8",
     )
     assert scan_service.load_filing_events(tmp_path) == ()

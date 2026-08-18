@@ -86,7 +86,7 @@ def _css_text() -> str:
     # take effect during development.
     if not _CSS_PATH.exists():
         return ""
-    return _CSS_PATH.read_text()
+    return _CSS_PATH.read_text(encoding="utf-8")
 
 
 def load_css() -> None:

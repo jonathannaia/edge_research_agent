@@ -74,7 +74,7 @@ def load_candidates(cache_dir: Path, filename: str = _CACHE_FILENAME) -> dict[st
     if not path.exists():
         return {}
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
     if not isinstance(raw, dict):
@@ -91,7 +91,7 @@ def load_candidates(cache_dir: Path, filename: str = _CACHE_FILENAME) -> dict[st
 def save_candidates(cache_dir: Path, candidates: dict[str, CandidateSignal], filename: str = _CACHE_FILENAME) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     payload = {candidate_id: asdict(candidate) for candidate_id, candidate in candidates.items()}
-    _cache_path(cache_dir, filename).write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+    _cache_path(cache_dir, filename).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def upsert_new_candidates(

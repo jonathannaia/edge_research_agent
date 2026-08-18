@@ -93,7 +93,7 @@ def _load_cache(cache_dir: Path) -> dict:
     if not path.exists():
         return _empty_cache()
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return _empty_cache()
     if not isinstance(raw, dict):
@@ -105,7 +105,7 @@ def _load_cache(cache_dir: Path) -> dict:
 
 def _save_cache(cache_dir: Path, cache: dict) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
-    _cache_path(cache_dir).write_text(json.dumps(cache, ensure_ascii=False, indent=2))
+    _cache_path(cache_dir).write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def load_seen_receipt_numbers(cache_dir: Path) -> set[str]:

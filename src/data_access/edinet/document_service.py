@@ -44,7 +44,7 @@ def _load_cache(cache_dir: Path) -> dict:
     if not path.exists():
         return {}
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
     return raw if isinstance(raw, dict) else {}
@@ -52,7 +52,7 @@ def _load_cache(cache_dir: Path) -> dict:
 
 def _save_cache(cache_dir: Path, cache: dict) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
-    _cache_path(cache_dir).write_text(json.dumps(cache, ensure_ascii=False, indent=2))
+    _cache_path(cache_dir).write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def _fetch_with_retry(client: EdinetClient, doc_id: str, type_: int) -> bytes:

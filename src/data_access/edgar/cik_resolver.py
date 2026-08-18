@@ -61,7 +61,7 @@ def load_cached_ciks(cache_dir: Path) -> dict[str, ResolvedCik]:
     if not path.exists():
         return {}
     try:
-        raw = json.loads(path.read_text())
+        raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
     required_keys = {"cik", "company_name", "source", "retrieved_at"}
@@ -75,7 +75,7 @@ def load_cached_ciks(cache_dir: Path) -> dict[str, ResolvedCik]:
 def _save_cache(cache_dir: Path, resolved: dict[str, ResolvedCik]) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     payload = {ticker: record.__dict__ for ticker, record in resolved.items()}
-    _cache_path(cache_dir).write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+    _cache_path(cache_dir).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def _candidate_cik_by_ticker(bulk_tickers: dict) -> dict[str, dict]:

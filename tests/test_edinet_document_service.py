@@ -185,7 +185,7 @@ def test_pdf_raw_bytes_are_never_written_to_the_cache_file(tmp_path):
     document_service.get_or_fetch_excerpt(client, "S100PDF", tmp_path)
 
     cache_path = tmp_path / "edinet_document_excerpts.json"
-    raw_cache_text = cache_path.read_text()
+    raw_cache_text = cache_path.read_text(encoding="utf-8")
     assert "%PDF-" not in raw_cache_text  # no PDF magic bytes/structure persisted
     assert "endobj" not in raw_cache_text  # no raw PDF syntax persisted
     import json
