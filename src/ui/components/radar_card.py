@@ -73,7 +73,12 @@ def _evidence_status_panel(filing: FilingEvent, candidate: CandidateSignal | Non
         _detail_row("Translation", evidence_translation_label(candidate.translation_state))
         _detail_row("Review", evidence_review_label(candidate))
     else:
+        # A bare FilingEvent has no extraction/translation/candidate-status
+        # data to show — never fabricate one. The exact copy below is the
+        # honest, source-neutral answer to "what about translation?" for a
+        # filing no candidate pipeline has touched yet.
         _detail_row("Document processing", "Not started")
+        _detail_row("Translation", "Available after document processing")
     _detail_row(evidence_document_id_label(filing.source_name), filing.rcept_no)
 
 

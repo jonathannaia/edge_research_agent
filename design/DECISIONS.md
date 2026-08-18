@@ -2192,3 +2192,187 @@ steps established repeatedly.
   phase, and `.env.example`'s new entries explicitly state that OAuth
   client/cookie secrets must never be added there — only to the
   gitignored `.streamlit/secrets.toml`, when that later phase begins.
+
+## Navigation-bug repair — stable `st.Page` identity (partial fix; root symptom not fully resolved)
+
+- **Reported bug**: from a running local instance, clicking a visible
+  custom-sidebar link (Themes, Signals, Research, etc.) while on Radar
+  Inbox left the app showing Radar Inbox content — even though the
+  clicked link's own `href` was correct. Reproduced live in-browser
+  (Browser pane against the user's running `localhost:8501` instance,
+  clicking real sidebar links — not a scan/fetch/process action, so
+  within this task's no-live-network-call constraint) before any fix was
+  attempted, per this repo's standing "live evidence catches bugs mocked
+  tests can't" discipline.
+- **Confirmed, verifiable technical facts** (method: direct browser
+  interaction plus `elementFromPoint`/DOM inspection via the Browser
+  pane's `javascript_tool`, not guesswork):
+  - A hard URL reload to any route always renders correctly — server-side
+    `url_path` routing itself is intact.
+  - A sidebar-link click *to* Radar Inbox from another page always
+    worked; a click *away* from Radar Inbox to any other page (Themes,
+    Signals tested directly) reliably failed, leaving Radar Inbox's
+    content on screen with no console error, no new network request, and
+    the clicked anchor's own `href` attribute correct.
+  - `document.elementFromPoint` at the click's screen coordinates
+    confirmed the click reaches the correct, on-top `<a href="…">`
+    element — ruling out a CSS overlay.
+  - Waiting up to 10 seconds after Radar Inbox's (533-item) render
+    settled before clicking made no difference — ruling out a
+    render-still-in-progress/timing explanation.
+  - A `WebSocket onclose` console event was initially suspected, then
+    ruled out by a clean, single-reload-then-click reproduction that
+    showed the failure with zero new console output at all — the earlier
+    sighting was an artifact of this investigation's own repeated
+    `navigate(force=true)` reloads tearing down a prior connection, not a
+    spontaneous drop.
+  - `app.py` rebuilt fresh `st.Page` objects (and fresh `with_chrome(...)`
+    wrapped callables) on every single script rerun — confirmed via
+    `AppTest`: two consecutive `.run()` calls in the same
+    "is dashboard default" phase returned a *different* Python object for
+    the same logical page each time. This is a real defect independent of
+    the reported symptom (unstable page/callable identity across reruns
+    is exactly the anti-pattern Streamlit's own multipage guidance warns
+    against for `st.navigation`).
+- **Fix applied** (`app.py` only): page construction now goes through
+  `_build_pages(dashboard_is_default: bool)`, wrapped in
+  `st.cache_resource`. Since that boolean has exactly two values, the
+  cache holds at most two entries for the process's lifetime — the same
+  `st.Page` objects (and their wrapped callables) are now handed back on
+  every rerun within a given "home is default" / "dashboard is default"
+  phase, instead of freshly reconstructed each time. Home's first-visit,
+  dashboard-thereafter behavior is unchanged — `_first_visit` is still
+  computed fresh every rerun from `st.session_state["_has_visited"]`; it
+  now only decides *which cache entry* is returned, not whether new
+  objects get built. Verified via `AppTest` (`tests/test_navigation.py`):
+  the same page object is now returned across reruns within one phase,
+  and every registered page key, label, and order is unchanged.
+- **Honest result — this fix did not fully resolve the reported
+  symptom.** Re-running the exact same live-browser reproduction after
+  applying it showed clicks away from Radar Inbox still failing,
+  identically. The stable-identity property is real and independently
+  worth keeping (it matches Streamlit's own recommended pattern and was
+  the specific direction requested), but it was not the sole or complete
+  cause of the reported bug.
+- **What was ruled out** for the remaining symptom, all via direct live
+  testing rather than assumption: CSS overlay, click timing/settle delay,
+  page/callable identity instability (the fix above), WebSocket closure,
+  and widget-key collisions between `radar_inbox.py`/`radar_card.py` and
+  other pages or `ui.py`'s own sidebar containers (checked by grepping
+  every `key=`/`key=f"..."` literal across those files — no collision
+  found).
+- **Leading remaining hypothesis, not confirmed**: Radar Inbox is by far
+  the heaviest page in the app — hundreds of filing rows, each with
+  several nested `st.container`/`st.expander` calls and per-candidate
+  `st.button`s keyed by candidate id, versus a few dozen elements on any
+  other page. This is the one structural way Radar Inbox differs from
+  every page that was confirmed to chain navigation cleanly
+  (Dashboard→Themes→Signals→Research, tested consecutively, no failures).
+  Confirming this would require either reducing Radar Inbox's render
+  volume (a change to `src/ui/pages/radar_inbox.py`/`radar_card.py`,
+  explicitly out of scope for this repair) or live frontend/React
+  debugging tools this session's toolset does not have.
+- **Scope discipline**: no page implementation file, model, data-access
+  code, setting, dependency, secret, database, cache, scan code, or Radar
+  filter was touched investigating or fixing this — per the explicit
+  constraints of this repair, only `app.py` was edited, plus
+  `tests/test_navigation.py` (new) and this record.
+
+## Radar Inbox: view selector, pagination, filter simplification (render-volume reduction)
+
+- **Why**: the leading hypothesis above — that Radar Inbox's raw render
+  volume (hundreds of filing cards, each with several nested containers/
+  expanders/buttons) was the likeliest remaining cause of the sidebar
+  click-navigation failure — is only addressable by reducing that volume,
+  which the prior repair explicitly left out of scope (no page files).
+  This is that follow-up, confined to `radar_inbox.py` (+ one small,
+  bare-event-only addition to `radar_card.py`'s existing evidence panel).
+- **View selector**: "Signals & review queue" (default — items with a
+  `CandidateSignal` only) vs. "All filing events" (opt-in, the full raw
+  inventory). Switching views is read-only — it filters an already-built
+  in-memory list; it never creates a signal, mutates a `CandidateStatus`,
+  or calls a processing service. An empty Signals view shows a calm empty
+  state ("No filing currently meets the configured candidate rules") with
+  a one-click switch to All filing events, never a blank page or a
+  fabricated signal.
+- **Pagination**: exactly `PAGE_SIZE = 20` cards per page, in both views —
+  off-page items are sliced out of the Python list *before*
+  `candidate_row(...)` is ever called for them, so their containers,
+  expanders, and per-candidate buttons are never constructed, not merely
+  hidden by CSS. A page/result summary plus explicit Previous/Next
+  buttons are always visible; pagination clamps to a valid page and
+  resets to page 1 whenever the view mode or any filter value changes
+  (tracked via a stored filter-signature tuple compared each rerun).
+- **Filters**: Search (new — case-insensitive substring match against
+  filing title and company name), Source, Theme, Status, and Filed-date
+  stay directly visible; Company, Language, and Detection confidence move
+  into a collapsed "Advanced filters" expander. A "Clear all filters"
+  button resets every filter key (and pagination) to its default via an
+  `on_click` callback, the standard Streamlit pattern for widgets backed
+  by `session_state` keys. All existing filter *semantics* are unchanged —
+  each one applies the exact same predicate as before, just to a
+  view-scoped item list instead of the full raw one, and search is a new
+  additive predicate, not a replacement for any existing one.
+- **Bare-event translation copy**: a `FilingEvent` with no `CandidateSignal`
+  now shows an explicit `Translation: Available after document processing`
+  row inside its unchanged Evidence status panel — added only to the
+  `candidate is None` branch of `radar_card.py`'s existing
+  `_evidence_status_panel`; the candidate branch (real extraction/
+  translation-state mapping) is untouched.
+- **Data controls**: the three "Scan … now" buttons, their handling code,
+  and their scan-result rendering all moved unmodified into a collapsed
+  `st.expander("Data controls (local/admin)")`, with one new warning line
+  above them ("Source scans can take time and are intended for local/admin
+  use."). No button's code path, key, or behavior changed — only the
+  surrounding container.
+- **Tests**: `tests/test_radar_inbox_page.py` gained fixture-driven
+  coverage for every part of Requirement 6 (a–e): default view excludes
+  bare events (using each fixture's own unique title text, not the
+  generic "New filing" status label — that label is a false-positive risk
+  here, since it also appears verbatim in `assets/styles.css`'s own
+  design-system comments, which is how one pre-existing assertion was
+  silently passing without exercising what it claimed to); All filing
+  events never renders more than 20 cards and reports "Page 1 of 2" for a
+  26-card fixture; Search and Source filters demonstrably narrow results;
+  Clear all filters restores the full view; the bare-event translation
+  copy renders exactly as specified; the Data controls expander exists
+  with its exact title and warning text and no scan/process service is
+  ever called (an autouse fixture in the test file monkeypatches every
+  `run_scan`/`process_candidate_now` entry point to raise if reached — a
+  guard, not an incidental absence). Two pre-existing tests
+  (`test_radar_inbox_renders_populated_list_with_expected_statuses`,
+  `test_radar_inbox_shows_all_three_edinet_form_codes_for_a_softbank_shaped_event`)
+  were updated to explicitly switch to the All filing events view before
+  asserting on bare-event content, since the new default view would
+  otherwise hide it. All 50 tests across
+  `test_radar_inbox_page.py`/`test_navigation.py`/`test_app_smoke.py`
+  pass. `app.py`'s stable-`st.Page`-identity hardening from the prior
+  repair was left exactly as-is — its own tests still demonstrate the
+  invariant it was added for, and this change didn't touch it.
+- **Live-browser verification — passed, after a required restart.** The
+  Dashboard → Radar Inbox → Themes click sequence was first attempted
+  against the user's already-running local `localhost:8501` process
+  (clicking sidebar links only — no scan/process control touched). That
+  attempt was inconclusive: the running process kept serving the *old*
+  Radar Inbox layout (no view selector, no pagination, the old unbounded
+  item list). A plain page reload, Streamlit's own explicit "Rerun" menu
+  action, and its "Clear caches" action (for `@st.cache_data`/
+  `@st.cache_resource`) were all tried, in that order — none caused the
+  new code to appear; a direct DOM check afterward confirmed literal
+  strings unique to the new code (`"Data controls"`, `"Advanced
+  filters"`, `"Signals & review queue"`) were absent everywhere in the
+  page, not merely hidden. This meant the running process's own Python
+  module cache (`sys.modules`) had never been invalidated for the changed
+  source files — most likely its local source-file watcher thread wasn't
+  active in that environment, since watcher-driven reloads are automatic
+  and independent of a manual "Rerun" click, which only re-executes
+  `app.py`'s top level without re-importing already-imported submodules.
+  A full restart of the `streamlit run app.py` process was required, and
+  outside this session's access/authorization to perform. **After the
+  user restarted Streamlit locally, the Dashboard → Radar Inbox → Themes
+  sequence succeeded**, and the user additionally confirmed that all
+  sidebar pages open correctly after visiting Radar Inbox. The live local
+  navigation verification has therefore passed. This confirms the fix in
+  this local session, on the browser/setup used for that check — it is
+  not a claim of universal browser/device coverage, and no hosted/
+  deployed instance has been verified.

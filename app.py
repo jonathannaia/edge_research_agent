@@ -65,38 +65,61 @@ _URL_PATHS = {
     "about": "about",
 }
 
+# Navigation-bug repair (design/DECISIONS.md): `st.Page` objects — and the
+# `with_chrome(...)` closures wrapped inside them — used to be rebuilt from
+# scratch on every single rerun (this whole module re-executes on every
+# navigation). Live reproduction confirmed that broke click-driven sidebar
+# navigation: after a couple of reruns, `st.page_link` clicks silently
+# stopped changing the page (a hard URL reload always still worked, proving
+# server-side url_path routing itself was fine — only the client-side
+# page-identity tracking that `st.page_link` clicks depend on had gone
+# stale). `st.cache_resource` makes each distinct page set a stable,
+# singleton set of Python objects reused across reruns instead of fresh
+# ones every time — the officially-recommended fix for exactly this class
+# of `st.navigation` instability.
+@st.cache_resource(show_spinner=False)
+def _build_pages(dashboard_is_default: bool) -> dict[str, st.Page]:
+    pages = {
+        "home": st.Page(with_chrome(home.render, "home", show_sidebar=False), title="Home", default=not dashboard_is_default),
+    }
+    for key, _label in PRIMARY_NAV + FOOTER_NAV:
+        pages[key] = st.Page(
+            with_chrome(_RENDER_FNS[key], key),
+            title=_label,
+            url_path=_URL_PATHS.get(key),
+            default=(key == "dashboard" and dashboard_is_default),
+        )
+    pages["company"] = st.Page(
+        with_chrome(company.render, "company"), title="Company", url_path="company", visibility="hidden",
+    )
+    # Restored as a real destination (UX-refinement pass) — linked from the
+    # sidebar's "My Watchlists" group header and Dashboard's watchlist-changes
+    # panel. Per-list sidebar entries still shortcut straight into Signals.
+    pages["watchlists"] = st.Page(
+        with_chrome(watchlists.render, "watchlists"), title="Watchlists", url_path="watchlists",
+    )
+    # Disclaimer is no longer a primary sidebar item, but stays a real
+    # reachable route via Methodology's cross-link and the page footer.
+    pages["disclaimer"] = st.Page(
+        with_chrome(disclaimer.render, "disclaimer"), title="Disclaimer", url_path="disclaimer", visibility="hidden",
+    )
+    return pages
+
+
 # Home renders on first visit only; Dashboard is the default thereafter
 # (brief §4) — a page keeps the root path "/" via default=True regardless
 # of its own url_path, so Dashboard stays reachable at both "/" and
-# "/dashboard" once it takes over as default.
+# "/dashboard" once it takes over as default. This per-session flip is
+# unchanged by the cache-stability fix above: `_build_pages` has exactly
+# two possible cache entries (dashboard_is_default True/False), each built
+# once and then reused — so within one session, every rerun after the
+# first consistently gets the SAME "dashboard is default" page set, and a
+# brand-new session's first rerun consistently gets the SAME "home is
+# default" page set, instead of a fresh, unstable set every single time.
 _first_visit = "_has_visited" not in st.session_state
 st.session_state["_has_visited"] = True
 
-pages = {
-    "home": st.Page(with_chrome(home.render, "home", show_sidebar=False), title="Home", default=_first_visit),
-}
-for key, _label in PRIMARY_NAV + FOOTER_NAV:
-    pages[key] = st.Page(
-        with_chrome(_RENDER_FNS[key], key),
-        title=_label,
-        url_path=_URL_PATHS.get(key),
-        default=(key == "dashboard" and not _first_visit),
-    )
-pages["company"] = st.Page(
-    with_chrome(company.render, "company"), title="Company", url_path="company", visibility="hidden",
-)
-# Restored as a real destination (UX-refinement pass) — linked from the
-# sidebar's "My Watchlists" group header and Dashboard's watchlist-changes
-# panel. Per-list sidebar entries still shortcut straight into Signals.
-pages["watchlists"] = st.Page(
-    with_chrome(watchlists.render, "watchlists"), title="Watchlists", url_path="watchlists",
-)
-# Disclaimer is no longer a primary sidebar item, but stays a real
-# reachable route via Methodology's cross-link and the page footer.
-pages["disclaimer"] = st.Page(
-    with_chrome(disclaimer.render, "disclaimer"), title="Disclaimer", url_path="disclaimer", visibility="hidden",
-)
-
+pages = _build_pages(dashboard_is_default=not _first_visit)
 st.session_state["_pages"] = pages
 
 if LAST_SEEN_KEY not in st.session_state:

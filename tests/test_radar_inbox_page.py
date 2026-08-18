@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
 from streamlit.testing.v1 import AppTest
 
 from src.config.settings import Settings
@@ -24,6 +25,28 @@ from src.models.models import (
 )
 
 _HARNESS = Path(__file__).parent / "apptest_pages" / "radar_inbox_page.py"
+_SIGNALS_VIEW = "Signals & review queue"
+_ALL_FILINGS_VIEW = "All filing events"
+
+
+@pytest.fixture(autouse=True)
+def _guard_against_live_calls(monkeypatch):
+    """No test in this file clicks a scan/process control — this just
+    makes that guarantee load-bearing rather than incidental. Requirement
+    6e: no scan/process service may be called during any render or test."""
+
+    def _forbidden(*_args, **_kwargs):
+        raise AssertionError("Test attempted a live call — this suite must stay network-free.")
+
+    for module_path, attr in [
+        ("src.data_access.dart.radar_service", "run_scan"),
+        ("src.data_access.dart.radar_service", "process_candidate_now"),
+        ("src.data_access.edgar.edgar_service", "run_scan"),
+        ("src.data_access.edgar.edgar_service", "process_candidate_now"),
+        ("src.data_access.edinet.edinet_service", "run_scan"),
+        ("src.data_access.edinet.edinet_service", "process_candidate_now"),
+    ]:
+        monkeypatch.setattr(f"{module_path}.{attr}", _forbidden, raising=True)
 
 
 def _seed_corp_codes(cache_dir) -> None:
@@ -134,6 +157,22 @@ def test_radar_inbox_shows_all_three_edinet_form_codes_for_a_softbank_shaped_eve
         at = AppTest.from_file(str(_HARNESS), default_timeout=10)
         at.run()
 
+        assert not at.exception
+        # This filing has no CandidateSignal, so the default Signals &
+        # review queue view must show the calm empty state instead — never
+        # fabricate a signal for it, never fall back to a raw-inventory dump.
+        default_text = " ".join(m.value for m in at.markdown)
+        assert "No candidate signals yet" in default_text
+        assert "no filing currently meets the configured candidate rules" in default_text.lower()
+        assert "有価証券報告書" not in default_text  # the bare filing's own title is not shown here
+        action_labels = {b.label for b in at.button}
+        assert "Show all filing events" in action_labels
+
+        # get_settings must still be patched for this second run — AppTest
+        # re-executes the harness script synchronously on `.run()`.
+        at.radio(key="radar-view-mode").set_value(_ALL_FILINGS_VIEW)
+        at.run()
+
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
     assert "Ordinance code" in all_text and "010" in all_text
@@ -198,9 +237,24 @@ def test_radar_inbox_renders_populated_list_with_expected_statuses(tmp_path):
         at = AppTest.from_file(str(_HARNESS), default_timeout=10)
         at.run()
 
+        assert not at.exception
+        # Default view (Signals & review queue): the 3 candidates render,
+        # but `new_filing` — a bare FilingEvent with no CandidateSignal —
+        # is excluded. Its own report title is a precise, non-coincidental
+        # marker (unlike the "New filing" status label, which also appears
+        # verbatim inside assets/styles.css's own design-system comments).
+        default_text = " ".join(m.value for m in at.markdown)
+        assert "일반 공고" not in default_text
+        assert "Needs review" in default_text
+        assert "Processing deferred" in default_text
+        assert "Retrieval failed" in default_text
+
+        at.radio(key="radar-view-mode").set_value(_ALL_FILINGS_VIEW)
+        at.run()
+
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
-    assert "New filing" in all_text
+    assert "일반 공고" in all_text  # the bare event's own title, now visible
     assert "Needs review" in all_text
     assert "Processing deferred" in all_text
     assert "Retrieval failed" in all_text
@@ -303,3 +357,230 @@ def test_radar_inbox_edgar_only_configured_renders_edgar_candidates(tmp_path):
     assert "Machine translation" not in all_text
     # DART is unconfigured here — its scope line must not render.
     assert "OpenDART / DART · Samsung" not in all_text
+
+
+# --- View selector, pagination, filter simplification, translation copy,
+# and Data controls (usability/navigation-stability follow-up) ---
+
+
+def test_radar_inbox_data_controls_expander_present_with_warning_and_scans_untouched(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000010", "일반 공고")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = CandidateSignal(
+        id="cand-dc", filing=filing, matched_rules=["x:y:z"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    expander_titles = {e.label for e in at.expander}
+    assert "Data controls (local/admin)" in expander_titles
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Source scans can take time and are intended for local/admin use." in all_text
+    # Scan buttons still exist, unclicked — the guard fixture would have
+    # raised (failing this test) if any scan/process path were reached.
+    button_labels = {b.label for b in at.button}
+    assert "Scan DART now" in button_labels
+
+
+def test_radar_inbox_bare_event_shows_translation_availability_copy(tmp_path):
+    _seed_corp_codes(tmp_path)
+    bare_filing = _filing("20260812000011", "단순 공시")
+    _seed_filing_events(tmp_path, [bare_filing])
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+        # No candidate anywhere in this fixture, so Signals view is empty —
+        # switch to All filing events to reach the bare event's own card.
+        at.radio(key="radar-view-mode").set_value(_ALL_FILINGS_VIEW)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Translation:</strong> Available after document processing" in all_text
+    # Requirement 4: never fabricate excerpt/translation/extraction/status
+    # for a bare event.
+    assert "Extraction state" not in all_text
+    assert "Excerpt quality" not in all_text
+    assert "English translation" not in all_text
+
+
+def test_radar_inbox_all_filings_view_paginates_at_twenty_cards(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filings = [_filing(f"2026081200{i:04d}", f"공시 {i}") for i in range(25)]
+    _seed_filing_events(tmp_path, filings)  # no candidates — all bare events
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+        at.radio(key="radar-view-mode").set_value(_ALL_FILINGS_VIEW)
+        at.run()
+
+        assert not at.exception
+        assert len(at.get("link_button")) == 20  # never more than PAGE_SIZE cards rendered
+        all_text = " ".join(m.value for m in at.markdown)
+        assert "Page 1 of 2" in all_text
+        assert "25 of 25 items" in all_text
+
+        next_buttons = [b for b in at.button if b.label == "Next →"]
+        assert len(next_buttons) == 1
+        next_buttons[0].click()
+        at.run()
+
+        assert not at.exception
+        assert len(at.get("link_button")) == 5  # the remaining 5 items on page 2
+        all_text = " ".join(m.value for m in at.markdown)
+        assert "Page 2 of 2" in all_text
+
+
+def test_radar_inbox_switching_view_or_filters_resets_pagination_to_page_one(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filings = [_filing(f"2026081200{i:04d}", f"공시 {i}") for i in range(25)]
+    _seed_filing_events(tmp_path, filings)
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+        at.radio(key="radar-view-mode").set_value(_ALL_FILINGS_VIEW)
+        at.run()
+        [b for b in at.button if b.label == "Next →"][0].click()
+        at.run()
+        assert "Page 2 of 2" in " ".join(m.value for m in at.markdown)
+
+        # Typing a search query is a filter change — pagination must clamp
+        # back to page 1 rather than staying on a now out-of-range page.
+        at.text_input(key="radar-filter-search").set_value("공시 1")
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Page 1 of" in all_text
+
+
+def test_radar_inbox_search_filter_narrows_to_matching_company_or_title(tmp_path):
+    _seed_corp_codes(tmp_path)
+    match_filing = _filing("20260812000020", "특별한 제목")
+    other_filing = _filing("20260812000021", "다른 제목")
+    _seed_filing_events(tmp_path, [match_filing, other_filing])
+    match_candidate = CandidateSignal(
+        id="cand-search-1", filing=match_filing, matched_rules=["x:y:z"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    other_candidate = CandidateSignal(
+        id="cand-search-2", filing=other_filing, matched_rules=["x:y:z"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {match_candidate.id: match_candidate, other_candidate.id: other_candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+        at.text_input(key="radar-filter-search").set_value("특별한")
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "특별한 제목" in all_text
+    assert "다른 제목" not in all_text
+
+
+def test_radar_inbox_source_filter_narrows_across_configured_sources(tmp_path):
+    _seed_corp_codes(tmp_path)
+    _seed_edgar_ciks(tmp_path)
+
+    dart_filing = _filing("20260812000030", "국문 공시")
+    _seed_filing_events(tmp_path, [dart_filing])
+    dart_candidate = CandidateSignal(
+        id="cand-dart-src", filing=dart_filing, matched_rules=["x:y:z"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {dart_candidate.id: dart_candidate})
+
+    edgar_filing = FilingEvent(
+        rcept_no="0001045810-26-000002", corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA",
+        report_nm="8-K filing two", rcept_dt="2026-08-12", flr_nm="NVIDIA", pblntf_ty="8-K", theme_slug="ai-buildout",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000002/",
+        retrieved_at=_now_iso(), source_name="SEC EDGAR", original_language="English", primary_document="nvda-8k-2.htm",
+    )
+    edgar_payload = {
+        "seen_keys": [f"SEC EDGAR:0001045810:{edgar_filing.rcept_no}"],
+        "filing_events": [
+            {
+                "rcept_no": edgar_filing.rcept_no, "corp_code": edgar_filing.corp_code, "corp_name": edgar_filing.corp_name,
+                "stock_code": edgar_filing.stock_code, "report_nm": edgar_filing.report_nm, "rcept_dt": edgar_filing.rcept_dt,
+                "flr_nm": edgar_filing.flr_nm, "pblntf_ty": edgar_filing.pblntf_ty, "pblntf_detail_ty": "",
+                "theme_slug": edgar_filing.theme_slug, "subtheme_slug": None, "source_url": edgar_filing.source_url,
+                "retrieved_at": edgar_filing.retrieved_at, "source_name": edgar_filing.source_name,
+                "original_language": edgar_filing.original_language, "is_demo": False,
+                "primary_document": edgar_filing.primary_document,
+            }
+        ],
+        "candidate_signals": [],
+    }
+    (tmp_path / "edgar_filing_events.json").write_text(json.dumps(edgar_payload))
+    edgar_candidate = CandidateSignal(
+        id="edgar-cand-src", filing=edgar_filing, matched_rules=["earnings_or_results:8-K item 2.02"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {edgar_candidate.id: edgar_candidate}, "edgar_candidates.json")
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", edgar_user_agent="EevaResearch test@example.com", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+        both_text = " ".join(m.value for m in at.markdown)
+        assert "국문 공시" in both_text and "8-K filing two" in both_text
+
+        at.multiselect(key="radar-filter-source").set_value(["SEC EDGAR"])
+        at.run()
+
+    assert not at.exception
+    filtered_text = " ".join(m.value for m in at.markdown)
+    assert "8-K filing two" in filtered_text
+    assert "국문 공시" not in filtered_text
+
+
+def test_radar_inbox_clear_all_filters_restores_full_view(tmp_path):
+    _seed_corp_codes(tmp_path)
+    match_filing = _filing("20260812000040", "특별한 제목 둘")
+    other_filing = _filing("20260812000041", "다른 제목 둘")
+    _seed_filing_events(tmp_path, [match_filing, other_filing])
+    match_candidate = CandidateSignal(
+        id="cand-clear-1", filing=match_filing, matched_rules=["x:y:z"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    other_candidate = CandidateSignal(
+        id="cand-clear-2", filing=other_filing, matched_rules=["x:y:z"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {match_candidate.id: match_candidate, other_candidate.id: other_candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+        at.text_input(key="radar-filter-search").set_value("특별한")
+        at.run()
+        assert "다른 제목 둘" not in " ".join(m.value for m in at.markdown)
+
+        clear_buttons = [b for b in at.button if b.label == "Clear all filters"]
+        assert clear_buttons
+        clear_buttons[0].click()
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "특별한 제목 둘" in all_text
+    assert "다른 제목 둘" in all_text
+    assert at.text_input(key="radar-filter-search").value == ""

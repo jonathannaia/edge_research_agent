@@ -43,6 +43,41 @@ from src.ui.components.radar_status import RadarItem, status_label
 _DART_SCOPE_LINE = "OpenDART / DART · Samsung Electronics + SK Hynix · Memory + AI Buildout"
 _EDGAR_SCOPE_LINE = "SEC EDGAR · NVIDIA, Micron, Coherent, Rockwell Automation, Rocket Lab · AI Buildout, Memory, Photonics, Humanoids, Space"
 
+# View-mode + pagination (usability/navigation-stability follow-up — see
+# design/DECISIONS.md): the raw "every FilingEvent, every source, no cap"
+# list could grow to hundreds of cards, each with several nested
+# containers/expanders/buttons — rendering all of them at once was found
+# live to make the app's own sidebar navigation unreliable. Signals &
+# review queue (candidates only) is the default, useful view; All filing
+# events is opt-in and always paginated, same as Signals if it ever grows
+# past one page. No page ever renders more than PAGE_SIZE cards' worth of
+# widgets, regardless of view or filters.
+_SIGNALS_VIEW = "Signals & review queue"
+_ALL_FILINGS_VIEW = "All filing events"
+PAGE_SIZE = 20
+
+_FILTER_KEYS = (
+    "radar-filter-search",
+    "radar-filter-source",
+    "radar-filter-company",
+    "radar-filter-theme",
+    "radar-filter-status",
+    "radar-filter-dates",
+    "radar-filter-language",
+    "radar-filter-confidence",
+)
+
+
+def _switch_to_all_filings() -> None:
+    st.session_state["radar-view-mode"] = _ALL_FILINGS_VIEW
+    st.session_state["radar-page"] = 1
+
+
+def _clear_filters() -> None:
+    for key in _FILTER_KEYS:
+        st.session_state.pop(key, None)
+    st.session_state["radar-page"] = 1
+
 
 def _edinet_scope_line(cache_dir) -> str:
     """Truthful configured-but-not-scanned wording (Gate 7.1) — replaces
@@ -190,43 +225,51 @@ def render() -> None:
         _render_missing_configuration(dart_readiness, edgar_readiness, edinet_readiness)
         return
 
-    st.markdown("<div style='margin-top:0.6rem;'></div>", unsafe_allow_html=True)
-    scan_cols = st.columns([2, 2, 2, 2])
-    with scan_cols[0]:
-        dart_scan_clicked = dart_readiness.ready and st.button(
-            "Scan DART now", type="primary", use_container_width=True, key="scan-dart-btn",
+    # Data controls moved into a collapsed, explicitly-labeled expander —
+    # scanning is a local/admin action, not something every visit needs
+    # front-and-center. Behavior/code paths below are unchanged from
+    # before this move; only the surrounding container changed.
+    with st.expander("Data controls (local/admin)"):
+        st.markdown(
+            '<div class="er-muted">Source scans can take time and are intended for local/admin use.</div>',
+            unsafe_allow_html=True,
         )
-    with scan_cols[1]:
-        edgar_scan_clicked = edgar_readiness.ready and st.button(
-            "Scan EDGAR now", type="primary", use_container_width=True, key="scan-edgar-btn",
-        )
-    with scan_cols[2]:
-        edinet_scan_clicked = edinet_readiness.ready and st.button(
-            "Scan EDINET now", type="primary", use_container_width=True, key="scan-edinet-btn",
-        )
+        scan_cols = st.columns([2, 2, 2, 2])
+        with scan_cols[0]:
+            dart_scan_clicked = dart_readiness.ready and st.button(
+                "Scan DART now", type="primary", use_container_width=True, key="scan-dart-btn",
+            )
+        with scan_cols[1]:
+            edgar_scan_clicked = edgar_readiness.ready and st.button(
+                "Scan EDGAR now", type="primary", use_container_width=True, key="scan-edgar-btn",
+            )
+        with scan_cols[2]:
+            edinet_scan_clicked = edinet_readiness.ready and st.button(
+                "Scan EDINET now", type="primary", use_container_width=True, key="scan-edinet-btn",
+            )
 
-    if dart_scan_clicked:
-        with st.spinner("Scanning DART — bounded to the configured lookback window and candidate budget..."):
-            try:
-                st.session_state["radar_last_scan_report"] = radar_service.run_scan(settings)
-            except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
-                st.session_state["radar_last_scan_error"] = "DART scan failed — see server logs for detail."
-    if edgar_scan_clicked:
-        with st.spinner("Scanning EDGAR — bounded to the configured lookback window, candidate budget, and rate limit..."):
-            try:
-                st.session_state["edgar_last_scan_report"] = edgar_service.run_scan(settings)
-            except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
-                st.session_state["edgar_last_scan_error"] = "EDGAR scan failed — see server logs for detail."
-    if edinet_scan_clicked:
-        with st.spinner("Scanning EDINET — no tracked companies configured yet, so this will report zero filings this gate..."):
-            try:
-                st.session_state["edinet_last_scan_report"] = edinet_service.run_scan(settings)
-            except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
-                st.session_state["edinet_last_scan_error"] = "EDINET scan failed — see server logs for detail."
+        if dart_scan_clicked:
+            with st.spinner("Scanning DART — bounded to the configured lookback window and candidate budget..."):
+                try:
+                    st.session_state["radar_last_scan_report"] = radar_service.run_scan(settings)
+                except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
+                    st.session_state["radar_last_scan_error"] = "DART scan failed — see server logs for detail."
+        if edgar_scan_clicked:
+            with st.spinner("Scanning EDGAR — bounded to the configured lookback window, candidate budget, and rate limit..."):
+                try:
+                    st.session_state["edgar_last_scan_report"] = edgar_service.run_scan(settings)
+                except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
+                    st.session_state["edgar_last_scan_error"] = "EDGAR scan failed — see server logs for detail."
+        if edinet_scan_clicked:
+            with st.spinner("Scanning EDINET — no tracked companies configured yet, so this will report zero filings this gate..."):
+                try:
+                    st.session_state["edinet_last_scan_report"] = edinet_service.run_scan(settings)
+                except Exception:  # noqa: BLE001 — surfaced as a safe, generic message only
+                    st.session_state["edinet_last_scan_error"] = "EDINET scan failed — see server logs for detail."
 
-    _render_scan_result("radar_last_scan_report", "radar_last_scan_error")
-    _render_scan_result("edgar_last_scan_report", "edgar_last_scan_error")
-    _render_scan_result("edinet_last_scan_report", "edinet_last_scan_error")
+        _render_scan_result("radar_last_scan_report", "radar_last_scan_error")
+        _render_scan_result("edgar_last_scan_report", "edgar_last_scan_error")
+        _render_scan_result("edinet_last_scan_report", "edinet_last_scan_error")
 
     items = _build_items(settings.cache_dir)
 
@@ -237,29 +280,61 @@ def render() -> None:
         )
         return
 
-    companies = sorted({i.filing.corp_name for i in items})
-    sources = sorted({i.filing.source_name for i in items})
-    themes = sorted({i.filing.theme_slug for i in items if i.filing.theme_slug})
-    statuses = sorted({status_label(i) for i in items})
-    parsed_dates = sorted(d for d in (_parse_rcept_date(i.filing.rcept_dt) for i in items) if d is not None)
+    # View selector — the top-level content control (Requirement 1):
+    # Signals & review queue (candidate-only, the useful default) vs. All
+    # filing events (the full raw inventory, opt-in). Read-only: switching
+    # views never creates a signal, mutates a status, or invokes processing.
+    view_mode = st.radio(
+        "View", [_SIGNALS_VIEW, _ALL_FILINGS_VIEW], key="radar-view-mode", horizontal=True,
+    )
+
+    view_items = [i for i in items if i.candidate is not None] if view_mode == _SIGNALS_VIEW else items
+
+    if view_mode == _SIGNALS_VIEW and not view_items:
+        empty_state(
+            "No candidate signals yet",
+            "No filing currently meets the configured candidate rules.",
+            action_label="Show all filing events",
+            on_click=_switch_to_all_filings,
+            key="radar-no-signals",
+        )
+        return
+
+    companies = sorted({i.filing.corp_name for i in view_items})
+    sources = sorted({i.filing.source_name for i in view_items})
+    themes = sorted({i.filing.theme_slug for i in view_items if i.filing.theme_slug})
+    statuses = sorted({status_label(i) for i in view_items})
+    parsed_dates = sorted(d for d in (_parse_rcept_date(i.filing.rcept_dt) for i in view_items) if d is not None)
     min_date = parsed_dates[0] if parsed_dates else date.today()
     max_date = parsed_dates[-1] if parsed_dates else date.today()
 
-    filter_cols = st.columns([2, 2, 2, 2, 2, 2, 2])
-    source_filter = filter_cols[0].multiselect("Source", sources, key="radar-filter-source")
-    company_filter = filter_cols[1].multiselect("Company", companies, key="radar-filter-company")
-    theme_filter = filter_cols[2].multiselect("Theme", themes, key="radar-filter-theme")
-    status_filter = filter_cols[3].multiselect("Status", statuses, key="radar-filter-status")
-    date_range = filter_cols[4].date_input(
+    search_col, source_col, theme_col, status_col, date_col = st.columns([2, 2, 2, 2, 3])
+    search_query = search_col.text_input("Search", key="radar-filter-search", placeholder="Company or filing title…")
+    source_filter = source_col.multiselect("Source", sources, key="radar-filter-source")
+    theme_filter = theme_col.multiselect("Theme", themes, key="radar-filter-theme")
+    status_filter = status_col.multiselect("Status", statuses, key="radar-filter-status")
+    date_range = date_col.date_input(
         "Filed between", value=(min_date, max_date), min_value=min_date, max_value=max_date, key="radar-filter-dates",
     )
-    language_filter = filter_cols[5].selectbox(
-        "Language", ["All", "Korean original", "Korean + English translation", "Translation unavailable"],
-        key="radar-filter-language",
-    )
-    confidence_filter = filter_cols[6].multiselect("Detection confidence", ["Moderate", "High"], key="radar-filter-confidence")
 
-    filtered = items
+    adv_col, clear_col = st.columns([6, 2])
+    with adv_col:
+        with st.expander("Advanced filters"):
+            adv_cols = st.columns(3)
+            company_filter = adv_cols[0].multiselect("Company", companies, key="radar-filter-company")
+            language_filter = adv_cols[1].selectbox(
+                "Language", ["All", "Korean original", "Korean + English translation", "Translation unavailable"],
+                key="radar-filter-language",
+            )
+            confidence_filter = adv_cols[2].multiselect("Detection confidence", ["Moderate", "High"], key="radar-filter-confidence")
+    with clear_col:
+        st.markdown('<div style="margin-top:1.6rem;"></div>', unsafe_allow_html=True)
+        st.button("Clear all filters", key="radar-clear-filters-btn", on_click=_clear_filters, use_container_width=True)
+
+    filtered = view_items
+    if search_query and search_query.strip():
+        query = search_query.strip().lower()
+        filtered = [i for i in filtered if query in i.filing.report_nm.lower() or query in i.filing.corp_name.lower()]
     if source_filter:
         filtered = [i for i in filtered if i.filing.source_name in source_filter]
     if company_filter:
@@ -280,8 +355,6 @@ def render() -> None:
     if confidence_filter:
         filtered = [i for i in filtered if i.candidate is not None and i.candidate.confidence in confidence_filter]
 
-    st.markdown(f'<div class="er-muted" style="margin-top:0.4rem;">{len(filtered)} of {len(items)} items</div>', unsafe_allow_html=True)
-
     def _on_process(candidate_id: str) -> None:
         # Routed by the candidate's own id prefix ("edgar-cand-",
         # "edinet-cand-", vs "cand-") — reliable since each source's
@@ -297,8 +370,49 @@ def render() -> None:
         st.rerun()
 
     if not filtered:
-        empty_state("No items match these filters", "Clear a filter to see more results.")
+        empty_state(
+            "No items match these filters", "Clear a filter to see more results.",
+            action_label="Clear all filters", on_click=_clear_filters, key="radar-no-filter-matches",
+        )
         return
 
-    for item in filtered:
+    # Pagination — never render more than PAGE_SIZE cards' worth of
+    # containers/expanders/buttons in one script run, in either view.
+    # Reset to page 1 whenever the view mode or any filter value changes.
+    filter_signature = (
+        view_mode, search_query, tuple(sorted(source_filter)), tuple(sorted(company_filter)),
+        tuple(sorted(theme_filter)), tuple(sorted(status_filter)), date_range, language_filter,
+        tuple(sorted(confidence_filter)),
+    )
+    if st.session_state.get("radar-filter-signature") != filter_signature:
+        st.session_state["radar-page"] = 1
+        st.session_state["radar-filter-signature"] = filter_signature
+
+    total_items = len(filtered)
+    total_pages = max(1, -(-total_items // PAGE_SIZE))
+    current_page = max(1, min(st.session_state.get("radar-page", 1), total_pages))
+    st.session_state["radar-page"] = current_page
+    start_idx = (current_page - 1) * PAGE_SIZE
+    end_idx = start_idx + PAGE_SIZE
+    page_items = filtered[start_idx:end_idx]
+    range_start = start_idx + 1 if total_items else 0
+    range_end = min(end_idx, total_items)
+
+    summary_cols = st.columns([1, 1, 6])
+    with summary_cols[0]:
+        if st.button("← Previous", key="radar-page-prev", disabled=current_page <= 1, use_container_width=True):
+            st.session_state["radar-page"] = current_page - 1
+            st.rerun()
+    with summary_cols[1]:
+        if st.button("Next →", key="radar-page-next", disabled=current_page >= total_pages, use_container_width=True):
+            st.session_state["radar-page"] = current_page + 1
+            st.rerun()
+    with summary_cols[2]:
+        st.markdown(
+            f'<div class="er-muted" style="margin-top:0.5rem;">{total_items} of {len(view_items)} items · '
+            f'Page {current_page} of {total_pages} (showing {range_start}–{range_end})</div>',
+            unsafe_allow_html=True,
+        )
+
+    for item in page_items:
         candidate_row(item, on_process=_on_process)
