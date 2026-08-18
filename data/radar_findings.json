@@ -1,6 +1,69 @@
 [
   {
     "niche": "Space",
+    "headline": "Watch SpaceX launch its 100th mission of the year tonight",
+    "summary": "SpaceX is launching its 100th mission of the year on August 18, with a live broadcast available to viewers.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-100-launches-2026-starlink-group-17-50-launch",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 16:00:00 +0000",
+    "retrieved_at": "2026-08-18T16:22:03+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla, Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "This article is directly about SpaceX launching a space mission, which is substantively within the Space scope.",
+    "url_hash": "7820c002c7d69ea5",
+    "id": "7820c002c7d69ea5"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "FORT Robotics to take safety stack public via SPAC merger",
+    "summary": "FORT Robotics announced a SPAC merger to go public on Nasdaq at a valuation exceeding $500 million, with plans to expand its safety software development for robotics applications.",
+    "source_url": "https://www.therobotreport.com/fort-robotics-takes-safety-stack-public-via-spac-merger/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 15:24:13 +0000",
+    "retrieved_at": "2026-08-18T16:21:56+00:00",
+    "tickers": [],
+    "relevance_reason": "FORT Robotics is developing safety software for robotics automation, which falls within the humanoids/robotics automation scope.",
+    "url_hash": "1d7cf1977c335ca5",
+    "id": "1d7cf1977c335ca5"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "CBRE: Europe data center market to grow by nearly a quarter in 2026",
+    "summary": "Europe's data center market is expected to reach 13GW of capacity by the end of 2026, representing growth of nearly a quarter according to CBRE.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/cbre-europe-data-center-market-to-grow-by-nearly-a-quarter-in-2026/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 15:53:58 +0000",
+    "retrieved_at": "2026-08-18T16:21:30+00:00",
+    "tickers": [],
+    "relevance_reason": "discusses data center capacity expansion, which is directly relevant to AI infrastructure buildout.",
+    "url_hash": "d7bf42ce6a730a6d",
+    "id": "d7bf42ce6a730a6d"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "DataVita secures £300m debt facility to expand North Lanarkshire data center campus",
+    "summary": "DataVita has secured a £300 million debt facility to expand its data center campus in North Lanarkshire, with funds directed toward expanding two buildings.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/datavita-secures-300m-debt-facility-to-expand-north-lanarkshire-data-center-campus/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 15:57:58 +0000",
+    "retrieved_at": "2026-08-18T16:21:28+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly concerns data center infrastructure expansion financing, a core AI Buildout component.",
+    "url_hash": "de9ac570843c2294",
+    "id": "de9ac570843c2294"
+  },
+  {
+    "niche": "Space",
     "headline": "New report takes closer look at the Space Force spending surge",
     "summary": "Aerospace Corp. analysis identifies that most growth in Space Force spending is concentrated in classified programs, target tracking, missile warning, and command and control capabilities.",
     "source_url": "https://spacenews.com/new-report-takes-closer-look-at-the-space-force-spending-surge/",
