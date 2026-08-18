@@ -1,6 +1,62 @@
 [
   {
     "niche": "Space",
+    "headline": "Eoptic, Inc. Selected to Supply DeepScan™ Imaging Payloads Scheduled for Launch in 2027",
+    "summary": "Eoptic, Inc. has been selected as an approved supplier to provide DeepScan™ imaging payloads for a launch scheduled in 2027.",
+    "source_url": "https://spacenews.com/eoptic-inc-selected-to-supply-deepscan-imaging-payloads-scheduled-for-launch-in-2027/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 12:00:00 +0000",
+    "retrieved_at": "2026-08-18T12:26:45+00:00",
+    "tickers": [],
+    "relevance_reason": "Eoptic selected as supplier for imaging payloads scheduled for space launch in 2027",
+    "url_hash": "747941ae108938ab",
+    "id": "747941ae108938ab"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Groq raises $350m, with Nvidia participation \"planned\"",
+    "summary": "Groq raised $350 million in funding with planned participation from Nvidia, with the company's valuation nearly halving following a Nvidia license deal.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/groq-raises-350m-with-nvidia-participation-planned/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 10:36:51 +0000",
+    "retrieved_at": "2026-08-18T12:26:14+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Groq's funding round and valuation changes are directly relevant to AI buildout sector activity and competitive dynamics.",
+    "url_hash": "32baaf1c33622b95",
+    "id": "32baaf1c33622b95"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "NextEra secures $3.3bn in state funding for 10GW of new natural gas generation to meet growing data center power needs",
+    "summary": "NextEra Energy secured $3.3 billion in state funding for 10GW of new natural gas generation capacity across projects in Texas and Pennsylvania to support growing data center power requirements.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/nextera-secures-33bn-in-state-funding-for-10gw-of-new-natural-gas-generation-to-meet-growing-data-center-power-needs/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 10:45:42 +0000",
+    "retrieved_at": "2026-08-18T12:26:11+00:00",
+    "tickers": [
+      {
+        "ticker": "NEE",
+        "company_name": "NextEra Energy",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "directly addresses power infrastructure development specifically to serve data center power demands, a core AI Buildout infrastructure component.",
+    "url_hash": "1113c6b56fb8aff2",
+    "id": "1113c6b56fb8aff2"
+  },
+  {
+    "niche": "Space",
     "headline": "NRO to expand use of HawkEye 360’s satellite intelligence",
     "summary": "The National Reconnaissance Office (NRO) has increased its use of HawkEye 360's satellite data to locate radars, ships, and other electronic emitters.",
     "source_url": "https://spacenews.com/nro-to-expand-use-of-hawkeye-360s-satellite-intelligence/",

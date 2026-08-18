@@ -3,6 +3,7 @@
     "064b1ff0861f28e3",
     "0ebeb2b5821686d9",
     "10b1ad1129616a9a",
+    "1113c6b56fb8aff2",
     "14a09adfb895155a",
     "14f10bd390e866e7",
     "1550e3203ce25e0c",
@@ -15,6 +16,7 @@
     "26decce38bd8cc84",
     "2d84da0c7b29cb7a",
     "2f1578935c046f10",
+    "32baaf1c33622b95",
     "3ba347311bac7a70",
     "3c31e82004ba35c4",
     "3f5693b003e12fe8",
@@ -36,6 +38,7 @@
     "6bf89a9becd06e0f",
     "72bafb98f257c5c2",
     "744ebd52ee08e82a",
+    "747941ae108938ab",
     "770c6c0bdff2fde1",
     "7726551c08f5c764",
     "7851e5630bc510e7",
@@ -92,6 +95,21 @@
     "fbd5c7f2369a30b9"
   ],
   "run_history": [
+    {
+      "started_at": "2026-08-18T12:25:59+00:00",
+      "finished_at": "2026-08-18T12:26:55+00:00",
+      "status": "partial_error",
+      "feeds_checked": 16,
+      "items_seen": 426,
+      "items_after_freshness_filter": 62,
+      "items_after_keyword_filter": 25,
+      "items_sent_to_llm": 25,
+      "items_saved": 3,
+      "items_rejected_by_guardrail": 0,
+      "errors": [
+        "NASA News Releases: unparseable feed (<unknown>:7:2: mismatched tag)"
+      ]
+    },
     {
       "started_at": "2026-08-18T10:19:15+00:00",
       "finished_at": "2026-08-18T10:20:02+00:00",
