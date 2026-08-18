@@ -304,7 +304,7 @@ def _filing_event_from_row(row: dict, company: TrackedCompany, retrieved_at: str
 
 
 def _evaluate_row(row: dict, code_category_map: dict[str, str]) -> edinet_rules.RuleEvaluation:
-    return edinet_rules.evaluate_document(row.get("ordinanceCode", ""), row.get("formCode", ""), code_category_map)
+    return edinet_rules.evaluate_document(row.get("ordinanceCode", ""), row.get("formCode", ""), row.get("docTypeCode", ""), code_category_map)
 
 
 def _candidate_signal_from_evaluation(filing: FilingEvent, evaluation: edinet_rules.RuleEvaluation) -> CandidateSignal:

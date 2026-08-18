@@ -33,7 +33,7 @@ from pathlib import Path
 
 from src.config.tracked_companies import TrackedCompany
 from src.data_access.dart import candidate_store
-from src.data_access.edinet import document_service, scan_service
+from src.data_access.edinet import document_service, edinet_rules, scan_service
 from src.data_access.edinet.client import EdinetClient
 from src.models.models import CandidateSignal, CandidateStatus, ExtractionState, StateTransition, TranslationState
 
@@ -138,6 +138,73 @@ def process_candidate(
     candidate = _transition(candidate, final_status)
 
     return candidate
+
+
+@dataclass(frozen=True)
+class CandidateBackfillResult:
+    """Outcome of backfill_candidate_from_existing_event — never raises;
+    exactly one of `created`/`already_existed`/`error` explains what
+    happened, so a caller (or Gate 10's own report) can distinguish "a
+    new candidate now exists" from "nothing changed" without inspecting
+    internals."""
+
+    candidate_id: str | None = None
+    created: bool = False
+    already_existed: bool = False
+    error: str | None = None
+
+
+def backfill_candidate_from_existing_event(
+    cache_dir: Path,
+    doc_id: str,
+    code_category_map: dict[str, str] = edinet_rules.DEFAULT_CODE_CATEGORY_MAP,
+) -> CandidateBackfillResult:
+    """No network call of any kind — purely local. Re-evaluates an
+    already-persisted FilingEvent's own already-recorded
+    ordinance_code/pblntf_ty/pblntf_detail_ty (populated by
+    scan_service.backfill_form_codes in Gate 9, or by a live scan going
+    forward) against `code_category_map`, and creates exactly one
+    CandidateSignal referencing the EXISTING FilingEvent if and only if
+    the rule matches AND no CandidateSignal for this docID already
+    exists in the real candidate_store (edinet_candidates.json) — never
+    scan_service's own internal cache bookkeeping, which nothing reads
+    back for display.
+
+    Never creates a new FilingEvent, never modifies any existing
+    FilingEvent field, never touches document_service/translation.
+    Idempotent: a second call with an already-existing candidate is a
+    no-op, reported via `already_existed=True`."""
+    filings = {f.rcept_no: f for f in scan_service.load_filing_events(cache_dir)}
+    filing = filings.get(doc_id)
+    if filing is None:
+        return CandidateBackfillResult(error=f"{doc_id}: no existing FilingEvent found.")
+
+    candidate_id = f"edinet-cand-{doc_id}"
+    existing_candidates = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
+    if candidate_id in existing_candidates:
+        return CandidateBackfillResult(candidate_id=candidate_id, already_existed=True)
+
+    evaluation = edinet_rules.evaluate_document(filing.ordinance_code, filing.pblntf_ty, filing.pblntf_detail_ty, code_category_map)
+    if evaluation.confidence is None:
+        return CandidateBackfillResult(error=f"{doc_id}: form tuple ({filing.ordinance_code}:{filing.pblntf_ty}:{filing.pblntf_detail_ty}) does not match any configured category — no candidate created.")
+
+    category = evaluation.matched_rules[0].split(":", 1)[0]
+    label = category.replace("_", " ").title()
+    detail = (
+        f"{label} · ordinanceCode={filing.ordinance_code} · formCode={filing.pblntf_ty} · "
+        f"docTypeCode={filing.pblntf_detail_ty} — form-metadata routing only; no extracted document evidence yet."
+    )
+    now = datetime.now(timezone.utc).isoformat()
+    candidate = CandidateSignal(
+        id=candidate_id,
+        filing=filing,
+        matched_rules=list(evaluation.matched_rules),
+        confidence=evaluation.confidence,
+        status=CandidateStatus.CANDIDATE_DETECTED,
+        state_history=[StateTransition(status=CandidateStatus.CANDIDATE_DETECTED, at=now, detail=detail)],
+    )
+    candidate_store.upsert_new_candidates(cache_dir, [candidate], CANDIDATE_STORE_FILENAME)
+    return CandidateBackfillResult(candidate_id=candidate_id, created=True)
 
 
 def process_single_candidate(client: EdinetClient, candidate_id: str, cache_dir: Path) -> CandidateSignal | None:

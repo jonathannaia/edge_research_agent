@@ -14,7 +14,7 @@ from src.config.tracked_companies import TrackedCompany
 from src.data_access.edinet import scan_service
 from src.data_access.edinet.errors import EdinetApiError, EdinetTimeoutError
 
-_TEST_MAP = {"010:030": "earnings_or_results"}
+_TEST_MAP = {"010:030:120": "fictional_category_alpha"}  # fictional key/category, not real EDINET data
 
 _ACME = TrackedCompany(
     name="Acme Test Co", exchange="TSE", krx_code="1234", source="EDINET",
@@ -498,12 +498,12 @@ def test_scan_with_default_empty_code_map_creates_no_candidates(tmp_path):
 
 def test_scan_with_injected_code_map_creates_a_candidate(tmp_path):
     today = datetime.now(timezone.utc).date().isoformat()
-    client = _client({today: _envelope([_result(ordinance="010", form="030")])})
+    client = _client({today: _envelope([_result(ordinance="010", form="030")])})  # docTypeCode defaults to "120"
 
     result = scan_service.scan(client, [_ACME], tmp_path, lookback_days=1, code_category_map=_TEST_MAP)
 
     assert len(result.new_candidate_signals) == 1
-    assert result.new_candidate_signals[0].matched_rules == ["earnings_or_results:010:030"]
+    assert result.new_candidate_signals[0].matched_rules == ["fictional_category_alpha:010:030:120"]
 
 
 def test_dedup_key_includes_source_edinet_code_and_doc_id():
@@ -656,12 +656,15 @@ def test_no_mismatch_between_requested_dates_processed_dates_and_reported_scope(
 # Gate 8's own live scan. ---
 
 def test_filing_event_preserves_the_full_softbank_shaped_form_code_triplet(tmp_path):
+    # code_category_map={} isolates this from Gate 10's now-real default
+    # map (010:030000:120 matches this exact fixture) — this test is
+    # about form-code persistence, not candidate creation.
     today = datetime.now(timezone.utc).date().isoformat()
     client = _client({today: _envelope([_result(
         edinet_code="E02778", sec_code="99840", ordinance="010", form="030000",
     )])})
 
-    result = scan_service.scan(client, [_SOFTBANK], tmp_path, lookback_days=1)
+    result = scan_service.scan(client, [_SOFTBANK], tmp_path, lookback_days=1, code_category_map={})
 
     filing = result.new_filing_events[0]
     assert filing.pblntf_ty == "030000"  # formCode
@@ -674,7 +677,7 @@ def test_filing_event_form_codes_round_trip_through_the_on_disk_cache(tmp_path):
     client = _client({today: _envelope([_result(
         edinet_code="E02778", sec_code="99840", ordinance="010", form="030000",
     )])})
-    scan_service.scan(client, [_SOFTBANK], tmp_path, lookback_days=1)
+    scan_service.scan(client, [_SOFTBANK], tmp_path, lookback_days=1, code_category_map={})
 
     reloaded = scan_service.load_filing_events(tmp_path)
 

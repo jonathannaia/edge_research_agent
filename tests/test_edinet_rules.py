@@ -1,9 +1,19 @@
-"""edinet_rules — pure functions, no I/O. Gate 1's DEFAULT_CODE_CATEGORY_MAP
-is intentionally empty (see the module docstring — no real EDINET
-ordinanceCode/formCode mapping has been confirmed), so every test that
-needs a match injects its own explicit, clearly-fictional test map rather
-than relying on any real EDINET code. Tests using the real empty default
-confirm the honest "no match yet" Gate 1 behavior itself."""
+"""edinet_rules — pure functions, no I/O.
+
+Gate 10 populated DEFAULT_CODE_CATEGORY_MAP with its first (and, this
+gate, only) real entry — the live-verified SoftBank Group annual
+securities report tuple (ordinanceCode=010, formCode=030000,
+docTypeCode=120 → "annual_securities_report"; see
+design/DECISIONS.md's Gate 10 entry for the full evidence chain). Every
+other real ordinanceCode/formCode/docTypeCode combination — including
+the two verified SoftBank Group companion filings' own tuples
+(010:042000:135 and 015:010000:235), deliberately left unmapped — must
+still yield confidence=None. Tests exercising the *generic matching
+mechanism* (not this one real mapping) use their own explicit,
+deliberately fictional test codes/category names — never "earnings_or_
+results" (retired after Gate 10's correction) and never any of the three
+real, live-verified tuples — so a fictional-mechanism test can never be
+mistaken for a claim about real EDINET data."""
 from __future__ import annotations
 
 from src.data_access.edinet.edinet_rules import (
@@ -13,56 +23,90 @@ from src.data_access.edinet.edinet_rules import (
     merge_evaluations,
 )
 
-# Fictional test codes — NOT real EDINET ordinanceCode/formCode values.
+# Fictional test codes/categories — NOT real EDINET
+# ordinanceCode/formCode/docTypeCode values, and deliberately distinct
+# from all three live-verified SoftBank Group tuples.
 _TEST_MAP = {
-    "010:030": "earnings_or_results",
-    "010:040": "ownership_or_large_shareholding",
+    "999:888:001": "fictional_category_alpha",
+    "999:888:002": "fictional_category_beta",
 }
 
+# The one real, live-verified mapping (Gate 10) — used only by tests that
+# specifically exercise it, never implicitly via the fictional _TEST_MAP.
+_REAL_ANNUAL_REPORT_KEY = "010:030000:120"
 
-def test_default_code_category_map_is_empty():
-    assert DEFAULT_CODE_CATEGORY_MAP == {}
+
+def test_default_code_category_map_has_exactly_one_real_entry():
+    assert DEFAULT_CODE_CATEGORY_MAP == {_REAL_ANNUAL_REPORT_KEY: "annual_securities_report"}
 
 
-def test_evaluate_document_with_default_empty_map_never_matches():
-    result = evaluate_document("010", "030")
+def test_evaluate_document_default_map_matches_only_the_real_annual_report_tuple():
+    result = evaluate_document("010", "030000", "120")
+    assert result.confidence == "Moderate"
+    assert result.matched_rules == ("annual_securities_report:010:030000:120",)
+
+
+def test_evaluate_document_default_map_does_not_match_fictional_codes():
+    result = evaluate_document("999", "888", "001")
     assert result.confidence is None
     assert result.matched_rules == ()
 
 
-def test_evaluate_document_matches_when_given_an_explicit_test_map():
-    result = evaluate_document("010", "030", code_category_map=_TEST_MAP)
+def test_evaluate_document_default_map_does_not_match_softbank_companion_tuples():
+    # The two verified SoftBank Group companion filings — 確認書 and
+    # 内部統制報告書 — deliberately remain unmapped this gate.
+    confirmation_letter = evaluate_document("010", "042000", "135")
+    internal_control_report = evaluate_document("015", "010000", "235")
+    assert confirmation_letter.confidence is None
+    assert confirmation_letter.matched_rules == ()
+    assert internal_control_report.confidence is None
+    assert internal_control_report.matched_rules == ()
+
+
+def test_evaluate_document_requires_all_three_values_not_ordinance_form_pair_alone():
+    # Same ordinanceCode+formCode as the real annual-report tuple, but a
+    # different docTypeCode — must NOT match. This is the exact
+    # correction Gate 10 required: routing keys on all three fields, not
+    # ordinance:form alone.
+    result = evaluate_document("010", "030000", "999")
+    assert result.confidence is None
+    assert result.matched_rules == ()
+
+
+def test_evaluate_document_matches_when_given_an_explicit_fictional_test_map():
+    result = evaluate_document("999", "888", "001", code_category_map=_TEST_MAP)
     assert result.confidence == "Moderate"
-    assert result.matched_rules == ("earnings_or_results:010:030",)
+    assert result.matched_rules == ("fictional_category_alpha:999:888:001",)
 
 
-def test_evaluate_document_unmatched_code_with_test_map_yields_no_confidence():
-    result = evaluate_document("999", "999", code_category_map=_TEST_MAP)
+def test_evaluate_document_unmatched_code_with_fictional_test_map_yields_no_confidence():
+    result = evaluate_document("111", "222", "333", code_category_map=_TEST_MAP)
     assert result.confidence is None
     assert result.matched_rules == ()
 
 
 def test_evaluate_document_is_whitespace_tolerant_in_routing_key():
-    result = evaluate_document(" 010 ", " 030 ", code_category_map=_TEST_MAP)
+    result = evaluate_document(" 999 ", " 888 ", " 001 ", code_category_map=_TEST_MAP)
     assert result.confidence == "Moderate"
 
 
 def test_all_edinet_categories_are_english_slugs():
     assert all(isinstance(c, str) and c == c.lower() for c in EDINET_CATEGORIES)
+    assert "annual_securities_report" in EDINET_CATEGORIES
     assert "ownership_or_large_shareholding" in EDINET_CATEGORIES
     assert "other" in EDINET_CATEGORIES
 
 
 def test_merge_evaluations_unions_matched_rules_without_duplicates():
-    a = evaluate_document("010", "030", code_category_map=_TEST_MAP)
-    b = evaluate_document("010", "040", code_category_map=_TEST_MAP)
+    a = evaluate_document("999", "888", "001", code_category_map=_TEST_MAP)
+    b = evaluate_document("999", "888", "002", code_category_map=_TEST_MAP)
     merged = merge_evaluations([a, b])
     assert merged.confidence == "High"  # two distinct categories
-    assert set(merged.matched_rules) == {"earnings_or_results:010:030", "ownership_or_large_shareholding:010:040"}
+    assert set(merged.matched_rules) == {"fictional_category_alpha:999:888:001", "fictional_category_beta:999:888:002"}
 
 
 def test_merge_evaluations_deduplicates_identical_rules():
-    a = evaluate_document("010", "030", code_category_map=_TEST_MAP)
+    a = evaluate_document("999", "888", "001", code_category_map=_TEST_MAP)
     merged = merge_evaluations([a, a])
     assert merged.matched_rules == a.matched_rules
     assert merged.confidence == "Moderate"
@@ -75,7 +119,7 @@ def test_merge_evaluations_empty_list_yields_no_confidence():
 
 
 def test_merge_evaluations_all_no_match_yields_no_confidence():
-    a = evaluate_document("999", "999", code_category_map=_TEST_MAP)
-    b = evaluate_document("888", "888", code_category_map=_TEST_MAP)
+    a = evaluate_document("111", "222", "333", code_category_map=_TEST_MAP)
+    b = evaluate_document("444", "555", "666", code_category_map=_TEST_MAP)
     merged = merge_evaluations([a, b])
     assert merged.confidence is None

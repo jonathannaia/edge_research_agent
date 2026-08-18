@@ -1933,3 +1933,209 @@ steps established repeatedly.
   record created); `edinet_candidates.json` still doesn't exist. DART
   520/23 and EDGAR 10/1 unchanged; no source/test file was modified by
   the live action itself.
+
+## EDINET (Japan) pilot — Gate 10 (first real taxonomy mapping + candidate backfill)
+
+- **Classification correction, per the user's explicit instruction**:
+  the plan's original proposal to use `earnings_or_results` for the
+  verified annual securities report was rejected — form identity alone
+  (a statutory Annual Securities Report filing) does not establish a
+  current earnings event, guidance change, or market-relevant result.
+  Implemented `annual_securities_report` instead — a new,
+  EDINET-taxonomy-only category (added to `EDINET_CATEGORIES`, not a
+  shared-model change) naming what was actually verified (the statutory
+  report itself), never an inferred market meaning. `earnings_or_results`
+  no longer appears anywhere in `edinet_rules.py` or its real mapping.
+- **`edinet_rules.DEFAULT_CODE_CATEGORY_MAP` populated with its first
+  real entry**: `{"010:030000:120": "annual_securities_report"}` — the
+  only entry. `evaluate_document()`/`_routing_key()` were corrected to
+  require ordinanceCode, formCode, AND docTypeCode to all match, not
+  ordinanceCode+formCode alone (`scan_service._evaluate_row` updated to
+  pass `docTypeCode` through) — the two real, live-verified SoftBank
+  Group companion tuples confirmed at Gate 9 (`010:042000:135` for
+  S100YFHB/確認書, `015:010000:235` for S100YFH8/内部統制報告書)
+  deliberately remain unmapped and are the concrete reason a
+  docTypeCode-blind match would have been wrong (S100YFHB shares
+  `010` with the real mapped tuple).
+- New `edinet_pipeline.backfill_candidate_from_existing_event(cache_dir,
+  doc_id, code_category_map)`: takes **no client parameter at all** —
+  purely local, re-evaluates an already-persisted FilingEvent's own
+  already-recorded `ordinance_code`/`pblntf_ty`/`pblntf_detail_ty`
+  (populated by Gate 9's form-code backfill) against the map, and
+  creates exactly one `CandidateSignal` via the real `candidate_store`
+  (`edinet_candidates.json`) if and only if the rule matches AND no
+  candidate for that docID already exists there — idempotent, never
+  creates or modifies a `FilingEvent`. The human-readable
+  `StateTransition.detail` is built from the matched category's own
+  label (`"annual_securities_report"` → `"Annual Securities Report"`)
+  plus the filing's own recorded codes, which for `S100YGH5` produces
+  exactly `"Annual Securities Report · ordinanceCode=010 ·
+  formCode=030000 · docTypeCode=120 — form-metadata routing only; no
+  extracted document evidence yet."`
+- Test updates required by the new, no-longer-empty default map: two
+  Gate 8.1 form-code-persistence tests (which happen to use the exact
+  real annual-report shape) now explicitly pass `code_category_map={}`
+  to stay isolated from candidate-creation side effects unrelated to
+  what they test. Every fictional `_TEST_MAP`/`scan_map` fixture across
+  `test_edinet_rules.py`/`test_edinet_scan_service.py`/
+  `test_edinet_pipeline.py` was moved to 3-part keys and renamed away
+  from `earnings_or_results` to clearly-fictional category names
+  (`fictional_category_alpha`/`beta`), so no test fixture can ever be
+  mistaken for a claim about real EDINET data or reuse the now-retired
+  category name.
+- 26 new tests total: `test_edinet_rules.py` (default map has exactly
+  one real entry, the real tuple matches, both real companion tuples do
+  NOT match, a docTypeCode-only mismatch on an otherwise-matching
+  ordinance/form pair does NOT match, plus the fictional-mechanism
+  tests) and `test_edinet_pipeline.py` (candidate creation with every
+  required field, state-history wording verified verbatim, both
+  companion filings confirmed to create nothing, idempotent no-op
+  rerun, source FilingEvent proven byte-for-byte unchanged, unknown
+  docID creates nothing, the function's own signature proven to take no
+  `client` parameter, and a note tying "non-default filing status
+  remains non-promotable" to the pre-existing, already-covered
+  `scan()`-time status gate).
+- Full suite: **627/627 passing**; 80 DART-specific and 139
+  EDGAR-specific tests re-run in isolation, both fully passing. Zero
+  network calls anywhere (grep/signature-confirmed — the backfill
+  function has no client parameter to make a call with).
+- **The live backfill itself**: `backfill_candidate_from_existing_event
+  (settings.cache_dir, "S100YGH5")` against the real `data/cache/` —
+  zero network calls (no client involved). Created exactly one
+  `CandidateSignal` (`edinet-cand-S100YGH5`) with every required field
+  confirmed: `status="Candidate detected"`, `confidence="Moderate"`,
+  `matched_rules=["annual_securities_report:010:030000:120"]`,
+  `extraction_state="Not fetched"`, `excerpt_original=null`,
+  `translation_state="Not requested"`, exactly one `state_history` entry
+  with the exact required detail text. The underlying `S100YGH5`
+  `FilingEvent` (inside `edinet_filing_events.json`) is unchanged — the
+  candidate's own embedded `filing` object matches it field-for-field.
+  `S100YFHB`/`S100YFH8` were not touched by this backfill (only
+  `S100YGH5` was targeted) and remain FilingEvent-only, with no
+  candidate for either. EDINET FilingEvents stayed at 3; EDINET
+  CandidateSignals went **0 → 1**. DART 520/23 and EDGAR 10/1 unchanged.
+- **Next one-document gate proposal (not executed — nothing retrieved
+  this gate)**: one bounded live document fetch for `S100YGH5` only —
+  `EdinetClient.fetch_document("S100YGH5", type_=...)` — purely to
+  observe the real retrieved byte shape (confirming or correcting §3 of
+  the approved taxonomy-calibration plan's decision tree: whether the
+  PDF format is genuinely text-extractable, what the real package shape
+  is) before any extraction code is written. No candidate processing,
+  no status change beyond what a real `document_service` call would
+  naturally record, no translation.
+
+## EDINET (Japan) pilot — document-retrieval validation plan (approved), Gate 10.A (fixture-only PDF extractor, no live calls)
+
+- Approved a document-retrieval validation plan scoping the eventual
+  document fetch to `S100YGH5`/E02778 only, `type=2` (PDF) as the
+  smallest human-readable representation, a strict one-attempt/no-retry
+  rule for the future live gate, and observation-only persistence for
+  that gate (nothing written beyond the validation report itself). Gate
+  A (fixture-only extractor preparation) authorized now; Gates B/C/D
+  each require separate approval.
+- Added `pypdf>=6.0,<7.0` to `requirements.txt` (installed: 6.16.1) —
+  no PDF library existed in the project before this gate. Lightweight,
+  pure-Python, no OCR, no external binaries, no browser automation, no
+  Java tool, no shell-out.
+- `document_extractor.py` gained real PDF text extraction behind its
+  existing seam: PDF (`%PDF-`) and ZIP (`PK\x03\x04`) magic bytes are
+  now detected explicitly, before the plain-text/HTML fallback runs (a
+  real PDF is never valid UTF-8, so without this check it would have
+  silently fallen into the generic binary UNSUPPORTED_FORMAT path
+  instead of getting real extraction). ZIP remains explicitly
+  unsupported — no ZIP/XBRL parsing was added. Every pypdf exception is
+  caught broadly and mapped to `PARSE_FAILED` with a safe, generic
+  detail — never a raw exception surfaced. The 8MB size ceiling is
+  checked before any format detection or parsing, PDF included.
+- Every fixture this gate is a small, synthetic, hand-built,
+  non-secret PDF constructed directly in the test files via a minimal-
+  PDF-with-computed-xref-offsets helper (verified to genuinely
+  round-trip through pypdf before being committed to any test) — no
+  real EDINET document or copyrighted filing was added to the
+  repository. One additional case (an encrypted PDF) uses a narrow
+  `unittest.mock.patch` of `PdfReader.is_encrypted` rather than hand-
+  building real PDF encryption, since that would need a PDF-writing
+  library this gate doesn't add.
+- 27 new tests across `test_edinet_document_extractor.py` (13 new: valid
+  text-bearing PDF, bounded excerpt, no
+  translation/summarization/classification during extraction,
+  image-only/no-text PDF, empty bytes routes through the pre-existing
+  path not the new PDF path, corrupt/truncated PDF, a real valid PDF
+  truncated mid-file, ZIP magic when PDF expected, non-PDF unrecognized
+  binary, oversize PDF-shaped payload rejected before parsing, encrypted
+  PDF, deterministic repeat, and garbage-shaped-like-PDF never raises)
+  and `test_edinet_document_service.py` (2 new: a PDF fetch is extracted
+  and cached as text, and — the explicit "no raw bytes persisted" proof
+  — the on-disk cache file for a PDF-sourced candidate contains no `%PDF-`
+  magic bytes or PDF syntax at all, only the same four string/state
+  fields every other cached result already uses). Plus 3 explicit
+  isolation tests: the PDF path never invokes DART's
+  `_LenientHtmlTextExtractor`, and DART's/EDGAR's own
+  `document_extractor.py` modules are confirmed to have no `PdfReader`/
+  `_extract_pdf_text` at all (proving those two files were not touched).
+- Full suite: **645/645 passing**; 82 DART-specific and 140
+  EDGAR-specific tests re-run in isolation (both counts include this
+  gate's own DART-/EDGAR-isolation tests, which match those `-k`
+  filters by name), both fully passing. Zero network calls anywhere —
+  every fixture is synthetic bytes constructed in-process. Zero
+  `data/cache/` writes beyond ordinary test `tmp_path` usage. The real
+  `edinet-cand-S100YGH5` candidate confirmed completely unchanged after
+  this gate: `Candidate detected` / `Not fetched` / `excerpt_original =
+  None` / `Not requested` / exactly 1 `state_history` entry — identical
+  to its Gate 10 state. DART 520/23 and EDGAR 10/1 unchanged. `S100YGH5`
+  itself was never fetched.
+- **The exact proposed one-attempt Gate B call (not performed)**:
+  `EdinetClient.fetch_document("S100YGH5", type_=DOCUMENT_TYPE_PDF)` →
+  `GET https://api.edinet-fsa.go.jp/api/v2/documents/S100YGH5?type=2`
+  (credential as a separate query parameter, never logged), exactly one
+  HTTP attempt, no retry of any kind, stop and report on 403/429/
+  timeout/non-200/malformed content rather than retrying. Observation-
+  only: no bytes/length/magic/state/candidate/cache/state-history
+  persisted — only reported in the validation write-up itself.
+
+## EDINET (Japan) pilot — Gates B and C (real S100YGH5 PDF observation, fail-closed confirmed)
+
+- **Gate B** made one direct, observation-only
+  `EdinetClient.fetch_document("S100YGH5", type_=DOCUMENT_TYPE_PDF)`
+  call — the first deliberately authorized real fetch against a
+  document endpoint in this pilot validation sequence. Result: HTTP
+  success, a **1,233,855-byte** payload beginning `%PDF-1.5` (confirmed
+  via magic-byte signature only). Bytes were held in memory for the
+  duration of the one validation process and discarded — nothing was
+  written to `data/cache/`, no candidate/event field changed, no
+  state-history entry was added.
+- **Gate C** made one separate, fresh, direct fetch (same call as Gate
+  B; the Gate B bytes were never retained) and passed the in-memory
+  result to the production `extract_excerpt()` public interface
+  (`src/data_access/edinet/document_extractor.py`) — no
+  `DocumentService`, no retry wrapper, no cache, no candidate mutation.
+  Result: `ExtractionState.PARSE_FAILED`, `excerpt_original=None`, no
+  unhandled exception at either the fetch or the extraction layer.
+  Offline code inspection (no further live call) confirmed that
+  `ExtractionState.PARSE_FAILED` is a controlled, tested outcome for the
+  PDF extractor. In particular, a valid PDF with no extractable embedded
+  text takes the `_PDF_NO_TEXT_DETAIL` branch and returns a normal
+  `ExtractionResult` rather than raising. Gate C did not capture
+  `result.detail`, so the precise cause for this specific document's
+  `PARSE_FAILED` outcome—encrypted, parser-level failure, or no
+  extractable text—was not established. The payload's size and
+  `%PDF-1.5` header make the no-text-layer explanation a plausible but
+  unconfirmed hypothesis.
+- **No state changed in either gate**: `edinet-cand-S100YGH5` remains
+  exactly as backfilled at Gate 10 (`Candidate detected` / `Not
+  fetched` / `excerpt_original=None` / `Not requested` / one
+  state-history entry). No database, cache file, translation record,
+  signal, alert, scheduler entry, or Radar Inbox publication state
+  changed as a result of Gates B or C. EDINET remains 3 FilingEvents /
+  1 CandidateSignal; DART 520/23 and EDGAR 10/1 unchanged.
+- **Current policy, explicit**: fail closed. A PDF without usable
+  native (embedded) text does not produce an excerpt, does not advance
+  `extraction_state` past what the extractor reports, and triggers no
+  downstream automated enrichment (no translation, no candidate
+  finalization, no classification). `PARSE_FAILED` is the correct,
+  final, human-reviewable outcome for this shape of document under the
+  current pilot scope.
+- **OCR is explicitly out of scope** pending a separate evidence,
+  attribution, cost, and quality policy — not a technical gap to be
+  quietly closed, a scope boundary requiring its own review before any
+  image-to-text pipeline is considered for this pilot.

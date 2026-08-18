@@ -142,3 +142,53 @@ def test_binary_zip_content_is_a_safe_unsupported_format_not_a_crash(tmp_path):
 
     assert result.state == ExtractionState.UNSUPPORTED_FORMAT
     assert result.from_cache is False
+
+
+# --- Gate 10.A: a PDF-shaped fetch must never persist raw bytes ---
+
+def _minimal_pdf(text: str = "Cached evidence text.") -> bytes:
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        b"<< /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 612 792] /Contents 5 0 R >>",
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    ]
+    stream_content = f"BT /F1 24 Tf 100 700 Td ({text}) Tj ET".encode("latin-1")
+    objects.append(b"<< /Length " + str(len(stream_content)).encode() + b" >>\nstream\n" + stream_content + b"\nendstream")
+    pdf = b"%PDF-1.4\n"
+    offsets = [0]
+    for i, obj in enumerate(objects, start=1):
+        offsets.append(len(pdf))
+        pdf += f"{i} 0 obj\n".encode() + obj + b"\nendobj\n"
+    xref_offset = len(pdf)
+    pdf += f"xref\n0 {len(objects) + 1}\n".encode()
+    pdf += b"0000000000 65535 f \n"
+    for off in offsets[1:]:
+        pdf += f"{off:010d} 00000 n \n".encode()
+    pdf += f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_offset}\n%%EOF".encode()
+    return pdf
+
+
+def test_pdf_fetch_extracts_and_caches_text_only(tmp_path):
+    client = _client(_minimal_pdf("Real evidence sentence for the cache."))
+
+    result = document_service.get_or_fetch_excerpt(client, "S100PDF", tmp_path)
+
+    assert result.state == ExtractionState.EXTRACTED
+    assert "Real evidence sentence" in result.excerpt_original
+
+
+def test_pdf_raw_bytes_are_never_written_to_the_cache_file(tmp_path):
+    pdf_bytes = _minimal_pdf("Should never appear as raw bytes on disk.")
+    client = _client(pdf_bytes)
+
+    document_service.get_or_fetch_excerpt(client, "S100PDF", tmp_path)
+
+    cache_path = tmp_path / "edinet_document_excerpts.json"
+    raw_cache_text = cache_path.read_text()
+    assert "%PDF-" not in raw_cache_text  # no PDF magic bytes/structure persisted
+    assert "endobj" not in raw_cache_text  # no raw PDF syntax persisted
+    import json
+    cached = json.loads(raw_cache_text)["S100PDF"]
+    assert set(cached.keys()) == {"state", "excerpt_original", "detail", "retrieved_at"}
+    assert isinstance(cached["excerpt_original"], str)

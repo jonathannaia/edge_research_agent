@@ -2,3 +2,8 @@ streamlit>=1.38,<2.0
 python-dotenv>=1.0,<2.0
 pytest>=8.0,<9.0
 requests>=2.31,<3.0
+# EDINET pilot (Gate 10.A) — lightweight, pure-Python PDF text extraction
+# only, behind src/data_access/edinet/document_extractor.py's own
+# EDINET-specific seam. No OCR, no external binaries, no browser
+# automation, no Java. Not used by DART or EDGAR, which never handle PDF.
+pypdf>=6.0,<7.0

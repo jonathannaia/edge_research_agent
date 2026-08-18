@@ -1,35 +1,37 @@
-"""EDINET's own category-routing rules (Japan radar pilot, planning
-Gate 1). No LLM calls, no market interpretation — same "routing input
-only, never proof of relevance" posture as dart_rules.py/edgar_rules.py.
+"""EDINET's own category-routing rules (Japan radar pilot). No LLM
+calls, no market interpretation — same "routing input only, never proof
+of relevance" posture as dart_rules.py/edgar_rules.py.
 
-Gate 1 status — read before extending this module: per the approved
-EDINET-only plan (§4), real Japanese statutory document-type codes
-(ordinanceCode/formCode combinations, or their docDescription/title text)
-must NOT be guessed into this module — they are populated "only after a
-live pull, never guessed." Gate 0 did not confirm any such code, and the
-plan explicitly forbids encoding a Japan ownership/large-shareholding
-materiality threshold in this pilot. So this module intentionally ships
-with only the STRUCTURE of a category system — the category slugs
-themselves (English, provisional labels for the taxonomy this pilot
-expects to need) and a routing function driven by an explicit, injectable
-`code_category_map` — and DEFAULT_CODE_CATEGORY_MAP is deliberately
-empty. With the empty default, evaluate_document() matches nothing for
-every real input, which is the honest, correct Gate 1 behavior: this
-module does not yet know a single real EDINET code-to-category mapping.
-Fixture tests exercise the mechanism using their own explicit,
-fictional-and-labeled-as-such test codes, never real EDINET codes.
+Gate 1–9 status: real Japanese statutory document-type codes must NOT be
+guessed into this module — they are populated "only after live
+verification, never guessed," and the plan explicitly forbids encoding a
+Japan ownership/large-shareholding materiality threshold in this pilot.
+So through Gate 9 this module shipped with only the STRUCTURE of a
+category system (the taxonomy slugs) and an always-empty
+DEFAULT_CODE_CATEGORY_MAP, matching nothing.
+
+Gate 10 populated DEFAULT_CODE_CATEGORY_MAP with its first real entry —
+see the constant's own docstring below for the exact evidence chain and
+the explicit correction (form identity alone does not establish a
+current earnings event; the category is `annual_securities_report`, not
+`earnings_or_results`). Routing now requires ordinanceCode, formCode,
+AND docTypeCode to all match (see evaluate_document/_routing_key) — a
+formCode/ordinanceCode pair alone is deliberately no longer sufficient,
+since a real live pull (Gate 6/9) showed multiple real SoftBank Group
+filings sharing the same ordinanceCode with different, semantically
+distinct docTypeCode values.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-LEXICON_VERSION = "v0-2026-08-edinet-gate1-unpopulated"
+LEXICON_VERSION = "v1-2026-08-edinet-gate10-first-real-mapping"
 
-# Provisional category taxonomy (English slugs only) — see module
-# docstring. Mirrors the shape of DART/EDGAR's category sets structurally,
-# not their content; every one of these is a placeholder bucket name, not
-# yet backed by any real EDINET code.
+# Category taxonomy (English slugs only) — see module docstring. Every
+# entry except "annual_securities_report" remains an unbacked structural
+# placeholder — not yet backed by any real, mapped EDINET code.
 EDINET_CATEGORIES: tuple[str, ...] = (
+    "annual_securities_report",
     "earnings_or_results",
     "guidance",
     "capex_or_facility_expansion",
@@ -43,10 +45,28 @@ EDINET_CATEGORIES: tuple[str, ...] = (
     "other",
 )
 
-# Intentionally empty. See module docstring — do not populate with a
-# guessed real ordinanceCode/formCode/docTypeCode mapping. A future gate
-# must populate this only from a confirmed, live-verified source.
-DEFAULT_CODE_CATEGORY_MAP: dict[str, str] = {}
+# Gate 10 — the first, and this gate the only, real EDINET category
+# mapping. Every value here has been independently live-verified twice:
+# Gate 2 (2026-08-17, the real EDINET code-list artifact) and Gate 6/9
+# (2026-06-22 document-list observation + form-code backfill) both
+# confirmed this exact tuple for SoftBank Group's real annual securities
+# report (docID S100YGH5). Deliberately does NOT use "earnings_or_
+# results": form identity alone (a statutory Annual Securities Report
+# filing) does not establish a current earnings event, guidance change,
+# or market-relevant result — an Annual Securities Report can carry
+# financial, risk, governance, and business information together, so
+# "annual_securities_report" names what was actually verified (the
+# statutory report itself), not an inferred market meaning.
+#
+# The two other real, verified SoftBank Group tuples from the same
+# filing day — S100YFHB's 010:042000:135 (確認書/Confirmation Letter)
+# and S100YFH8's 015:010000:235 (内部統制報告書/Internal Control
+# Report) — are deliberately NOT mapped here; they remain FilingEvent-
+# only. Do not add another entry to this map without the same
+# live-verification discipline these three tuples went through.
+DEFAULT_CODE_CATEGORY_MAP: dict[str, str] = {
+    "010:030000:120": "annual_securities_report",
+}
 
 
 @dataclass(frozen=True)
@@ -63,28 +83,39 @@ def _confidence_for(matched: list[str]) -> str | None:
     return "High" if distinct_categories >= 2 else "Moderate"
 
 
-def _routing_key(ordinance_code: str, form_code: str) -> str:
-    return f"{ordinance_code.strip()}:{form_code.strip()}"
+def _routing_key(ordinance_code: str, form_code: str, doc_type_code: str) -> str:
+    return f"{ordinance_code.strip()}:{form_code.strip()}:{doc_type_code.strip()}"
 
 
 def evaluate_document(
     ordinance_code: str,
     form_code: str,
+    doc_type_code: str,
     code_category_map: dict[str, str] = DEFAULT_CODE_CATEGORY_MAP,
 ) -> RuleEvaluation:
-    """Scan-time evaluation from EDINET's ordinanceCode+formCode pair
-    (the provisional field names the user explicitly authorized recording
-    — see design/DECISIONS.md's Gate 0 entry). Pure function, no I/O.
+    """Scan-time evaluation from EDINET's ordinanceCode+formCode+
+    docTypeCode triplet (the field names the user explicitly authorized
+    recording — see design/DECISIONS.md's Gate 0 entry). Pure function,
+    no I/O.
+
+    Gate 10 correction: routing now requires ALL THREE fields to match,
+    never ordinanceCode+formCode alone — a real live pull (Gate 6/9)
+    showed multiple genuine SoftBank Group filings sharing the same
+    ordinanceCode/formCode-adjacent shape but carrying semantically
+    distinct docTypeCode values (the two companion filings' own real
+    tuples, 010:042000:135 and 015:010000:235, must never accidentally
+    collide with the mapped 010:030000:120 annual-report tuple).
+
     `code_category_map` is injectable specifically so fixtures can supply
-    their own explicit, labeled-provisional test mappings without this
+    their own explicit, labeled-fictional test mappings without this
     module claiming any real EDINET code as fact — with the module-level
-    DEFAULT_CODE_CATEGORY_MAP (empty), every real input yields
-    confidence=None, i.e. no candidate is ever produced from real EDINET
-    data by this rule set yet."""
-    category = code_category_map.get(_routing_key(ordinance_code, form_code))
+    DEFAULT_CODE_CATEGORY_MAP (Gate 10: exactly one real entry), every
+    input other than that one exact verified tuple yields
+    confidence=None."""
+    key = _routing_key(ordinance_code, form_code, doc_type_code)
+    category = code_category_map.get(key)
     if category is None:
         return RuleEvaluation(matched_rules=(), confidence=None)
-    key = _routing_key(ordinance_code, form_code)
     return RuleEvaluation(matched_rules=(f"{category}:{key}",), confidence="Moderate")
 
 
