@@ -185,6 +185,68 @@ TRACKED_COMPANIES: tuple[TrackedCompany, ...] = (
             "submissions metadata; cached CIK 0001633978)."
         ),
     ),
+    # Radar expansion, Phase 1 (registry-only), second batch — four
+    # companies added after a controlled, explicitly-approved live
+    # cik_resolver.py validation (2026-08-19). corp_code left unset,
+    # same as every other EDGAR entry above — resolves automatically via
+    # with_resolved_ciks() from the already-cached CIK.
+    TrackedCompany(
+        name="Intel Corp.",
+        exchange="NASDAQ",
+        krx_code="INTC",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("compute-accelerators",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0000050863)."
+        ),
+    ),
+    TrackedCompany(
+        name="Arm Holdings plc",
+        exchange="NASDAQ",
+        krx_code="ARM",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("compute-accelerators",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001973239). SEC-registered "
+            "as \"ARM HOLDINGS PLC /UK\" — a UK-domiciled foreign private "
+            "issuer; cross-check passed against its real submissions "
+            "metadata regardless."
+        ),
+    ),
+    TrackedCompany(
+        name="Applied Optoelectronics, Inc.",
+        exchange="NASDAQ",
+        krx_code="AAOI",
+        source="SEC EDGAR",
+        themes=("photonics",),
+        notes=(
+            "SEC EDGAR pilot cohort — Photonics. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001158114)."
+        ),
+    ),
+    TrackedCompany(
+        name="Corning Inc.",
+        exchange="NYSE",
+        krx_code="GLW",
+        source="SEC EDGAR",
+        themes=("photonics",),
+        notes=(
+            "SEC EDGAR pilot cohort — Photonics. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0000024741)."
+        ),
+    ),
     # EDINET (Japan) pilot cohort (Gate 7) — one company per theme,
     # `krx_code`/`corp_code` hardcoded rather than left for runtime
     # resolution because both were already independently live-verified
