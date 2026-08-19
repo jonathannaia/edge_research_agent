@@ -369,6 +369,18 @@ def render() -> None:
             radar_service.process_candidate_now(settings, candidate_id)
         st.rerun()
 
+    # Reuses the exact same readiness objects computed at the top of
+    # render() for the Scan buttons — a candidate's "Prepare analyst
+    # view"/"Retry analyst view preparation" action needs its own
+    # source's live credentials just as much as a scan does, and must be
+    # disabled (with an honest reason) rather than silently attempted
+    # when they're absent.
+    process_readiness_by_source = {
+        "OpenDART / DART": dart_readiness.ready,
+        "SEC EDGAR": edgar_readiness.ready,
+        "EDINET": edinet_readiness.ready,
+    }
+
     if not filtered:
         empty_state(
             "No items match these filters", "Clear a filter to see more results.",
@@ -415,4 +427,7 @@ def render() -> None:
         )
 
     for item in page_items:
-        candidate_row(item, on_process=_on_process)
+        candidate_row(
+            item, on_process=_on_process,
+            process_ready=process_readiness_by_source.get(item.filing.source_name, False),
+        )

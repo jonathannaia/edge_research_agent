@@ -26,6 +26,12 @@ from src.ui.components.radar_status import (
 
 _TRANSLATION_LABEL = "Machine translation · For convenience · Verify against the original-language source"
 
+_PREPARE_ANALYST_VIEW_LABEL = "Prepare analyst view"
+_RETRY_ANALYST_VIEW_LABEL = "Retry analyst view preparation"
+_PREPARING_SPINNER_TEXT = "Preparing analyst view — retrieving and interpreting the filing…"
+_ANALYST_VIEW_CAPTION = "When ready, the analyst-ready summary appears in this filing’s Details."
+_UNAVAILABLE_REASON = "Preparation is unavailable until this source is configured."
+
 
 def _why_flagged_phrases(matched_rules: list[str]) -> list[str]:
     """Parses matched-rule strings into short, human-readable phrases —
@@ -82,7 +88,40 @@ def _evidence_status_panel(filing: FilingEvent, candidate: CandidateSignal | Non
     _detail_row(evidence_document_id_label(filing.source_name), filing.rcept_no)
 
 
-def candidate_row(item: RadarItem, on_process: Callable[[str], None] | None = None) -> None:
+def _render_process_action(candidate_id: str, label: str, key: str, ready: bool, on_process: Callable[[str], None]) -> None:
+    """Renders the one "Prepare analyst view" / "Retry analyst view
+    preparation" button — the seam that used to click and appear to do
+    nothing (no visible spinner during the synchronous retrieval/
+    extraction/translation call, which can legitimately take a long
+    time). Now: a visible spinner covers the call, a disabled state with
+    an honest, non-secret reason covers the "this source isn't
+    configured" case (readiness is checked here, not inferred), and a
+    narrow except-Exception guards only against a truly unexpected
+    failure outside the pipeline's own typed retrieval/parse/translation
+    failure states — those are already caught and persisted as a
+    CandidateStatus inside the pipeline itself and must reach the UI
+    unchanged; this is defense-in-depth only, same pattern as the Scan
+    buttons' own try/except in radar_inbox.py."""
+    if not ready:
+        st.button(label, key=key, use_container_width=True, disabled=True)
+        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem; font-size:0.78rem;">{_UNAVAILABLE_REASON}</div>', unsafe_allow_html=True)
+        return
+
+    error_key = f"radar-process-error-{candidate_id}"
+    if st.button(label, key=key, use_container_width=True):
+        st.session_state.pop(error_key, None)
+        with st.spinner(_PREPARING_SPINNER_TEXT):
+            try:
+                on_process(candidate_id)
+            except Exception:  # noqa: BLE001 — defense-in-depth only; see docstring above
+                st.session_state[error_key] = "Preparing the analyst view failed unexpectedly — see server logs for detail."
+    if st.session_state.get(error_key):
+        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem; font-size:0.78rem;">{st.session_state[error_key]}</div>', unsafe_allow_html=True)
+
+
+def candidate_row(
+    item: RadarItem, on_process: Callable[[str], None] | None = None, process_ready: bool = True,
+) -> None:
     filing = item.filing
     candidate = item.candidate
 
@@ -149,13 +188,17 @@ def candidate_row(item: RadarItem, on_process: Callable[[str], None] | None = No
         if candidate is not None and on_process is not None:
             with action_cols[1]:
                 if candidate.status == CandidateStatus.PROCESSING_DEFERRED:
-                    if st.button("Process now", key=f"process-{candidate.id}", use_container_width=True):
-                        on_process(candidate.id)
+                    _render_process_action(
+                        candidate.id, _PREPARE_ANALYST_VIEW_LABEL, f"process-{candidate.id}", process_ready, on_process,
+                    )
+                    st.markdown(f'<div class="er-muted" style="margin-top:0.2rem; font-size:0.78rem;">{_ANALYST_VIEW_CAPTION}</div>', unsafe_allow_html=True)
                 elif retry_policy.is_retryable(candidate):
                     eligibility = retry_policy.retry_eligibility(candidate)
                     if eligibility.eligible:
-                        if st.button("Retry processing", key=f"retry-{candidate.id}", use_container_width=True):
-                            on_process(candidate.id)
+                        _render_process_action(
+                            candidate.id, _RETRY_ANALYST_VIEW_LABEL, f"retry-{candidate.id}", process_ready, on_process,
+                        )
+                        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem; font-size:0.78rem;">{_ANALYST_VIEW_CAPTION}</div>', unsafe_allow_html=True)
                     elif eligibility.reason == "Retry limit reached":
                         st.button(
                             "Retry limit reached · Review original filing", key=f"retry-{candidate.id}",

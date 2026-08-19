@@ -262,8 +262,130 @@ def test_radar_inbox_renders_populated_list_with_expected_statuses(tmp_path):
     assert "New facility investment original text" in all_text  # English excerpt translation
     assert "Machine translation" in all_text
     button_labels = {b.label for b in at.button}
-    assert "Process now" in button_labels
+    assert "Prepare analyst view" in button_labels
     assert any("Retry limit reached" in label for label in button_labels)
+    assert "When ready, the analyst-ready summary appears in this filing’s Details." in all_text
+
+
+# --- "Prepare analyst view" UX fix: spinner-covered, readiness-gated,
+# defense-in-depth process/retry action (see design/DECISIONS.md) ---
+
+
+def test_radar_inbox_retry_eligible_candidate_shows_retry_label_and_caption(tmp_path):
+    _seed_corp_codes(tmp_path)
+    failed_filing = _filing("20260812000005", "실적 관련 공시")
+    _seed_filing_events(tmp_path, [failed_filing])
+
+    # Zero QUEUED_FOR_PROCESSING attempts and no recent last-attempt
+    # timestamp — retry_policy.retry_eligibility(...) is immediately
+    # eligible=True for this shape (see retry_policy.py), distinct from
+    # the "Retry limit reached" fixture above (3 exhausted attempts).
+    retryable = CandidateSignal(
+        id="cand-retry-eligible", filing=failed_filing, matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.RETRIEVAL_FAILED,
+        state_history=[StateTransition(status=CandidateStatus.RETRIEVAL_FAILED, at=_now_iso(), detail="DART request timed out.")],
+    )
+    candidate_store.save_candidates(tmp_path, {retryable.id: retryable})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    button_labels = {b.label for b in at.button}
+    assert "Retry analyst view preparation" in button_labels
+    assert "When ready, the analyst-ready summary appears in this filing’s Details." in all_text
+    retry_button = next(b for b in at.button if b.label == "Retry analyst view preparation")
+    assert retry_button.disabled is False
+
+
+def test_radar_inbox_process_action_disabled_when_source_not_configured(tmp_path):
+    # DART left unconfigured while EDINET is configured — at least one
+    # source must be ready or render() takes the early "not configured"
+    # empty-state return before ever reaching the item list. This proves
+    # the disabled state is genuinely per-candidate-source, not a page-
+    # wide gate: a DART candidate must render disabled even while the
+    # page as a whole is usable because EDINET is ready.
+    _seed_corp_codes(tmp_path)
+    deferred_filing = _filing("20260812000006", "신규시설투자 결정")
+    _seed_filing_events(tmp_path, [deferred_filing])
+    deferred = CandidateSignal(
+        id="cand-unconfigured-1", filing=deferred_filing, matched_rules=["capex_or_facility_investment:facility_investment:신규시설투자"],
+        confidence="Moderate", status=CandidateStatus.PROCESSING_DEFERRED,
+        state_history=[StateTransition(status=CandidateStatus.PROCESSING_DEFERRED, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {deferred.id: deferred})
+
+    settings = Settings(
+        dart_api_key=None, translation_api_key=None, edgar_user_agent=None,
+        edinet_subscription_key="test-key", cache_dir=tmp_path,
+    )
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    prepare_button = next(b for b in at.button if b.label == "Prepare analyst view")
+    assert prepare_button.disabled is True
+    assert "Preparation is unavailable until this source is configured." in all_text
+    # Requirement 4: never a credential name, key value, path, or raw
+    # exception detail in the disabled-reason text.
+    for forbidden in ("EDGE_DART_API_KEY", "EDGE_TRANSLATION_API_KEY", "api_key", "Traceback"):
+        assert forbidden not in all_text
+
+
+def test_radar_inbox_clicking_prepare_analyst_view_calls_processing_once_and_rerenders_from_persisted_status(tmp_path, monkeypatch):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000007", "장래사업ㆍ경영계획 공시")
+    _seed_filing_events(tmp_path, [filing])
+    deferred = CandidateSignal(
+        id="cand-click-now", filing=filing, matched_rules=["guidance:forward_looking_business_plan:장래사업ㆍ경영계획"],
+        confidence="Moderate", status=CandidateStatus.PROCESSING_DEFERRED,
+        state_history=[StateTransition(status=CandidateStatus.PROCESSING_DEFERRED, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {deferred.id: deferred})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+
+    calls: list[str] = []
+
+    def _fake_process(_settings, candidate_id):
+        # Simulates the real pipeline's own behavior: mutate and persist
+        # via the same candidate_store the page reads from — proves the
+        # card re-renders from the persisted store, not an optimistic
+        # local value held in the button's own click handler.
+        calls.append(candidate_id)
+        store = candidate_store.load_candidates(tmp_path)
+        candidate = store[candidate_id]
+        candidate.status = CandidateStatus.NEEDS_REVIEW
+        candidate_store.update_candidate(tmp_path, candidate)
+        return candidate
+
+    # Overrides this file's autouse network-call guard for exactly this
+    # one source/function — every other guarded entry point (EDGAR,
+    # EDINET, DART run_scan) still raises if reached.
+    monkeypatch.setattr("src.data_access.dart.radar_service.process_candidate_now", _fake_process, raising=True)
+
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        assert not at.exception
+        prepare_button = next(b for b in at.button if b.label == "Prepare analyst view")
+        assert prepare_button.disabled is False
+        prepare_button.click()
+        at.run()
+
+    assert not at.exception
+    assert calls == ["cand-click-now"]  # called exactly once
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Needs review" in all_text  # re-rendered from the persisted CandidateStatus
+    button_labels = {b.label for b in at.button}
+    assert "Prepare analyst view" not in button_labels  # no longer PROCESSING_DEFERRED
+    assert "Retry analyst view preparation" not in button_labels  # NEEDS_REVIEW isn't retryable
 
 
 def test_radar_inbox_shows_not_material_label_for_routine_ownership_candidate(tmp_path):
