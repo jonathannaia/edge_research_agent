@@ -1,6 +1,159 @@
 [
   {
     "niche": "Space",
+    "headline": "Mysterious Russian 'space activity' causes US Air Force flight to Antarctica to turn around: report",
+    "summary": "A U.S. Air Force aircraft was forced to turn around during a flight to Antarctica on August 18 due to a possible space debris hazard caused by mysterious Russian space activity over the South Pacific.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/mysterious-russian-space-activity-causes-us-air-force-flight-to-antarctica-to-turn-around-report",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:00:00 +0000",
+    "retrieved_at": "2026-08-19T16:21:20+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses space debris hazard affecting military aviation operations, directly relevant to space scope.",
+    "url_hash": "16623ce8920f1ddb",
+    "id": "16623ce8920f1ddb"
+  },
+  {
+    "niche": "Space",
+    "headline": "Moog Inc. Expands METEORITE Satellite Bus Capacity for High-Maneuverability Missions",
+    "summary": "Moog Inc. announced an expansion of capacity for its METEORITE satellite bus platform designed for high-maneuverability space missions.",
+    "source_url": "https://spacenews.com/moog-inc-expands-meteorite-satellite-bus-capacity-for-high-maneuverability-missions/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 15:11:52 +0000",
+    "retrieved_at": "2026-08-19T16:21:17+00:00",
+    "tickers": [
+      {
+        "ticker": "MOG.A",
+        "company_name": "Moog Inc.",
+        "jurisdiction": "United States",
+        "verified": false
+      },
+      {
+        "ticker": "MOG.B",
+        "company_name": "Moog Inc.",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Moog is expanding satellite bus capacity for space missions, which directly relates to spacecraft and space infrastructure.",
+    "url_hash": "8851125c4c747315",
+    "id": "8851125c4c747315"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "TerraPower’s nuclear reactor has a secret weapon for powering AI data centers",
+    "summary": "TerraPower's nuclear power plant is positioned to support data center operations, giving it a competitive advantage in securing data center deals.",
+    "source_url": "https://techcrunch.com/2026/08/19/terrapowers-nuclear-reactor-has-a-secret-weapon-for-powering-ai-data-centers/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 15:44:53 +0000",
+    "retrieved_at": "2026-08-19T16:21:08+00:00",
+    "tickers": [],
+    "relevance_reason": "TerraPower's nuclear reactor is being developed to power AI data centers, directly addressing power infrastructure for AI buildout.",
+    "url_hash": "c86c5d5f5cf725ad",
+    "id": "c86c5d5f5cf725ad"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Cerebras unveils CS-4 rack scale solution powered by four-trillion transistor WSE-3T chip",
+    "summary": "Cerebras unveiled its CS-4 rack-scale solution powered by the WSE-3T chip containing four trillion transistors, claiming it delivers 750 petaflops of AI compute.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/cerebras-unveils-cs-4-rack-scale-solution-powered-by-four-trillion-transistor-wse-3t-chip/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:01:32 +0000",
+    "retrieved_at": "2026-08-19T16:20:55+00:00",
+    "tickers": [
+      {
+        "ticker": "CBRS",
+        "company_name": "Cerebras Systems",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Cerebras announced a new AI accelerator chip (WSE-3T) and compute solution directly relevant to AI infrastructure buildout.",
+    "url_hash": "064d66247fce5cb3",
+    "id": "064d66247fce5cb3"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Pennsylvania Governor signs executive order imposing strict requirements on data center developments",
+    "summary": "Pennsylvania's governor signed an executive order requiring data center projects to obtain all local approvals before permits can be issued, imposing stricter requirements on data center developments.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/pennsylvania-governor-signs-executive-order-imposing-strict-requirements-on-data-center-developments/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:04:28 +0000",
+    "retrieved_at": "2026-08-19T16:20:53+00:00",
+    "tickers": [],
+    "relevance_reason": "Pennsylvania data center regulatory framework directly affects AI infrastructure buildout constraints and permitting timelines.",
+    "url_hash": "c13e51ddfc22ce52",
+    "id": "c13e51ddfc22ce52"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Google reveals it is behind 506-acre Project Clydesdale data center in Oklahoma",
+    "summary": "Google revealed it is developing a 506-acre data center project called Project Clydesdale in Owasso, Oklahoma.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/google-reveals-it-is-behind-506-acre-project-clydesdale-data-center-in-oklahoma/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:04:47 +0000",
+    "retrieved_at": "2026-08-19T16:20:52+00:00",
+    "tickers": [
+      {
+        "ticker": "GOOGL",
+        "company_name": "Alphabet Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly concerns hyperscaler data center capex expansion by a major AI infrastructure investor.",
+    "url_hash": "e865ccd29e8fe5af",
+    "id": "e865ccd29e8fe5af"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Relativity Networks completes $22m raise, as hollow-core fiber provider secures $40m hyperscaler contract",
+    "summary": "Relativity Networks completed a $22 million funding round and secured a $40 million contract with a hyperscaler customer, building on a recent manufacturing milestone achieved with Prysmian.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/relativity-networks-completes-22m-raise-as-hollow-core-fiber-provider-secures-40m-hyperscaler-contract/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:08:58 +0000",
+    "retrieved_at": "2026-08-19T16:20:50+00:00",
+    "tickers": [
+      {
+        "ticker": "PRY",
+        "company_name": "Prysmian Group",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Hollow-core fiber is critical infrastructure for AI data center networking and hyperscaler buildout.",
+    "url_hash": "b89664958ba9dbf6",
+    "id": "b89664958ba9dbf6"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Ukraine says Nvidia Jetson gear found in Russian S-71M missile",
+    "summary": "Ukraine reported that Nvidia Jetson gear was found in Russian S-71M missiles, prompting calls for stronger sanctions to prevent technology from reaching Russia.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/ukraine-says-nvidia-jetson-gear-found-in-russian-s-71m-missile/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:16:21 +0000",
+    "retrieved_at": "2026-08-19T16:20:48+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "involves Nvidia AI chips in military application, relevant to AI chip supply chain and export control concerns",
+    "url_hash": "98d71878a6b58eca",
+    "id": "98d71878a6b58eca"
+  },
+  {
+    "niche": "Space",
     "headline": "The space industry’s next challenge: supply chain resilience",
     "summary": "America's space economy is expanding faster than its industrial base can support, driven by growing commercial constellations, distributed national security architectures, and expanding civil missions.",
     "source_url": "https://spacenews.com/the-space-industrys-next-challenge-supply-chain-resilience/",
