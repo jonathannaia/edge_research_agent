@@ -118,6 +118,19 @@
   ],
   "run_history": [
     {
+      "started_at": "2026-08-19T06:27:32+00:00",
+      "finished_at": "2026-08-19T06:28:13+00:00",
+      "status": "ok",
+      "feeds_checked": 16,
+      "items_seen": 438,
+      "items_after_freshness_filter": 61,
+      "items_after_keyword_filter": 25,
+      "items_sent_to_llm": 25,
+      "items_saved": 0,
+      "items_rejected_by_guardrail": 0,
+      "errors": []
+    },
+    {
       "started_at": "2026-08-19T04:42:02+00:00",
       "finished_at": "2026-08-19T04:42:45+00:00",
       "status": "ok",
