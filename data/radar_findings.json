@@ -1,6 +1,20 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "The Future Of AI Compute Won’t Run On Just One Kind Of Chip",
+    "summary": "Data centers are moving toward heterogeneous clusters combining CPUs, GPUs, NPUs, optics, and custom accelerators, driven by considerations of power efficiency, token costs, interconnects, and software orchestration.",
+    "source_url": "https://semiengineering.com/the-future-of-ai-compute-wont-run-on-just-one-kind-of-chip/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 07:01:42 +0000",
+    "retrieved_at": "2026-08-19T08:26:08+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses heterogeneous chip architectures and accelerators fundamental to AI data center infrastructure buildout.",
+    "url_hash": "4f7ae2d5265b386f",
+    "id": "4f7ae2d5265b386f"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "DayOne partners with Cortical Labs, NUS Medicine, for deployment of Singapore’s first biological data center prototype",
     "summary": "DayOne has partnered with Cortical Labs and NUS Medicine to deploy Singapore's first biological data center prototype, consisting of 20 units of the CL1 biological computing system.",
     "source_url": "https://www.datacenterdynamics.com/en/news/dayone-partners-with-cortical-labs-nus-medicine-for-deployment-of-singapores-first-biological-data-center-prototype/",
