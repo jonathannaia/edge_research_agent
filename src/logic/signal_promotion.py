@@ -105,4 +105,8 @@ def candidate_to_signal(candidate: CandidateSignal) -> Signal:
         related_tickers=[filing.stock_code] if filing.stock_code else [],
         last_updated=last_updated,
         is_demo=False,
+        issuer=filing.corp_name,
+        source_name=filing.source_name,
+        source_url=filing.source_url,
+        excerpt=candidate.excerpt_original,
     )

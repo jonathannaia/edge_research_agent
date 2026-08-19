@@ -49,11 +49,42 @@ def test_signals_page_shows_real_dart_signal_with_no_sample_badge(tmp_path):
         at = AppTest.from_file(str(_HARNESS), default_timeout=10)
         at.run()
 
-    assert not at.exception
-    all_text = " ".join(m.value for m in at.markdown)
-    assert filing.report_nm in all_text
-    assert ":gray-badge[Sample]" not in all_text  # signal_card() only shows this for is_demo candidates
-    assert "demo data in this phase" not in all_text
+        assert not at.exception
+        all_text = " ".join(m.value for m in at.markdown)
+        assert filing.report_nm in all_text
+        assert ":gray-badge[Sample]" not in all_text  # signal_card() only shows this for is_demo candidates
+        assert "demo data in this phase" not in all_text
+
+        # Card-level: real issuer, source name, date, source link, excerpt.
+        assert filing.corp_name in all_text
+        assert filing.source_name in all_text
+        assert "View source document" in all_text
+        assert filing.source_url in all_text
+        assert candidate.excerpt_original in all_text
+
+        # Open the drawer ("Review evidence") and confirm the same
+        # discipline holds there — no demo language, real excerpt, working
+        # source link. The click-triggered rerun must stay inside this
+        # `with patch(...)` block: get_settings() is re-resolved on every
+        # rerun, so a rerun outside the patch would silently fall back to
+        # the real production cache_dir instead of tmp_path.
+        drawer_buttons = [b for b in at.button if (b.key or "").startswith("open-drawer-")]
+        assert len(drawer_buttons) == 1
+        drawer_buttons[0].click().run()
+        assert not at.exception
+
+        drawer_text = " ".join(m.value for m in at.markdown)
+        assert "EevaResearch Demo Data" not in drawer_text
+        assert "sample evidence item" not in drawer_text
+        assert "No live filing connected in this phase" not in drawer_text
+        assert filing.corp_name in drawer_text
+        assert filing.source_name in drawer_text
+        assert candidate.excerpt_original in drawer_text
+
+        link_buttons = at.get("link_button")
+        assert len(link_buttons) == 1
+        assert link_buttons[0].proto.url == filing.source_url
+        assert link_buttons[0].proto.label == "Open filing"
 
 
 def test_signals_page_shows_truthful_empty_state_when_no_eligible_candidates(tmp_path):
@@ -108,3 +139,36 @@ def test_signals_page_empty_state_when_no_cache_files_exist(tmp_path):
     all_text = " ".join(m.value for m in at.markdown)
     assert "No eligible filings yet." in all_text
     assert ":gray-badge[Sample]" not in all_text
+
+
+_DEMO_SIGNAL_CARD_SCRIPT = """
+from src.config.settings import get_settings
+from src.data_access.demo.signal_repository import DemoSignalRepository
+from src.data_access.demo.evidence_repository import DemoEvidenceRepository
+from src.ui.components.cards import signal_card
+
+settings = get_settings()
+signal = DemoSignalRepository(settings).get_all_signals()[0]
+evidence_repository = DemoEvidenceRepository(settings)
+signal_card(signal, evidence_repository=evidence_repository)
+"""
+
+
+def test_demo_signal_still_shows_sample_badge_and_demo_drawer_text():
+    """Regression check: is_demo=True signals must keep their existing
+    demo presentation exactly as before — only real (is_demo=False)
+    signals lose the "Sample"/"EevaResearch Demo Data" language."""
+    at = AppTest.from_string(_DEMO_SIGNAL_CARD_SCRIPT, default_timeout=10)
+    at.run()
+    assert not at.exception
+
+    all_text = " ".join(m.value for m in at.markdown)
+    assert ":gray-badge[Sample]" in all_text
+
+    drawer_buttons = [b for b in at.button if (b.key or "").startswith("open-drawer-")]
+    assert len(drawer_buttons) == 1
+    drawer_buttons[0].click().run()
+    assert not at.exception
+
+    drawer_text = " ".join(m.value for m in at.markdown)
+    assert "EevaResearch Demo Data" in drawer_text

@@ -125,12 +125,32 @@ def test_candidate_to_signal_maps_confidence_to_strength():
     assert candidate_to_signal(_candidate(filing, confidence="High")).strength == Strength.STRONG
 
 
+def test_candidate_to_signal_maps_issuer_source_url_and_excerpt_verbatim():
+    filing = _filing(
+        corp_name="Samsung Electronics", source_name="OpenDART / DART",
+        source_url="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260812000001",
+    )
+    candidate = _candidate(filing, excerpt_original="원문 발췌 텍스트")
+    signal = candidate_to_signal(candidate)
+
+    assert signal.issuer == "Samsung Electronics"
+    assert signal.source_name == "OpenDART / DART"
+    assert signal.source_url == "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260812000001"
+    assert signal.excerpt == "원문 발췌 텍스트"
+
+
+def test_candidate_to_signal_excerpt_is_none_when_not_extracted():
+    filing = _filing()
+    candidate = _candidate(filing, excerpt_original=None)
+    assert candidate_to_signal(candidate).excerpt is None
+
+
 def test_candidate_to_signal_never_invents_amounts_or_counterparties():
     filing = _filing()
     signal = candidate_to_signal(_candidate(filing))
     combined = " ".join([
         signal.title, signal.interpretation, signal.contrary_evidence,
-        signal.validation_criteria, signal.invalidation_criteria,
+        signal.validation_criteria, signal.invalidation_criteria, signal.excerpt or "",
     ])
     assert "KRW" not in combined
     assert "China" not in combined

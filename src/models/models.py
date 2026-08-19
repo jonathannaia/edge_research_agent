@@ -180,6 +180,16 @@ class Signal:
     related_tickers: list[str]
     last_updated: str  # ISO 8601
     is_demo: bool = True
+    # Additive — real Radar promotion (src/logic/signal_promotion.py) only.
+    # Empty/None for every demo signal (the seed file never sets these).
+    # Never inferred or translated here: issuer/source_url/excerpt are
+    # copied verbatim from the underlying FilingEvent/CandidateSignal;
+    # excerpt is the original-language text only, same bounded-excerpt
+    # rule as CandidateSignal.excerpt_original.
+    issuer: str = ""
+    source_name: str = ""
+    source_url: str = ""
+    excerpt: str | None = None
 
 
 @dataclass

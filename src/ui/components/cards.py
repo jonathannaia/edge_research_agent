@@ -135,6 +135,15 @@ def signal_card(
             st.markdown(f'<div class="er-card-title">{dot}{signal.title}</div>', unsafe_allow_html=True)
             tag_line = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
             st.markdown(f'<div class="er-muted">{tag_line}</div>', unsafe_allow_html=True)
+            if signal.issuer:
+                # Real Radar promotion only (signal_promotion.py) — issuer/
+                # source name/date copied verbatim from the filing, never
+                # inferred. Empty for every demo signal.
+                st.markdown(
+                    f'<div class="er-muted" style="font-size:0.85rem; margin-top:0.15rem;">'
+                    f'{signal.issuer} · {signal.source_name} · {fmt_date(signal.last_updated)}</div>',
+                    unsafe_allow_html=True,
+                )
         with top[1]:
             if signal.is_demo:
                 demo_badge("Sample")
@@ -143,6 +152,11 @@ def signal_card(
             f'<div style="margin:0.4rem 0; max-height:3.2em; overflow:hidden;">{signal.interpretation}</div>',
             unsafe_allow_html=True,
         )
+        if signal.excerpt:
+            st.markdown(
+                f'<div class="er-excerpt" style="font-size:0.85rem; margin:0.3rem 0;">{signal.excerpt}</div>',
+                unsafe_allow_html=True,
+            )
         st.markdown(
             f"""
             <div style="display:flex; gap:1.25rem; margin: 0.4rem 0;">
@@ -166,6 +180,13 @@ def signal_card(
                 for t in signal.related_tickers
             )
             st.markdown(f'<div class="er-muted" style="font-size:0.78rem;">Related: {links}</div>', unsafe_allow_html=True)
+        if signal.source_url:
+            st.markdown(
+                f'<div class="er-muted" style="font-size:0.78rem;">'
+                f'<a href="{signal.source_url}" target="_blank" rel="noopener noreferrer" '
+                f'style="color:var(--text-2); text-decoration:underline;">View source document ↗</a></div>',
+                unsafe_allow_html=True,
+            )
 
         action_cols = st.columns([1, 1, 2])
         with action_cols[0]:

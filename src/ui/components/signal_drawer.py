@@ -11,7 +11,7 @@ from __future__ import annotations
 import streamlit as st
 
 from src.logic.formatting import fmt_date
-from src.models.models import Signal
+from src.models.models import ClaimType, Signal
 from src.ui.components.badges import direction_dot_html
 from src.ui.components.evidence_chips import evidence_chip
 from src.ui.components.excerpts import render_excerpt
@@ -26,8 +26,9 @@ def open_signal_drawer(signal: Signal, evidence_repository=None) -> None:
     @st.dialog(signal.title, width="large")
     def _drawer() -> None:
         tag = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
+        source_label = "EevaResearch Demo Data" if signal.is_demo else f"{signal.issuer} · {signal.source_name}"
         st.markdown(
-            f'<div class="er-mono er-muted">EevaResearch Demo Data · {fmt_date(signal.last_updated)} · {tag}</div>',
+            f'<div class="er-mono er-muted">{source_label} · {fmt_date(signal.last_updated)} · {tag}</div>',
             unsafe_allow_html=True,
         )
 
@@ -46,18 +47,27 @@ def open_signal_drawer(signal: Signal, evidence_repository=None) -> None:
         st.write(signal.interpretation)
 
         st.markdown('<div class="er-section-label">Evidence</div>', unsafe_allow_html=True)
-        evidence_items = []
-        if evidence_repository is not None and signal.related_tickers:
-            evidence_items = evidence_repository.get_evidence_for_ticker(signal.related_tickers[0])
-        if evidence_items:
-            evidence_chip(evidence_items[0].claim_type, has_source=bool(evidence_items[0].source_name))
-            render_excerpt(evidence_items[0])
+        if signal.is_demo:
+            evidence_items = []
+            if evidence_repository is not None and signal.related_tickers:
+                evidence_items = evidence_repository.get_evidence_for_ticker(signal.related_tickers[0])
+            if evidence_items:
+                evidence_chip(evidence_items[0].claim_type, has_source=bool(evidence_items[0].source_name))
+                render_excerpt(evidence_items[0])
+            else:
+                st.markdown(
+                    f'<div class="er-muted">{signal.evidence_count} sample evidence item(s) attributed to this signal '
+                    '— no individual excerpt attached in this phase.</div>',
+                    unsafe_allow_html=True,
+                )
+        elif signal.excerpt:
+            # Real Radar promotion — the excerpt is copied verbatim from
+            # the extracted filing (CandidateSignal.excerpt_original),
+            # never generated or translated here.
+            evidence_chip(ClaimType.FACT, has_source=bool(signal.source_url))
+            st.markdown(f'<div class="er-excerpt">{signal.excerpt}</div>', unsafe_allow_html=True)
         else:
-            st.markdown(
-                f'<div class="er-muted">{signal.evidence_count} sample evidence item(s) attributed to this signal '
-                '— no individual excerpt attached in this phase.</div>',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="er-muted">No excerpt available for this filing yet.</div>', unsafe_allow_html=True)
 
         st.markdown(
             f'<div class="er-section-label">Contrary evidence</div>'
@@ -80,7 +90,13 @@ def open_signal_drawer(signal: Signal, evidence_repository=None) -> None:
                     st.session_state[TRIGGER_KEY] = signal.related_tickers[0] if signal.related_tickers else None
                     st.rerun()
         with foot_cols[1]:
-            st.button("Open filing", key=f"drawer-filing-{signal.id}", width="stretch", disabled=True, help="No live filing connected in this phase.")
+            if signal.source_url:
+                st.link_button("Open filing", signal.source_url, width="stretch")
+            else:
+                st.button(
+                    "Open filing", key=f"drawer-filing-{signal.id}", width="stretch", disabled=True,
+                    help="No source document link available for this signal.",
+                )
         with foot_cols[2]:
             research_page = get_page("research")
             if research_page is not None:
