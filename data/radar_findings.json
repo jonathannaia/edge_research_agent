@@ -1,6 +1,55 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "Relativity Networks raises $22 million to bring a faster kind of fiber to data centers",
+    "summary": "Relativity Networks raised $22 million in funding to deploy hollow-core fiber technology that transmits data 30% faster than conventional fiber for use in data centers.",
+    "source_url": "https://techcrunch.com/2026/08/19/relativity-networks-raises-22-million-to-bring-a-faster-kind-of-fiber-to-data-centers/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 10:00:00 +0000",
+    "retrieved_at": "2026-08-19T10:19:33+00:00",
+    "tickers": [],
+    "relevance_reason": "hollow-core fiber for data centers is a material supporting technology for AI infrastructure networking",
+    "url_hash": "26ef0b285fb9d3dd",
+    "id": "26ef0b285fb9d3dd"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Can Large-Load Flexibility Ease Data Center Energy Concerns?",
+    "summary": "The article explores whether data centers can provide large-load flexibility to stabilize energy grids and reduce blackouts and costs rather than straining them.",
+    "source_url": "https://www.datacenterknowledge.com/energy-power-supply/can-large-load-flexibility-ease-data-center-energy-concerns",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 09:00:00 GMT",
+    "retrieved_at": "2026-08-19T10:19:31+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses data center power infrastructure and energy management, a core component of AI buildout infrastructure.",
+    "url_hash": "69804f465d9dfa6f",
+    "id": "69804f465d9dfa6f"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Sponsored: Castrol ON PG25 cooling fluids validated for NVIDIA AI factory and data center infrastructure",
+    "summary": "Castrol's PG25 cooling fluids have been validated for use in NVIDIA AI factory and data center infrastructure, with validation covering technical performance, material compatibility, and supply chain resilience.",
+    "source_url": "https://www.datacenterdynamics.com/en/product-news/castrol-on-pg25-cooling-fluids-validated-for-nvidia-ai-factory-and-data-center-infrastructure/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 09:00:00 +0000",
+    "retrieved_at": "2026-08-19T10:19:23+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "NVIDIA",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly addresses cooling infrastructure for AI data centers and mentions NVIDIA AI factory validation.",
+    "url_hash": "7d5607e1d46ed37d",
+    "id": "7d5607e1d46ed37d"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "The Future Of AI Compute Won’t Run On Just One Kind Of Chip",
     "summary": "Data centers are moving toward heterogeneous clusters combining CPUs, GPUs, NPUs, optics, and custom accelerators, driven by considerations of power efficiency, token costs, interconnects, and software orchestration.",
     "source_url": "https://semiengineering.com/the-future-of-ai-compute-wont-run-on-just-one-kind-of-chip/",
