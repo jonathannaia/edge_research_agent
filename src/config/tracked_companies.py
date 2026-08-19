@@ -137,6 +137,54 @@ TRACKED_COMPANIES: tuple[TrackedCompany, ...] = (
         subthemes=("launch",),
         notes="SEC EDGAR pilot cohort — Space.",
     ),
+    # Radar expansion, Phase 1 (registry-only) — three companies added
+    # after a controlled, explicitly-approved live cik_resolver.py
+    # validation (2026-08-19), not a hardcoded guess. corp_code is left
+    # unset here, same as every other EDGAR entry above — the CIK is
+    # already resolved into data/cache/edgar_ciks.json and will populate
+    # automatically via with_resolved_ciks() the next time EDGAR
+    # companies are loaded, exactly like NVIDIA/Micron/Coherent/Rockwell/
+    # Rocket Lab already do.
+    TrackedCompany(
+        name="Advanced Micro Devices",
+        exchange="NASDAQ",
+        krx_code="AMD",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("compute-accelerators",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0000002488)."
+        ),
+    ),
+    TrackedCompany(
+        name="SanDisk Corp",
+        exchange="NASDAQ",
+        krx_code="SNDK",
+        source="SEC EDGAR",
+        themes=("memory",),
+        notes=(
+            "SEC EDGAR pilot cohort — Memory. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0002023554)."
+        ),
+    ),
+    TrackedCompany(
+        name="Lumentum Holdings Inc.",
+        exchange="NASDAQ",
+        krx_code="LITE",
+        source="SEC EDGAR",
+        themes=("photonics",),
+        notes=(
+            "SEC EDGAR pilot cohort — Photonics. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001633978)."
+        ),
+    ),
     # EDINET (Japan) pilot cohort (Gate 7) — one company per theme,
     # `krx_code`/`corp_code` hardcoded rather than left for runtime
     # resolution because both were already independently live-verified
