@@ -1,5 +1,19 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "DayOne partners with Cortical Labs, NUS Medicine, for deployment of Singapore’s first biological data center prototype",
+    "summary": "DayOne has partnered with Cortical Labs and NUS Medicine to deploy Singapore's first biological data center prototype, consisting of 20 units of the CL1 biological computing system.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/dayone-partners-with-cortical-labs-nus-medicine-for-deployment-of-singapores-first-biological-data-center-prototype/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 14:19:51 +0000",
+    "retrieved_at": "2026-08-19T04:42:19+00:00",
+    "tickers": [],
+    "relevance_reason": "Biological computing systems represent an emerging AI infrastructure technology relevant to AI buildout scope.",
+    "url_hash": "0d84957197ebaca1",
+    "id": "0d84957197ebaca1"
+  },
+  {
     "niche": "Space",
     "headline": "Touchdown! Private Chinese rocket aces landing on 2nd-ever flight",
     "summary": "Beijing-based LandSpace successfully landed its Zhuque-3 rocket on its second flight on August 18, marking a significant milestone for Chinese commercial spaceflight.",
