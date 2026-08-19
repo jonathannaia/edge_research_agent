@@ -481,6 +481,225 @@ def test_radar_inbox_edgar_only_configured_renders_edgar_candidates(tmp_path):
     assert "OpenDART / DART · Samsung" not in all_text
 
 
+# --- Analyst view (deterministic, template-only Details section) ---
+
+
+def test_radar_inbox_analyst_view_renders_for_dart_market_rumor_response_candidate(tmp_path):
+    _seed_corp_codes(tmp_path)
+    rumor_filing = FilingEvent(
+        rcept_no="20260812000100", corp_code="00164779", corp_name="SK Hynix", stock_code="000660",
+        report_nm="조회공시요구(풍문또는보도)에대한답변(미확정)", rcept_dt="20260812", flr_nm="SK 하이닉스",
+        source_url="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260812000100",
+        retrieved_at=_now_iso(),
+    )
+    _seed_filing_events(tmp_path, [rumor_filing])
+    rumor_candidate = CandidateSignal(
+        id="cand-rumor-1", filing=rumor_filing,
+        matched_rules=["market_rumor_response:rumor_inquiry_or_response:풍문또는보도"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        translation_state=TranslationState.TRANSLATED,
+        excerpt_original="한국거래소의조회공시요구에대한답변으로,보도된내용에대해확인된바없습니다.",
+        excerpt_translation=Translation(
+            translated_text="In response to the exchange's disclosure inquiry, nothing has been confirmed regarding the reported content.",
+            provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
+        ),
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {rumor_candidate.id: rumor_candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Analyst view" in all_text
+    # 1. Source facts — deterministic, structured-fields-only sentence.
+    assert "SK Hynix filed “조회공시요구(풍문또는보도)에대한답변(미확정)” with OpenDART / DART on 20260812." in all_text
+    assert "Open original filing" in all_text
+    # 2. What is unconfirmed — the exact required wording.
+    assert (
+        "This filing is a disclosure inquiry or response about reported information. "
+        "It does not confirm that a transaction has occurred." in all_text
+    )
+    # 3. Why it entered Radar — native keyword preserved, labeled a keyword match.
+    assert "matched keyword “풍문또는보도”" in all_text
+    # 4. Follow-up evidence to watch — the exact three-item checklist.
+    assert "A formal company response or clarification" in all_text
+    assert "A subsequent filing that confirms or denies the reported matter" in all_text
+    assert "An amendment or related disclosure" in all_text
+    # 5. Evidence and provenance — native text + translation still visible,
+    # nothing invented (no amount/counterparty this fixture never stated).
+    assert "한국거래소의조회공시요구에대한답변" in all_text  # native excerpt still rendered below
+    assert "nothing has been confirmed" in all_text  # translation still rendered below
+    assert "KRW" not in all_text
+    assert "China" not in all_text
+    assert "trillion" not in all_text
+    # Claim-type vocabulary reused correctly.
+    assert "Fact" in all_text
+    assert "Uncertainty" in all_text
+    assert "Interpretation" in all_text
+
+
+def test_radar_inbox_analyst_view_absent_for_deferred_and_failed_candidates(tmp_path):
+    _seed_corp_codes(tmp_path)
+    deferred_filing = _filing("20260812000101", "유상증자 결정")
+    failed_filing = _filing("20260812000102", "실적 발표")
+    _seed_filing_events(tmp_path, [deferred_filing, failed_filing])
+    deferred = CandidateSignal(
+        id="cand-deferred-av", filing=deferred_filing, matched_rules=["financing:capital_raise_or_treasury_stock:유상증자"],
+        confidence="Moderate", status=CandidateStatus.PROCESSING_DEFERRED,
+        state_history=[StateTransition(status=CandidateStatus.PROCESSING_DEFERRED, at=_now_iso())],
+    )
+    failed = CandidateSignal(
+        id="cand-failed-av", filing=failed_filing, matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.PARSE_FAILED, extraction_state=ExtractionState.PARSE_FAILED,
+        state_history=[StateTransition(status=CandidateStatus.PARSE_FAILED, at=_now_iso(), detail="No extractable text.")],
+    )
+    candidate_store.save_candidates(tmp_path, {deferred.id: deferred, failed.id: failed})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Analyst view" not in all_text
+
+
+def test_radar_inbox_analyst_view_unknown_category_uses_exact_fallback_wording(tmp_path):
+    _seed_corp_codes(tmp_path)
+    capex_filing = _filing("20260812000103", "신규시설투자 결정")
+    _seed_filing_events(tmp_path, [capex_filing])
+    capex_candidate = CandidateSignal(
+        id="cand-capex-av", filing=capex_filing,
+        matched_rules=["capex_or_facility_investment:facility_investment:신규시설투자"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="신규시설투자관련공시내용입니다.",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {capex_candidate.id: capex_candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Analyst view" in all_text
+    assert (
+        "This filing type has no specific uncertainty template yet. "
+        "Read the source excerpt directly before drawing conclusions." in all_text
+    )
+    assert "Review subsequent company filings or official statements related to this disclosure." in all_text
+    # The DART-rumor-specific wording must never leak into an unrelated category.
+    assert "does not confirm that a transaction has occurred" not in all_text
+    assert "A formal company response or clarification" not in all_text
+
+
+def test_radar_inbox_analyst_view_edgar_omits_translation_line_when_not_requested(tmp_path):
+    _seed_edgar_ciks(tmp_path)
+    edgar_filing = FilingEvent(
+        rcept_no="0001045810-26-000099", corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA",
+        report_nm="8-K filing", rcept_dt="2026-08-12", flr_nm="NVIDIA", pblntf_ty="8-K", theme_slug="ai-buildout",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000099/",
+        retrieved_at=_now_iso(), source_name="SEC EDGAR", original_language="English", primary_document="nvda-8k.htm",
+    )
+    payload = {
+        "seen_keys": [f"SEC EDGAR:0001045810:{edgar_filing.rcept_no}"],
+        "filing_events": [
+            {
+                "rcept_no": edgar_filing.rcept_no, "corp_code": edgar_filing.corp_code, "corp_name": edgar_filing.corp_name,
+                "stock_code": edgar_filing.stock_code, "report_nm": edgar_filing.report_nm, "rcept_dt": edgar_filing.rcept_dt,
+                "flr_nm": edgar_filing.flr_nm, "pblntf_ty": edgar_filing.pblntf_ty, "pblntf_detail_ty": "",
+                "theme_slug": edgar_filing.theme_slug, "subtheme_slug": None, "source_url": edgar_filing.source_url,
+                "retrieved_at": edgar_filing.retrieved_at, "source_name": edgar_filing.source_name,
+                "original_language": edgar_filing.original_language, "is_demo": False,
+                "primary_document": edgar_filing.primary_document,
+            }
+        ],
+        "candidate_signals": [],
+    }
+    (tmp_path / "edgar_filing_events.json").write_text(json.dumps(payload), encoding="utf-8")
+
+    edgar_candidate = CandidateSignal(
+        id="edgar-cand-av-1", filing=edgar_filing,
+        matched_rules=["earnings_or_results:8-K item 2.02"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        translation_state=TranslationState.NOT_REQUESTED, excerpt_original="Item 2.02 Results of Operations. Revenue increased.",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {edgar_candidate.id: edgar_candidate}, "edgar_candidates.json")
+
+    settings = Settings(dart_api_key=None, translation_api_key=None, edgar_user_agent="EevaResearch test@example.com", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Analyst view" in all_text
+    assert "NVIDIA filed “8-K filing” with SEC EDGAR on 2026-08-12." in all_text
+    assert "Item 2.02 Results of Operations. Revenue increased." in all_text  # native excerpt still shown
+    # Requirement: the Analyst view's own translation-status line must not
+    # appear for a NOT_REQUESTED candidate (the pre-existing, unrelated
+    # "Translation state: Not requested" raw technical-detail row is fine
+    # and untouched — this only checks the new Evidence and provenance line).
+    assert "Machine translation: see below" not in all_text
+    assert "not currently available for this excerpt" not in all_text
+
+
+def test_radar_inbox_analyst_view_edinet_never_labels_a_code_match_as_a_keyword_match(tmp_path):
+    edinet_filing = FilingEvent(
+        rcept_no="S100YTEST", corp_code="E02778", corp_name="SoftBank Group Corp.", stock_code="99840",
+        report_nm="有価証券報告書－第46期(2025/04/01－2026/03/31)", rcept_dt="2026-06-22",
+        flr_nm="ソフトバンクグループ株式会社", pblntf_ty="030000", pblntf_detail_ty="120", ordinance_code="010",
+        theme_slug="ai-buildout", source_url="https://api.edinet-fsa.go.jp/api/v2/documents/S100YTEST",
+        retrieved_at=_now_iso(), source_name="EDINET", original_language="Japanese",
+    )
+    cache_dir = tmp_path
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    from dataclasses import asdict
+    edinet_payload = {
+        "seen_keys": [f"EDINET:{edinet_filing.corp_code}:{edinet_filing.rcept_no}"],
+        "filing_events": [asdict(edinet_filing)], "candidate_signals": [],
+    }
+    (cache_dir / "edinet_filing_events.json").write_text(json.dumps(edinet_payload, ensure_ascii=False), encoding="utf-8")
+
+    edinet_candidate = CandidateSignal(
+        id="edinet-cand-test-av", filing=edinet_filing,
+        matched_rules=["annual_securities_report:010:030000:120"], confidence="Moderate",
+        status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="有価証券報告書の記載内容です。",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(cache_dir, {edinet_candidate.id: edinet_candidate}, "edinet_candidates.json")
+
+    settings = Settings(
+        dart_api_key=None, translation_api_key=None, edgar_user_agent=None,
+        edinet_subscription_key="test-key", cache_dir=cache_dir,
+    )
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Analyst view" in all_text
+    # The new Analyst view section's own phrasing (precisely isolated —
+    # see test_analyst_view.py's own unit test for the exact contract):
+    # a routing-code match, correctly never called a keyword match.
+    assert "Annual securities report — matched by filing type/form code (010:030000:120)" in all_text
+    # Note: the separate, pre-existing "Why flagged:" list elsewhere on
+    # this same card still mislabels EDINET code matches as "keyword
+    # match" (radar_card.py's _why_flagged_phrases) — a real, known gap
+    # this task's scope did not include fixing. Not yet documented in
+    # design/DECISIONS.md.
+
+
 # --- View selector, pagination, filter simplification, translation copy,
 # and Data controls (usability/navigation-stability follow-up) ---
 

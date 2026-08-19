@@ -13,6 +13,7 @@ import streamlit as st
 
 from src.data_access.dart import dart_rules, retry_policy
 from src.models.models import CandidateSignal, CandidateStatus, FilingEvent
+from src.ui.components.analyst_view import render_analyst_view
 from src.ui.components.radar_status import (
     RadarItem,
     evidence_document_id_label,
@@ -221,6 +222,7 @@ def candidate_row(
                 _detail_row("Extraction state", candidate.extraction_state.value)
                 _detail_row("Translation state", candidate.translation_state.value)
                 _detail_row("Excerpt quality", candidate.excerpt_quality.value)
+                render_analyst_view(filing, candidate)
                 if candidate.excerpt_original:
                     st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Original-language excerpt</strong></div>', unsafe_allow_html=True)
                     st.markdown(f'<div>{candidate.excerpt_original}</div>', unsafe_allow_html=True)
