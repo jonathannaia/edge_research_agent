@@ -1,6 +1,55 @@
 [
   {
     "niche": "Space",
+    "headline": "Private mission to save NASA's Swift space telescope fails",
+    "summary": "A private spacecraft mission failed to boost the orbit of NASA's Swift Observatory, resulting in the telescope being expected to crash back to Earth later this year.",
+    "source_url": "https://www.space.com/space-exploration/missions/private-mission-to-save-nasas-swift-space-telescope-fails",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 20:15:01 +0000",
+    "retrieved_at": "2026-08-19T22:16:06+00:00",
+    "tickers": [],
+    "relevance_reason": "Article directly concerns a space mission failure involving NASA's Swift space telescope and its imminent orbital decay.",
+    "url_hash": "948f99af20f23707",
+    "id": "948f99af20f23707"
+  },
+  {
+    "niche": "Space",
+    "headline": "NASA TechLeap Prize: Orbital Clarity Challenge",
+    "summary": "NASA announced the Orbital Clarity Challenge, a competition within the NASA TechLeap Prize series designed to address space weather monitoring and orbital drag prediction caused by atmospheric changes during solar activity.",
+    "source_url": "https://www.nasa.gov/directorates/stmd/prizes-challenges-crowdsourcing-program/nasa-techleap-prize-orbital-clarity-challenge/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Wed, 19 Aug 2026 19:57:48 +0000",
+    "retrieved_at": "2026-08-19T22:15:57+00:00",
+    "tickers": [],
+    "relevance_reason": "NASA challenge directly focused on space weather monitoring and orbital dynamics, which are substantive space infrastructure concerns.",
+    "url_hash": "6fd5b3c5ca4ea9ce",
+    "id": "6fd5b3c5ca4ea9ce"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Kollmorgen to give a joint-by-joint guide to humanoid motion at RoboBusiness",
+    "summary": "Kollmorgen will present at RoboBusiness about the technical demands of different body zones in humanoid robots and the challenges of scaling humanoid production.",
+    "source_url": "https://www.therobotreport.com/kollmorgen-give-joint-by-joint-guide-humanoid-motion-robobusiness/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 20:15:47 +0000",
+    "retrieved_at": "2026-08-19T22:15:54+00:00",
+    "tickers": [
+      {
+        "ticker": "KLMN",
+        "company_name": "Kollmorgen",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly addresses humanoid robot motion and production challenges.",
+    "url_hash": "09125c89f1e61a02",
+    "id": "09125c89f1e61a02"
+  },
+  {
+    "niche": "Space",
     "headline": "Katalyst Space and NASA abandon plans for Swift reboost",
     "summary": "Katalyst Space and NASA have abandoned plans to use Katalyst's Link spacecraft to raise the orbit of NASA's Swift gamma-ray observatory due to attitude-control problems with the spacecraft.",
     "source_url": "https://spacenews.com/katalyst-space-and-nasa-abandon-plans-for-swift-reboost/",
