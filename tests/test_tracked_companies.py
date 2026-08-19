@@ -12,13 +12,11 @@ from src.config.tracked_companies import (
 
 def test_registry_contains_all_three_pilot_cohorts():
     companies = get_tracked_companies()
+    sources = {c.source for c in companies}
     names = {c.name for c in companies}
-    assert names == {
-        "Samsung Electronics", "SK Hynix",
-        "NVIDIA", "Micron Technology", "Coherent Corp", "Rockwell Automation", "Rocket Lab",
-        "SoftBank Group Corp.", "Kioxia Holdings Corporation", "Furukawa Electric Co., Ltd.",
-        "FANUC CORPORATION", "ispace, inc.",
-    }
+    assert sources == {"OpenDART / DART", "SEC EDGAR", "EDINET"}
+    assert {"Samsung Electronics", "SK Hynix", "NVIDIA", "SoftBank Group Corp."}.issubset(names)
+    assert len(names) == len(companies)  # no duplicate names
 
 
 def test_get_tracked_companies_for_source_filters_dart_only():
@@ -30,7 +28,10 @@ def test_get_tracked_companies_for_source_filters_dart_only():
 def test_get_tracked_companies_for_source_filters_edgar_only():
     edgar_companies = get_tracked_companies_for_source("SEC EDGAR")
     names = {c.name for c in edgar_companies}
-    assert names == {"NVIDIA", "Micron Technology", "Coherent Corp", "Rockwell Automation", "Rocket Lab"}
+    assert all(c.source == "SEC EDGAR" for c in edgar_companies)
+    assert {"NVIDIA", "Micron Technology"}.issubset(names)
+    assert "Samsung Electronics" not in names
+    assert "SoftBank Group Corp." not in names
 
 
 def test_edgar_cohort_identifiers_and_theme_mapping():

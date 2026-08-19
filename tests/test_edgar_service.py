@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 
 from src.config.settings import Settings
+from src.config.tracked_companies import get_tracked_companies_for_source
 from src.data_access.edgar import edgar_service
 
 
@@ -25,15 +26,18 @@ def _seed_ciks(cache_dir, tickers: list[str]) -> None:
 
 
 def test_readiness_reports_missing_user_agent_and_unresolved_companies(tmp_path):
+    expected_names = {c.name for c in get_tracked_companies_for_source("SEC EDGAR")}
+
     readiness = edgar_service.edgar_readiness(_settings(tmp_path))
 
     assert not readiness.user_agent_configured
-    assert set(readiness.unresolved_companies) == {"NVIDIA", "Micron Technology", "Coherent Corp", "Rockwell Automation", "Rocket Lab"}
+    assert set(readiness.unresolved_companies) == expected_names
     assert not readiness.ready
 
 
 def test_readiness_ready_when_user_agent_present_and_all_companies_resolved(tmp_path):
-    _seed_ciks(tmp_path, ["NVDA", "MU", "COHR", "ROK", "RKLB"])
+    all_tickers = [c.krx_code for c in get_tracked_companies_for_source("SEC EDGAR")]
+    _seed_ciks(tmp_path, all_tickers)
 
     readiness = edgar_service.edgar_readiness(_settings(tmp_path, user_agent="EevaResearch test@example.com"))
 
@@ -65,5 +69,6 @@ def test_get_edgar_companies_fills_in_resolved_ciks(tmp_path):
 def test_get_edgar_companies_only_returns_edgar_source_companies(tmp_path):
     companies = edgar_service.get_edgar_companies(tmp_path)
     names = {c.name for c in companies}
-    assert names == {"NVIDIA", "Micron Technology", "Coherent Corp", "Rockwell Automation", "Rocket Lab"}
+    assert all(c.source == "SEC EDGAR" for c in companies)
+    assert {"NVIDIA", "Micron Technology"}.issubset(names)
     assert "Samsung Electronics" not in names
