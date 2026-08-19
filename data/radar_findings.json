@@ -1,6 +1,61 @@
 [
   {
     "niche": "Space",
+    "headline": "Katalyst Space and NASA abandon plans for Swift reboost",
+    "summary": "Katalyst Space and NASA have abandoned plans to use Katalyst's Link spacecraft to raise the orbit of NASA's Swift gamma-ray observatory due to attitude-control problems with the spacecraft.",
+    "source_url": "https://spacenews.com/katalyst-space-and-nasa-abandon-plans-for-swift-reboost/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 19:23:06 +0000",
+    "retrieved_at": "2026-08-19T20:17:51+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly concerns space mission operations involving a spacecraft and NASA collaboration.",
+    "url_hash": "7ff6c422420e10ca",
+    "id": "7ff6c422420e10ca"
+  },
+  {
+    "niche": "Space",
+    "headline": "NASA Updates Next Steps for Commercial Swift Boost Mission",
+    "summary": "NASA and Katalyst Space announced that the LINK spacecraft will not proceed with a planned boost of NASA's Swift satellite due to an attitude control issue, though rendezvous and proximity operations will still be attempted.",
+    "source_url": "https://www.nasa.gov/news-release/nasa-updates-next-steps-for-commercial-swift-boost-mission/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Wed, 19 Aug 2026 18:08:25 +0000",
+    "retrieved_at": "2026-08-19T20:17:43+00:00",
+    "tickers": [
+      {
+        "ticker": "NASDAQ:KSPACE",
+        "company_name": "Katalyst Space",
+        "jurisdiction": "United States",
+        "verified": false
+      },
+      {
+        "ticker": "N/A",
+        "company_name": "United States National Aeronautics and Space Administration",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Article directly discusses a NASA space mission involving commercial spacecraft operations with an orbital satellite.",
+    "url_hash": "f9a8ee3717b52f99",
+    "id": "f9a8ee3717b52f99"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "What does Unitree Robotics’ IPO mean for the humanoid industry?",
+    "summary": "Unitree Robotics has completed its IPO, raising questions about which other humanoid robotics companies may pursue public listings.",
+    "source_url": "https://www.therobotreport.com/what-does-unitree-robotics-ipo-mean-for-humanoid-industry/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 18:01:43 +0000",
+    "retrieved_at": "2026-08-19T20:17:39+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses a humanoid robotics company's IPO and its implications for the humanoid industry.",
+    "url_hash": "39e61ef42fec865b",
+    "id": "39e61ef42fec865b"
+  },
+  {
+    "niche": "Space",
     "headline": "A SpaceX rocket slammed into the moon this month — and a NASA spacecraft has spotted its lunar grave (photos)",
     "summary": "NASA's Lunar Reconnaissance Orbiter spotted a crater approximately 60 feet wide on the moon created by a SpaceX rocket that impacted on August 5.",
     "source_url": "https://www.space.com/astronomy/moon/a-spacex-rocket-slammed-into-the-moon-this-month-and-a-nasa-spacecraft-has-spotted-its-lunar-grave-photos",
