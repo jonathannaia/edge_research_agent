@@ -1,6 +1,123 @@
 [
   {
     "niche": "Space",
+    "headline": "The space industry’s next challenge: supply chain resilience",
+    "summary": "America's space economy is expanding faster than its industrial base can support, driven by growing commercial constellations, distributed national security architectures, and expanding civil missions.",
+    "source_url": "https://spacenews.com/the-space-industrys-next-challenge-supply-chain-resilience/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 13:00:00 +0000",
+    "retrieved_at": "2026-08-19T14:24:35+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses supply chain challenges as the space industry scales, directly addressing space industry infrastructure and operational needs.",
+    "url_hash": "b7ab53d61363e040",
+    "id": "b7ab53d61363e040"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Serve Robotics to deploy its autonomous delivery robots with Grubhub",
+    "summary": "Serve Robotics is deploying autonomous delivery robots in partnership with Grubhub across more than 100 merchants in Chicago and nearly 200 in Los Angeles.",
+    "source_url": "https://www.therobotreport.com/serve-robotics-deploys-autonomous-delivery-robots-grubhub/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 13:55:30 +0000",
+    "retrieved_at": "2026-08-19T14:24:26+00:00",
+    "tickers": [
+      {
+        "ticker": "SERV",
+        "company_name": "Serve Robotics",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Autonomous delivery robots represent robotics automation, which falls within the Humanoids scope.",
+    "url_hash": "469597a7e5807ffa",
+    "id": "469597a7e5807ffa"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Nvidia Backs OpenAI’s Ohio Data Center Buildout With $105B Guarantee",
+    "summary": "Nvidia is providing $105B in financial backing for OpenAI's Ohio data center project, with the guarantee tied to long-term infrastructure and residual hardware values.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-construction/nvidia-backs-openai-s-ohio-data-center-buildout-with-105b-guarantee",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 13:44:35 GMT",
+    "retrieved_at": "2026-08-19T14:24:19+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "OPENAI",
+        "company_name": "OpenAI",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly concerns hyperscaler capex and GPU supply chain commitments for AI infrastructure buildout.",
+    "url_hash": "9bc80a24a6539bc9",
+    "id": "9bc80a24a6539bc9"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "House Bill Would Put Federal Electricity Tax On Data Centers",
+    "summary": "H.R. 10102 proposes a 1 cent per kWh federal electricity tax on data centers, expected to generate $1.76 billion annually for housing, conservation and infrastructure programs.",
+    "source_url": "https://www.datacenterknowledge.com/regulations/house-bill-would-put-federal-electricity-tax-on-data-centers",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 14:03:01 GMT",
+    "retrieved_at": "2026-08-19T14:24:17+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses federal policy affecting data center electricity costs, which is core to AI infrastructure buildout economics.",
+    "url_hash": "b89533b174c3276e",
+    "id": "b89533b174c3276e"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Trane and Eaton tout integrated designs for AI data center power and cooling systems",
+    "summary": "Trane and Eaton are showcasing integrated designs for AI data center power and cooling systems, with vendors claiming significant cost savings for digital infrastructure operators.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/trane-and-eaton-tout-integrated-designs-for-ai-data-center-power-and-cooling-systems/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 12:30:34 +0000",
+    "retrieved_at": "2026-08-19T14:24:13+00:00",
+    "tickers": [
+      {
+        "ticker": "TT",
+        "company_name": "Trane Technologies",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "ETN",
+        "company_name": "Eaton Corporation",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Article discusses integrated power and cooling system designs specifically for AI data centers, which is core to AI infrastructure buildout.",
+    "url_hash": "00b6b595b72750df",
+    "id": "00b6b595b72750df"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "UAE's Mubadala considers investing in 500MW Bitgrit & S2 data center in Akita, Japan",
+    "summary": "UAE's Mubadala is considering investing in a 500MW data center in Akita, Japan operated by Bitgrit and S2, with a smaller 1.5MW deployment expected next year.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/uaes-mubadala-considers-investing-in-500mw-bitgrit-s2-data-center-in-akita-japan/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 13:00:54 +0000",
+    "retrieved_at": "2026-08-19T14:24:12+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses a significant data center investment project directly related to AI infrastructure buildout.",
+    "url_hash": "be5291ef7dd717ab",
+    "id": "be5291ef7dd717ab"
+  },
+  {
+    "niche": "Space",
     "headline": "Firefly Aerospace to fly Zeno Power radioisotope heating unit on lunar lander mission",
     "summary": "Firefly Aerospace will carry a radioisotope heating unit from Zeno Power on an upcoming lunar lander mission to test technology for surviving the lunar night.",
     "source_url": "https://spacenews.com/firefly-aerospace-to-fly-zeno-power-radioisotope-heating-unit-on-lunar-lander-mission/",
