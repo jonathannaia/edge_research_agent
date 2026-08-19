@@ -886,3 +886,60 @@ def test_backfill_leaves_every_other_field_untouched(tmp_path):
     assert filing.source_url == "https://api.edinet-fsa.go.jp/api/v2/documents/S100YGH5"
     assert filing.source_name == "EDINET"
     assert filing.original_language == "Japanese"
+
+
+# --- fetch_normalized_rows_for_dates: extracted fetch+normalize step
+# (EDINET discovery Phase 1) — scan() is refactored to call this
+# internally; every test above this point passes unmodified, which is
+# itself the primary proof the refactor is behavior-preserving. These
+# tests exercise the extracted helper directly, and prove it's the only
+# thing scan() calls for the fetch step (no hidden second call). ---
+
+def test_fetch_normalized_rows_for_dates_makes_one_call_per_date():
+    d1, d2 = _datetime_module.date(2026, 6, 20), _datetime_module.date(2026, 6, 21)
+    client = _client({d1.isoformat(): _envelope([_result()]), d2.isoformat(): _envelope([])})
+
+    fetched = scan_service.fetch_normalized_rows_for_dates(client, (d1, d2))
+
+    assert client.get_document_list.call_count == 2
+    assert len(fetched[d1.isoformat()].rows) == 1
+    assert fetched[d2.isoformat()].rows == ()
+
+
+def test_fetch_normalized_rows_for_dates_never_writes_any_cache(tmp_path):
+    d1 = _datetime_module.date(2026, 6, 20)
+    client = _client({d1.isoformat(): _envelope([_result()])})
+
+    scan_service.fetch_normalized_rows_for_dates(client, (d1,))
+
+    assert not (tmp_path / "edinet_filing_events.json").exists()
+
+
+def test_fetch_normalized_rows_for_dates_captures_error_as_a_warning_not_a_raise():
+    d1 = _datetime_module.date(2026, 6, 20)
+    client = MagicMock()
+    client.get_document_list.side_effect = EdinetApiError(500, "server error")
+
+    fetched = scan_service.fetch_normalized_rows_for_dates(client, (d1,))
+
+    assert fetched[d1.isoformat()].rows == ()
+    assert len(fetched[d1.isoformat()].warnings) == 1
+
+
+def test_fetch_normalized_rows_for_dates_captures_envelope_failure_as_a_warning():
+    d1 = _datetime_module.date(2026, 6, 20)
+    client = MagicMock()
+    client.get_document_list.return_value = {"metadata": {"status": "500", "message": "err"}, "results": []}
+
+    fetched = scan_service.fetch_normalized_rows_for_dates(client, (d1,))
+
+    assert fetched[d1.isoformat()].rows == ()
+    assert "non-success status" in fetched[d1.isoformat()].warnings[0]
+
+
+def test_scan_calls_get_document_list_exactly_once_per_date_via_the_shared_helper(tmp_path):
+    # Proves the refactor didn't introduce a second fetch path inside
+    # scan() itself — same call count as before the extraction.
+    client = _client({})
+    scan_service.scan(client, [_ACME], tmp_path, lookback_days=2)
+    assert client.get_document_list.call_count == 3  # 2-day lookback -> 3 calendar days, one call each

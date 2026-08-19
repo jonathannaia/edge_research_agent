@@ -337,3 +337,80 @@ def test_resolve_and_cache_preserves_previously_resolved_codes_across_runs(tmp_p
 
     assert "9984" in second.resolved
     assert "6954" in second.resolved
+
+
+# --- resolve_edinet_codes_by_code: additive, discovery-only sibling of
+# resolve_and_cache — reverse direction (edinet_code -> name), separate
+# cache file. Every test below uses this file's existing fixtures
+# unchanged (_zip_csv, _sample_csv, _client, _ISSUERS). ---
+
+def test_resolve_edinet_codes_by_code_resolves_by_edinet_code_not_securities_code(tmp_path):
+    client = _client(_zip_csv(_sample_csv()))
+
+    result = edinet_code_resolver.resolve_edinet_codes_by_code(client, ["E02778", "E37584"], tmp_path)
+
+    assert result.error is None
+    assert result.resolved["E02778"].filer_name_en == "SoftBank Group Corp."
+    assert result.resolved["E02778"].securities_code == "99840"
+    assert result.resolved["E37584"].filer_name == "株式会社ｉｓｐａｃｅ"
+    assert result.resolved["E37584"].filer_name_en == ""  # ispace, real observed blank field
+
+
+def test_resolve_edinet_codes_by_code_reports_missing_codes(tmp_path):
+    client = _client(_zip_csv(_sample_csv()))
+
+    result = edinet_code_resolver.resolve_edinet_codes_by_code(client, ["E00000"], tmp_path)
+
+    assert result.missing_codes == ("E00000",)
+    assert "E00000" not in result.resolved
+
+
+def test_resolve_edinet_codes_by_code_reports_ambiguous_codes_without_guessing(tmp_path):
+    duplicated = _ISSUERS + [("E02778", "12340", "別会社", "Different Co.")]  # same edinet_code as SoftBank
+    client = _client(_zip_csv(_sample_csv(issuers=duplicated)))
+
+    result = edinet_code_resolver.resolve_edinet_codes_by_code(client, ["E02778"], tmp_path)
+
+    assert result.ambiguous_codes == ("E02778",)
+    assert "E02778" not in result.resolved
+
+
+def test_resolve_edinet_codes_by_code_never_raises_on_client_error(tmp_path):
+    client = _client(EdinetError("boom"))
+
+    result = edinet_code_resolver.resolve_edinet_codes_by_code(client, ["E02778"], tmp_path)
+
+    assert result.error == "boom"
+    assert result.missing_codes == ("E02778",)
+
+
+def test_resolve_edinet_codes_by_code_persists_to_its_own_cache_file(tmp_path):
+    client = _client(_zip_csv(_sample_csv()))
+    edinet_code_resolver.resolve_edinet_codes_by_code(client, ["E02778"], tmp_path)
+
+    assert (tmp_path / "edinet_discovery_codes.json").exists()
+    assert not (tmp_path / "edinet_codes.json").exists()
+
+    cached = edinet_code_resolver.load_cached_discovery_codes(tmp_path)
+    assert cached["E02778"].edinet_code == "E02778"
+
+
+def test_resolve_edinet_codes_by_code_does_not_affect_resolve_and_caches_own_cache(tmp_path):
+    client = _client(_zip_csv(_sample_csv()))
+    edinet_code_resolver.resolve_and_cache(client, ["9984"], tmp_path)
+    before = (tmp_path / "edinet_codes.json").read_text(encoding="utf-8")
+
+    edinet_code_resolver.resolve_edinet_codes_by_code(client, ["E01946"], tmp_path)
+
+    after = (tmp_path / "edinet_codes.json").read_text(encoding="utf-8")
+    assert after == before  # byte-identical — the new function never touches this file
+    assert "E01946" not in edinet_code_resolver.load_cached_codes(tmp_path)  # only in the discovery cache
+
+
+def test_load_cached_discovery_codes_empty_when_no_cache(tmp_path):
+    assert edinet_code_resolver.load_cached_discovery_codes(tmp_path) == {}
+
+
+def test_load_cached_discovery_codes_tolerates_corrupt_cache_file(tmp_path):
+    (tmp_path / "edinet_discovery_codes.json").write_text("{not valid json", encoding="utf-8")
+    assert edinet_code_resolver.load_cached_discovery_codes(tmp_path) == {}

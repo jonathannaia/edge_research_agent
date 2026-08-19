@@ -90,6 +90,16 @@ def _iter_dates(begin: date, end: date) -> list[date]:
 
 
 @dataclass(frozen=True)
+class NormalizedDayResult:
+    """One date's fetch+normalize outcome — rows before any tracked-
+    company matching, dedup, or cache write. See
+    fetch_normalized_rows_for_dates."""
+
+    rows: tuple[dict, ...]
+    warnings: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class ScanScope:
     bgn_date: str
     end_date: str
@@ -224,6 +234,36 @@ def dedup_key(edinet_code: str, doc_id: str) -> str:
     """source + EDINET code + docID — EDINET's own native identifiers,
     never title, date, or type code alone."""
     return f"{_SOURCE_LABEL}:{edinet_code}:{doc_id}"
+
+
+def fetch_normalized_rows_for_dates(client: EdinetClient, dates: tuple[date, ...]) -> dict[str, NormalizedDayResult]:
+    """The fetch+normalize step, extracted verbatim from scan()'s own
+    per-day loop body so a second, independent caller (the EDINET
+    discovery path — src/data_access/edinet/discovery_service.py) can
+    reuse the identical one-call-per-date fetch/normalize path without
+    duplicating it or inlining a second implementation. scan() itself is
+    refactored to call this internally; its own signature, return type,
+    and behavior are unchanged (see scan()'s own docstring and this
+    module's test suite, which passes unmodified against the refactor).
+
+    One client.get_document_list call per date, in order. A date whose
+    request raises EdinetError, or whose response fails
+    normalize_document_list's envelope validation, has its message
+    recorded in that date's own `warnings` — never raised — matching
+    scan()'s pre-existing per-day fail-and-continue discipline exactly.
+    No cache read, no cache write, no company matching, no
+    FilingEvent/CandidateSignal creation."""
+    results: dict[str, NormalizedDayResult] = {}
+    for day in dates:
+        day_key = day.isoformat()
+        try:
+            payload = client.get_document_list(day_key)
+        except EdinetError as exc:
+            results[day_key] = NormalizedDayResult(rows=(), warnings=(str(exc),))
+            continue
+        rows, warnings = normalize_document_list(payload)
+        results[day_key] = NormalizedDayResult(rows=tuple(rows), warnings=warnings)
+    return results
 
 
 _DEFAULT_STATUS_VALUES = frozenset({None, "", "0"})
@@ -400,18 +440,13 @@ def scan(
     errors: list[str] = []
     companies_with_data: set[str] = set()
 
+    fetched = fetch_normalized_rows_for_dates(client, query_dates)
     for day in query_dates:
-        try:
-            payload = client.get_document_list(day.isoformat())
-        except EdinetError as exc:
-            errors.append(f"{day.isoformat()}: {exc}")
-            continue
-
-        rows, warnings = normalize_document_list(payload)
-        for warning in warnings:
+        day_result = fetched[day.isoformat()]
+        for warning in day_result.warnings:
             errors.append(f"{day.isoformat()}: {warning}")
 
-        for row in rows:
+        for row in day_result.rows:
             company = by_edinet_code.get(row.get("edinetCode", ""))
             if company is None:
                 continue

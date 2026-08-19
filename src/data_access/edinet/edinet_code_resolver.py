@@ -319,3 +319,104 @@ def resolve_and_cache(
 
     _save_cache(cache_dir, resolved)
     return CodeResolutionResult(resolved=resolved, missing_codes=tuple(missing), ambiguous_codes=tuple(ambiguous))
+
+
+# --- Additive, discovery-only sibling below. Reuses _extract_csv_text /
+# parse_code_list_csv / EdinetCodeEntry / CodeResolutionResult /
+# PROVISIONAL_CODE_LIST_URL / DEFAULT_CODE_LIST_COLUMN_MAP / _SOURCE_LABEL
+# unchanged. Every function above this point is untouched by this
+# addition — same signatures, same behavior, same edinet_codes.json cache.
+
+_DISCOVERY_CACHE_FILENAME = "edinet_discovery_codes.json"
+
+
+def _discovery_cache_path(cache_dir: Path) -> Path:
+    return cache_dir / _DISCOVERY_CACHE_FILENAME
+
+
+def load_cached_discovery_codes(cache_dir: Path) -> dict[str, EdinetCodeEntry]:
+    """Same shape/discipline as load_cached_codes, but reads the separate
+    edinet_discovery_codes.json store used only by
+    resolve_edinet_codes_by_code() — never edinet_codes.json, so this can
+    never collide with or mutate the tracked pipeline's own resolver
+    cache."""
+    path = _discovery_cache_path(cache_dir)
+    if not path.exists():
+        return {}
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    required_keys = {
+        "edinet_code", "securities_code", "filer_name", "filer_name_en",
+        "filer_corporate_number", "source", "retrieved_at",
+    }
+    return {
+        code: EdinetCodeEntry(**record)
+        for code, record in raw.items()
+        if isinstance(record, dict) and required_keys <= record.keys()
+    }
+
+
+def _save_discovery_cache(cache_dir: Path, resolved: dict[str, EdinetCodeEntry]) -> None:
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    payload = {code: record.__dict__ for code, record in resolved.items()}
+    _discovery_cache_path(cache_dir).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def resolve_edinet_codes_by_code(
+    client: EdinetClient,
+    edinet_codes: list[str],
+    cache_dir: Path,
+    code_list_url: str = PROVISIONAL_CODE_LIST_URL,
+    column_map: dict[str, str] = DEFAULT_CODE_LIST_COLUMN_MAP,
+) -> CodeResolutionResult:
+    """Reverse-direction sibling of resolve_and_cache(): resolves a list
+    of EDINET codes (e.g. "E12345") directly against the same code-list
+    artifact, indexed by the list's own edinet_code column instead of
+    securities_code — the direction resolve_and_cache() doesn't support.
+    Used only by src/data_access/edinet/discovery_service.py, for
+    company-name resolution of filers not in tracked_companies.py. Writes
+    to its own edinet_discovery_codes.json; never reads or writes
+    edinet_codes.json or touches resolve_and_cache()'s behavior in any
+    way. Same never-guess discipline: a code matching zero or more than
+    one real row is reported in `missing_codes`/`ambiguous_codes`, never
+    silently resolved."""
+    existing = load_cached_discovery_codes(cache_dir)
+    try:
+        zip_bytes = client.fetch_code_list(code_list_url)
+        csv_text = _extract_csv_text(zip_bytes)
+    except EdinetError as exc:
+        return CodeResolutionResult(resolved=existing, missing_codes=tuple(edinet_codes), error=str(exc))
+
+    rows, warnings = parse_code_list_csv(csv_text, column_map)
+    if not rows and warnings:
+        return CodeResolutionResult(resolved=existing, missing_codes=tuple(edinet_codes), error="; ".join(warnings))
+
+    by_edinet_code: dict[str, list[dict[str, str]]] = {}
+    for row in rows:
+        by_edinet_code.setdefault(row["edinet_code"], []).append(row)
+
+    now = datetime.now(timezone.utc).isoformat()
+    resolved = dict(existing)
+    missing: list[str] = []
+    ambiguous: list[str] = []
+
+    for input_code in edinet_codes:
+        matches = by_edinet_code.get(input_code.strip().upper(), [])
+        if len(matches) == 0:
+            missing.append(input_code)
+            continue
+        if len(matches) > 1:
+            ambiguous.append(input_code)
+            continue
+        row = matches[0]
+        resolved[input_code] = EdinetCodeEntry(
+            edinet_code=row["edinet_code"], securities_code=row["securities_code"],
+            filer_name=row["filer_name"], filer_name_en=row.get("filer_name_en", ""),
+            filer_corporate_number=row.get("filer_corporate_number", ""),
+            source=_SOURCE_LABEL, retrieved_at=now,
+        )
+
+    _save_discovery_cache(cache_dir, resolved)
+    return CodeResolutionResult(resolved=resolved, missing_codes=tuple(missing), ambiguous_codes=tuple(ambiguous))
