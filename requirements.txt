@@ -7,3 +7,9 @@ requests>=2.31,<3.0
 # EDINET-specific seam. No OCR, no external binaries, no browser
 # automation, no Java. Not used by DART or EDGAR, which never handle PDF.
 pypdf>=6.0,<7.0
+# R2 remote-cache sync (dormant infrastructure, see
+# src/data_access/remote_cache/) — only used by r2_client.py's lazy
+# `import boto3` inside build_r2_client(); nothing else in this repo
+# imports it, and no test requires it installed (tests inject an
+# ObjectStorageClient fake instead of building a real client).
+boto3>=1.34,<2.0

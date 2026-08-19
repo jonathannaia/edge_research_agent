@@ -69,6 +69,22 @@ class Settings:
     # src/ui/beta_gate.py); no identity/sign-in exists yet this phase.
     private_beta_auth_enabled: bool = field(default_factory=lambda: _parse_beta_auth_enabled("EDGE_PRIVATE_BETA_AUTH_ENABLED"))
     private_beta_allowed_emails: frozenset[str] = field(default_factory=lambda: _parse_beta_allowed_emails("EDGE_PRIVATE_BETA_ALLOWED_EMAILS"))
+    # R2 remote-cache sync (dormant infrastructure — see
+    # src/data_access/remote_cache/ — nothing in the app reads/writes
+    # through these yet). Disabled by default so every existing page and
+    # pipeline keeps working with no configuration at all. None means
+    # unconfigured for each individual field; remote_cache_available()
+    # requires r2_endpoint/r2_access_key_id/r2_secret_access_key/r2_bucket
+    # to all be present (r2_account_id is optional metadata only — see
+    # r2_client.py's r2_settings_complete()), never a partial config of
+    # the four required fields. Never logged/printed/exposed — only ever
+    # checked for presence, same discipline as dart_api_key/edgar_user_agent above.
+    remote_cache_enabled: bool = field(default_factory=lambda: _parse_beta_auth_enabled("EDGE_REMOTE_CACHE_ENABLED"))
+    r2_account_id: str | None = field(default_factory=lambda: os.getenv("EDGE_R2_ACCOUNT_ID") or None)
+    r2_access_key_id: str | None = field(default_factory=lambda: os.getenv("EDGE_R2_ACCESS_KEY_ID") or None)
+    r2_secret_access_key: str | None = field(default_factory=lambda: os.getenv("EDGE_R2_SECRET_ACCESS_KEY") or None)
+    r2_bucket: str | None = field(default_factory=lambda: os.getenv("EDGE_R2_BUCKET") or None)
+    r2_endpoint: str | None = field(default_factory=lambda: os.getenv("EDGE_R2_ENDPOINT") or None)
 
 
 def get_settings() -> Settings:
