@@ -214,14 +214,6 @@ def candidate_row(
         if candidate is not None:
             with st.expander("Details"):
                 _evidence_status_panel(filing, candidate)
-                st.markdown('<div class="er-muted" style="margin-top:0.6rem;"><strong>Technical detail</strong></div>', unsafe_allow_html=True)
-                _detail_row(evidence_document_id_label(filing.source_name), filing.rcept_no)
-                _detail_row("Filer", filing.flr_nm)
-                _detail_row("Filed", filing.rcept_dt)
-                _detail_row("Retrieved", filing.retrieved_at)
-                _detail_row("Extraction state", candidate.extraction_state.value)
-                _detail_row("Translation state", candidate.translation_state.value)
-                _detail_row("Excerpt quality", candidate.excerpt_quality.value)
                 render_analyst_view(filing, candidate)
                 if candidate.excerpt_original:
                     st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Original-language excerpt</strong></div>', unsafe_allow_html=True)
@@ -234,14 +226,25 @@ def candidate_row(
                         f'{candidate.excerpt_translation.provider} · English translation · translated at {candidate.excerpt_translation.translated_at}</div>',
                         unsafe_allow_html=True,
                     )
-                if candidate.state_history:
-                    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>State history</strong></div>', unsafe_allow_html=True)
-                    for transition in candidate.state_history:
-                        detail = f" — {transition.detail}" if transition.detail else ""
-                        st.markdown(
-                            f'<div class="er-muted" style="margin-left:0.8rem;">{transition.at} · {transition.status.value}{detail}</div>',
-                            unsafe_allow_html=True,
-                        )
+                # Developer-facing detail — extraction mechanics, cache/
+                # pipeline state, audit trail — relocated here, not
+                # removed, per the approved Phase 1 UI reorganization.
+                with st.expander("Technical details"):
+                    _detail_row(evidence_document_id_label(filing.source_name), filing.rcept_no)
+                    _detail_row("Filer", filing.flr_nm)
+                    _detail_row("Filed", filing.rcept_dt)
+                    _detail_row("Retrieved", filing.retrieved_at)
+                    _detail_row("Extraction state", candidate.extraction_state.value)
+                    _detail_row("Translation state", candidate.translation_state.value)
+                    _detail_row("Excerpt quality", candidate.excerpt_quality.value)
+                    if candidate.state_history:
+                        st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>State history</strong></div>', unsafe_allow_html=True)
+                        for transition in candidate.state_history:
+                            detail = f" — {transition.detail}" if transition.detail else ""
+                            st.markdown(
+                                f'<div class="er-muted" style="margin-left:0.8rem;">{transition.at} · {transition.status.value}{detail}</div>',
+                                unsafe_allow_html=True,
+                            )
         else:
             with st.expander("Details"):
                 _evidence_status_panel(filing, None)
