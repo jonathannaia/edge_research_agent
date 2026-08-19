@@ -498,7 +498,7 @@ def test_radar_inbox_analyst_view_renders_for_dart_market_rumor_response_candida
         matched_rules=["market_rumor_response:rumor_inquiry_or_response:풍문또는보도"],
         confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
         translation_state=TranslationState.TRANSLATED,
-        excerpt_original="한국거래소의조회공시요구에대한답변으로,보도된내용에대해확인된바없습니다.",
+        excerpt_original="한국거래소의조회공시요구에대한답변으로,보도된내용에대해확인된바없습니다. 향후확인되는대로재공시하겠습니다.",
         excerpt_translation=Translation(
             translated_text="In response to the exchange's disclosure inquiry, nothing has been confirmed regarding the reported content.",
             provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
@@ -514,22 +514,31 @@ def test_radar_inbox_analyst_view_renders_for_dart_market_rumor_response_candida
 
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
-    assert "Analyst view" in all_text
-    # 1. Source facts — deterministic, structured-fields-only sentence.
+    assert "Filing overview" in all_text
+    assert "Phase 1" in all_text
+    assert "Not a substantive summary of the filing text." in all_text
+    # 1. What happened — deterministic, structured-fields-only sentence,
+    # plus the plain-English restatement of why Radar flagged it.
+    assert "What happened" in all_text
     assert "SK Hynix filed “조회공시요구(풍문또는보도)에대한답변(미확정)” with OpenDART / DART on 20260812." in all_text
+    assert "Radar flagged this filing because:" in all_text
+    assert "matched keyword “풍문또는보도”" in all_text
     assert "Open original filing" in all_text
-    # 2. What is unconfirmed — the exact required wording.
+    # 2. What remains uncertain — the exact required wording, plus the
+    # follow-up checklist merged into the same section.
+    assert "What remains uncertain" in all_text
     assert (
         "This filing is a disclosure inquiry or response about reported information. "
         "It does not confirm that a transaction has occurred." in all_text
     )
-    # 3. Why it entered Radar — native keyword preserved, labeled a keyword match.
-    assert "matched keyword “풍문또는보도”" in all_text
-    # 4. Follow-up evidence to watch — the exact three-item checklist.
+    assert "Watch for:" in all_text
     assert "A formal company response or clarification" in all_text
     assert "A subsequent filing that confirms or denies the reported matter" in all_text
     assert "An amendment or related disclosure" in all_text
-    # 5. Evidence and provenance — native text + translation still visible,
+    # 3. Why it matters — the one real hand-written template for this category.
+    assert "Why it matters" in all_text
+    assert "This may matter because it is a company's formal response to reported information" in all_text
+    # 4. Evidence and provenance — native text + translation still visible,
     # nothing invented (no amount/counterparty this fixture never stated).
     assert "한국거래소의조회공시요구에대한답변" in all_text  # native excerpt still rendered below
     assert "nothing has been confirmed" in all_text  # translation still rendered below
@@ -540,6 +549,9 @@ def test_radar_inbox_analyst_view_renders_for_dart_market_rumor_response_candida
     assert "Fact" in all_text
     assert "Uncertainty" in all_text
     assert "Interpretation" in all_text
+    # Technical details relocated, not deleted.
+    assert "Technical details" in [e.label for e in at.expander]
+    assert "State history" in all_text
 
 
 def test_radar_inbox_analyst_view_absent_for_deferred_and_failed_candidates(tmp_path):
@@ -566,7 +578,8 @@ def test_radar_inbox_analyst_view_absent_for_deferred_and_failed_candidates(tmp_
 
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
-    assert "Analyst view" not in all_text
+    assert "Filing overview" not in all_text
+    assert "What happened" not in all_text
 
 
 def test_radar_inbox_analyst_view_unknown_category_uses_exact_fallback_wording(tmp_path):
@@ -577,7 +590,7 @@ def test_radar_inbox_analyst_view_unknown_category_uses_exact_fallback_wording(t
         id="cand-capex-av", filing=capex_filing,
         matched_rules=["capex_or_facility_investment:facility_investment:신규시설투자"],
         confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
-        excerpt_original="신규시설투자관련공시내용입니다.",
+        excerpt_original="신규시설투자관련공시내용입니다. 투자금액및목적등자세한사항은첨부서류를참고하시기바랍니다.",
         state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {capex_candidate.id: capex_candidate})
@@ -589,7 +602,8 @@ def test_radar_inbox_analyst_view_unknown_category_uses_exact_fallback_wording(t
 
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
-    assert "Analyst view" in all_text
+    assert "Filing overview" in all_text
+    assert "What remains uncertain" in all_text
     assert (
         "This filing type has no specific uncertainty template yet. "
         "Read the source excerpt directly before drawing conclusions." in all_text
@@ -598,6 +612,8 @@ def test_radar_inbox_analyst_view_unknown_category_uses_exact_fallback_wording(t
     # The DART-rumor-specific wording must never leak into an unrelated category.
     assert "does not confirm that a transaction has occurred" not in all_text
     assert "A formal company response or clarification" not in all_text
+    # "Why it matters" only exists for market_rumor_response — absent here.
+    assert "Why it matters" not in all_text
 
 
 def test_radar_inbox_analyst_view_edgar_omits_translation_line_when_not_requested(tmp_path):
@@ -629,7 +645,13 @@ def test_radar_inbox_analyst_view_edgar_omits_translation_line_when_not_requeste
         id="edgar-cand-av-1", filing=edgar_filing,
         matched_rules=["earnings_or_results:8-K item 2.02"], confidence="Moderate",
         status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
-        translation_state=TranslationState.NOT_REQUESTED, excerpt_original="Item 2.02 Results of Operations. Revenue increased.",
+        translation_state=TranslationState.NOT_REQUESTED,
+        # excerpt_quality deliberately left at its default (UNKNOWN) — real
+        # EDGAR candidates never have this field set at all (confirmed by
+        # grep; see analyst_view.py's module docstring). This is the exact
+        # regression case: a substantive excerpt must still render full
+        # "What happened" content based on length alone, not ExcerptQuality.
+        excerpt_original="Item 2.02 Results of Operations. Revenue increased.",
         state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {edgar_candidate.id: edgar_candidate}, "edgar_candidates.json")
@@ -641,7 +663,7 @@ def test_radar_inbox_analyst_view_edgar_omits_translation_line_when_not_requeste
 
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
-    assert "Analyst view" in all_text
+    assert "Filing overview" in all_text
     assert "NVIDIA filed “8-K filing” with SEC EDGAR on 2026-08-12." in all_text
     assert "Item 2.02 Results of Operations. Revenue increased." in all_text  # native excerpt still shown
     # Requirement: the Analyst view's own translation-status line must not
@@ -650,6 +672,8 @@ def test_radar_inbox_analyst_view_edgar_omits_translation_line_when_not_requeste
     # and untouched — this only checks the new Evidence and provenance line).
     assert "Machine translation: see below" not in all_text
     assert "not currently available for this excerpt" not in all_text
+    # EDGAR has no hand-written "Why it matters" template — never shown.
+    assert "Why it matters" not in all_text
 
 
 def test_radar_inbox_analyst_view_edinet_never_labels_a_code_match_as_a_keyword_match(tmp_path):
@@ -673,7 +697,7 @@ def test_radar_inbox_analyst_view_edinet_never_labels_a_code_match_as_a_keyword_
         id="edinet-cand-test-av", filing=edinet_filing,
         matched_rules=["annual_securities_report:010:030000:120"], confidence="Moderate",
         status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
-        excerpt_original="有価証券報告書の記載内容です。",
+        excerpt_original="有価証券報告書の記載内容です。事業の状況及び経理の状況について詳細に記載しております。",
         state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
     )
     candidate_store.save_candidates(cache_dir, {edinet_candidate.id: edinet_candidate}, "edinet_candidates.json")
@@ -688,7 +712,7 @@ def test_radar_inbox_analyst_view_edinet_never_labels_a_code_match_as_a_keyword_
 
     assert not at.exception
     all_text = " ".join(m.value for m in at.markdown)
-    assert "Analyst view" in all_text
+    assert "Filing overview" in all_text
     # The new Analyst view section's own phrasing (precisely isolated —
     # see test_analyst_view.py's own unit test for the exact contract):
     # a routing-code match, correctly never called a keyword match.
@@ -698,6 +722,135 @@ def test_radar_inbox_analyst_view_edinet_never_labels_a_code_match_as_a_keyword_
     # match" (radar_card.py's _why_flagged_phrases) — a real, known gap
     # this task's scope did not include fixing. Not yet documented in
     # design/DECISIONS.md.
+
+
+def test_radar_inbox_analyst_view_insufficient_excerpt_uses_exact_fallback_and_no_invented_content(tmp_path):
+    """Phase 1 "What happened" fallback — the excerpt is shorter than
+    _MIN_SUBSTANTIVE_EXCERPT_CHARS (40), so nothing beyond the exact
+    approved fallback sentence should appear; no keyword-match phrase, no
+    source-facts sentence, nothing invented. Length-based, not
+    ExcerptQuality — this candidate never sets excerpt_quality at all
+    (stays at its default), matching how EDGAR/EDINET candidates work in
+    real data."""
+    _seed_corp_codes(tmp_path)
+    thin_filing = _filing("20260812000104", "실적 발표")
+    _seed_filing_events(tmp_path, [thin_filing])
+    thin_candidate = CandidateSignal(
+        id="cand-thin-excerpt-av", filing=thin_filing,
+        matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="…",  # non-empty (passes should_render_analyst_view) but well under the 40-char floor
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {thin_candidate.id: thin_candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Filing overview" in all_text
+    assert "What happened" in all_text
+    assert (
+        "The filing was detected, but the available excerpt is not sufficient "
+        "to summarize the disclosure reliably. Read the original filing." in all_text
+    )
+    # No structured-facts sentence or keyword-match phrase — those are
+    # gated on the length threshold only.
+    assert "filed “실적 발표”" not in all_text
+    assert "Radar flagged this filing because:" not in all_text
+    # The source link is still offered even when the excerpt is thin.
+    assert "Open original filing" in all_text
+
+
+def test_radar_inbox_analyst_view_excerpt_at_exact_threshold_boundary(tmp_path):
+    """Boundary check on the approved constant itself: exactly
+    _MIN_SUBSTANTIVE_EXCERPT_CHARS (40) chars renders full content; one
+    character short falls back. Proves the gate is length, not
+    ExcerptQuality (never set on either candidate here)."""
+    _seed_corp_codes(tmp_path)
+    at_threshold_filing = _filing("20260812000106", "실적 발표")
+    one_under_filing = _filing("20260812000107", "실적 발표")
+    _seed_filing_events(tmp_path, [at_threshold_filing, one_under_filing])
+    exactly_40 = "x" * 40
+    one_under_40 = "x" * 39
+    assert len(exactly_40) == 40
+    assert len(one_under_40) == 39
+    at_threshold_candidate = CandidateSignal(
+        id="cand-at-threshold-av", filing=at_threshold_filing,
+        matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original=exactly_40,
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    one_under_candidate = CandidateSignal(
+        id="cand-one-under-av", filing=one_under_filing,
+        matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original=one_under_40,
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(
+        tmp_path, {at_threshold_candidate.id: at_threshold_candidate, one_under_candidate.id: one_under_candidate},
+    )
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    # The at-threshold candidate gets full content (structured-facts
+    # sentence); the one-under candidate gets only the fallback sentence.
+    # Both share the same filing title, so we assert via the distinctive
+    # "Radar flagged this filing because:" marker's total count instead
+    # of the (identical, non-distinguishing) source-facts sentence text.
+    assert all_text.count("Radar flagged this filing because:") == 1
+
+
+def test_radar_inbox_technical_details_expander_preserves_relocated_fields(tmp_path):
+    """Confirms the reorganization moved developer-facing fields into a
+    nested, collapsed expander rather than deleting them — the outer
+    "Details" expander and the inner "Technical details" expander both
+    exist, and every relocated field is still present somewhere in the
+    rendered output."""
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000105", "일반 공고")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = CandidateSignal(
+        id="cand-tech-details-av", filing=filing, matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="본문 발췌.",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso(), detail="Extraction succeeded.")],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+    assert not at.exception
+    expander_labels = [e.label for e in at.expander]
+    assert "Details" in expander_labels
+    assert "Technical details" in expander_labels
+
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Filer:" in all_text
+    assert "Filed:" in all_text
+    assert "Retrieved:" in all_text
+    assert "Extraction state:" in all_text
+    assert "Translation state:" in all_text
+    assert "Excerpt quality:" in all_text
+    assert "State history" in all_text
+    assert "Extraction succeeded." in all_text
+    # Evidence status and the original excerpt stay outside/alongside the
+    # collapsed technical section, not inside it — still present either way.
+    assert "Evidence status" in all_text
+    assert "본문 발췌." in all_text
 
 
 # --- View selector, pagination, filter simplification, translation copy,

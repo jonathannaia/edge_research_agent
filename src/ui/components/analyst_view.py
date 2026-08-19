@@ -1,13 +1,23 @@
-"""Analyst view — the first structured, human-readable section inside a
-processed Radar candidate's "Details," built on the real DART/SK Hynix
-processed filing that proved the underlying pipeline works (see
-design/DECISIONS.md). Every sentence here is either copied verbatim from
-a structured FilingEvent field or selected from a small, hand-reviewed
-template table keyed by the candidate's own matched category — never
-generated, never a guess, never a market judgment, price target, rating,
-or action recommendation. Reuses this app's existing Fact/Interpretation/
-Inference/Uncertainty vocabulary (evidence_chips.py) rather than inventing
-a new one.
+"""Filing overview — Phase 1, "evidence-first filing overview": the first
+structured, human-readable section inside a processed Radar candidate's
+"Details," built on the real DART/SK Hynix processed filing that proved
+the underlying pipeline works (see design/DECISIONS.md). Every sentence
+here is either copied verbatim from a structured FilingEvent field or
+selected from a small, hand-reviewed template table keyed by the
+candidate's own matched category — never generated, never a guess, never
+a market judgment, price target, rating, or action recommendation.
+Reuses this app's existing Fact/Interpretation/Inference/Uncertainty
+vocabulary (evidence_chips.py) rather than inventing a new one.
+
+Phase 1 explicitly does NOT read or summarize the excerpt's own content —
+it states filing metadata (issuer, title, source, date) and the matched
+category/keyword only. It must never be presented as, or mistaken for, a
+substantive summary of what the filing text actually says — that is
+Phase 2 (a separate, not-yet-approved task: an evidence-grounded
+substantive summary from the extracted filing text, with strict source
+citations and no invented claims). The "Filing overview" heading itself
+carries this caveat so the distinction is visible in the UI, not just in
+this docstring.
 
 Deliberately renders only when there is real extracted text to reason
 about (`should_render_analyst_view`) — a deferred, failed, or
@@ -53,6 +63,42 @@ _FOLLOWUP_TEMPLATES: dict[str, list[str]] = {
 _FOLLOWUP_FALLBACK: list[str] = [
     "Review subsequent company filings or official statements related to this disclosure.",
 ]
+
+# --- "What happened" — gated on a simple, source-neutral excerpt-length
+# check, not ExcerptQuality. ExcerptQuality is DART-only (never computed
+# for EDGAR/EDINET — confirmed by grep, not assumed) and is a coarse,
+# single-marker-anywhere-fails-the-whole-excerpt heuristic even within
+# DART (its own docstring: "never a materiality score... not an attempt
+# at real text-quality classification") — verified concretely against a
+# real Samsung candidate, where one incidental table-of-contents match
+# ("대표이사" inside "【대표이사 등의 확인】") flagged an otherwise
+# substantive 600-char excerpt as LIKELY_BOILERPLATE. The structured-
+# facts sentence below never reads the excerpt's content at all — only
+# FilingEvent fields and matched_rules — so its accuracy never actually
+# depended on excerpt quality; gating on ExcerptQuality was solving a
+# problem that didn't apply to it. ExcerptQuality remains visible as
+# informational metadata in radar_card.py's "Technical details" — it
+# just no longer decides whether this section renders.
+_MIN_SUBSTANTIVE_EXCERPT_CHARS = 40
+
+# Verbatim fallback whenever the excerpt is shorter than the threshold
+# above. Never invented per filing — this exact sentence, unchanged,
+# every time.
+_INSUFFICIENT_EXCERPT_TEXT = (
+    "The filing was detected, but the available excerpt is not sufficient "
+    "to summarize the disclosure reliably. Read the original filing."
+)
+
+# --- "Why it matters" — deliberately sparse and conditional, per the
+# approved plan: only rendered when a real, hand-written per-category
+# template exists. Every other category gets nothing here, never a
+# generic hedge invented to fill the section.
+_WHY_IT_MATTERS_TEMPLATES: dict[str, str] = {
+    "market_rumor_response": (
+        "This may matter because it is a company's formal response to reported "
+        "information — not yet a confirmed transaction."
+    ),
+}
 
 
 def should_render_analyst_view(candidate: CandidateSignal) -> bool:
@@ -127,45 +173,64 @@ def render_analyst_view(filing: FilingEvent, candidate: CandidateSignal) -> None
     if not should_render_analyst_view(candidate):
         return
 
-    st.markdown('<div class="er-muted" style="margin-top:0.6rem;"><strong>Analyst view</strong></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="er-muted" style="margin-top:0.6rem;"><strong>Filing overview</strong> '
+        '<span style="font-size:0.72rem;">— Phase 1: built from filing metadata and category '
+        'labels only. Not a substantive summary of the filing text.</span></div>',
+        unsafe_allow_html=True,
+    )
 
-    # 1. Source facts
-    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Source facts</strong></div>', unsafe_allow_html=True)
-    if filing.source_url:
-        st.markdown(evidence_chip_html(ClaimType.FACT, has_source=True), unsafe_allow_html=True)
-    st.markdown(f'<div style="margin-top:0.15rem;">{_source_facts_html(filing)}</div>', unsafe_allow_html=True)
+    category = _matched_category(candidate.matched_rules)
+
+    # 1. What happened — Phase 1: structured metadata only, gated on
+    # excerpt length (source-neutral, applies identically to DART/EDGAR/
+    # EDINET). Never reads/paraphrases the excerpt itself (that's Phase 2,
+    # not yet approved).
+    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>What happened</strong></div>', unsafe_allow_html=True)
+    excerpt_len = len((candidate.excerpt_original or "").strip())
+    if excerpt_len >= _MIN_SUBSTANTIVE_EXCERPT_CHARS:
+        if filing.source_url:
+            st.markdown(evidence_chip_html(ClaimType.FACT, has_source=True), unsafe_allow_html=True)
+        st.markdown(f'<div style="margin-top:0.15rem;">{_source_facts_html(filing)}</div>', unsafe_allow_html=True)
+        why_phrases = _why_entered_radar_phrases(filing.source_name, candidate.matched_rules)
+        if why_phrases:
+            st.markdown(evidence_chip_html(ClaimType.INTERPRETATION), unsafe_allow_html=True)
+            st.markdown('<div style="margin-top:0.1rem;">Radar flagged this filing because:</div>', unsafe_allow_html=True)
+            for phrase in why_phrases:
+                st.markdown(f'<div style="margin-top:0.1rem; margin-left:0.8rem;">• {phrase}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div style="margin-top:0.15rem;">{_INSUFFICIENT_EXCERPT_TEXT}</div>', unsafe_allow_html=True)
     if filing.source_url:
         st.markdown(
             f'<div style="margin-top:0.15rem;"><a href="{filing.source_url}" target="_blank">Open original filing ↗</a></div>',
             unsafe_allow_html=True,
         )
 
-    # 2. What is unconfirmed
-    category = _matched_category(candidate.matched_rules)
+    # 2. Why it matters — only when a real, hand-written per-category
+    # template exists. No generic hedge invented for other categories.
+    why_it_matters = _WHY_IT_MATTERS_TEMPLATES.get(category) if filing.source_name == _DART_SOURCE else None
+    if why_it_matters:
+        st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Why it matters</strong></div>', unsafe_allow_html=True)
+        st.markdown(evidence_chip_html(ClaimType.INTERPRETATION), unsafe_allow_html=True)
+        st.markdown(f'<div style="margin-top:0.15rem;">{why_it_matters}</div>', unsafe_allow_html=True)
+
+    # 3. What remains uncertain — merges the prior "What is unconfirmed"
+    # and "Follow-up evidence to watch" sections; template selection
+    # logic is unchanged from before.
     if filing.source_name == _DART_SOURCE and category == "market_rumor_response":
         unconfirmed_text = _UNCONFIRMED_TEMPLATES["market_rumor_response"]
-    else:
-        unconfirmed_text = _UNCONFIRMED_FALLBACK
-    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>What is unconfirmed</strong></div>', unsafe_allow_html=True)
-    st.markdown(evidence_chip_html(ClaimType.UNCERTAINTY), unsafe_allow_html=True)
-    st.markdown(f'<div style="margin-top:0.15rem;">{unconfirmed_text}</div>', unsafe_allow_html=True)
-
-    # 3. Why it entered Radar
-    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Why it entered Radar</strong></div>', unsafe_allow_html=True)
-    st.markdown(evidence_chip_html(ClaimType.INTERPRETATION), unsafe_allow_html=True)
-    for phrase in _why_entered_radar_phrases(filing.source_name, candidate.matched_rules):
-        st.markdown(f'<div style="margin-top:0.1rem; margin-left:0.8rem;">• {phrase}</div>', unsafe_allow_html=True)
-
-    # 4. Follow-up evidence to watch
-    if filing.source_name == _DART_SOURCE and category == "market_rumor_response":
         followups = _FOLLOWUP_TEMPLATES["market_rumor_response"]
     else:
+        unconfirmed_text = _UNCONFIRMED_FALLBACK
         followups = _FOLLOWUP_FALLBACK
-    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Follow-up evidence to watch</strong></div>', unsafe_allow_html=True)
+    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>What remains uncertain</strong></div>', unsafe_allow_html=True)
+    st.markdown(evidence_chip_html(ClaimType.UNCERTAINTY), unsafe_allow_html=True)
+    st.markdown(f'<div style="margin-top:0.15rem;">{unconfirmed_text}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="er-muted" style="margin-top:0.3rem; font-size:0.85rem;">Watch for:</div>', unsafe_allow_html=True)
     for item in followups:
         st.markdown(f'<div style="margin-top:0.1rem; margin-left:0.8rem;">• {item}</div>', unsafe_allow_html=True)
 
-    # 5. Evidence and provenance — a pointer to what's already rendered
+    # 4. Evidence and provenance — a pointer to what's already rendered
     # below (the raw excerpt/translation blocks stay exactly where they
     # are, unmodified), not a duplicate of it.
     st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Evidence and provenance</strong></div>', unsafe_allow_html=True)

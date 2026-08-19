@@ -18,6 +18,9 @@ from src.models.models import (
     TranslationState,
 )
 from src.ui.components.analyst_view import (
+    _INSUFFICIENT_EXCERPT_TEXT,
+    _MIN_SUBSTANTIVE_EXCERPT_CHARS,
+    _WHY_IT_MATTERS_TEMPLATES,
     _matched_category,
     _source_facts_html,
     _why_entered_radar_phrases,
@@ -104,3 +107,33 @@ def test_why_entered_radar_edinet_never_calls_a_code_match_a_keyword_match():
 def test_why_entered_radar_handles_amendment_marker():
     phrases = _why_entered_radar_phrases("OpenDART / DART", ["amendment_or_correction"])
     assert phrases == ["Amends or corrects an earlier filing"]
+
+
+def test_insufficient_excerpt_text_is_the_exact_approved_sentence():
+    """Phase 1 "What happened" fallback — must be this exact sentence,
+    verbatim, whenever the excerpt is shorter than
+    _MIN_SUBSTANTIVE_EXCERPT_CHARS. Never invented or paraphrased per
+    filing."""
+    assert _INSUFFICIENT_EXCERPT_TEXT == (
+        "The filing was detected, but the available excerpt is not sufficient "
+        "to summarize the disclosure reliably. Read the original filing."
+    )
+
+
+def test_min_substantive_excerpt_chars_is_the_approved_threshold():
+    """Source-neutral length gate, not ExcerptQuality (DART-only and,
+    even within DART, prone to false positives — see analyst_view.py's
+    own module docstring for the real Samsung example that motivated
+    this change)."""
+    assert _MIN_SUBSTANTIVE_EXCERPT_CHARS == 40
+
+
+def test_why_it_matters_templates_only_cover_market_rumor_response():
+    """Deliberately sparse: only one real category has a hand-written
+    "Why it matters" template — every other category renders nothing
+    there, never a generic hedge invented to fill the section."""
+    assert set(_WHY_IT_MATTERS_TEMPLATES.keys()) == {"market_rumor_response"}
+    assert _WHY_IT_MATTERS_TEMPLATES["market_rumor_response"] == (
+        "This may matter because it is a company's formal response to reported "
+        "information — not yet a confirmed transaction."
+    )
