@@ -46,17 +46,22 @@ def _candidate(filing: FilingEvent, **overrides) -> CandidateSignal:
     return CandidateSignal(**defaults)
 
 
-def test_is_eligible_for_signal_only_extracted_and_needs_review():
+def test_is_eligible_for_signal_only_published():
+    """Human-review gate (Stage 1): PUBLISHED is the sole eligible
+    status. EXTRACTED/NEEDS_REVIEW (not yet human-reviewed), MONITORING
+    (reviewed, deferred), DISMISSED (human-excluded), and NOT_MATERIAL
+    (automated exclusion) must all be ineligible — none of them may
+    produce a Signal through the normal eligibility guard."""
     filing = _filing()
-    for status in (CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW):
-        assert is_eligible_for_signal(_candidate(filing, status=status)) is True
+    assert is_eligible_for_signal(_candidate(filing, status=CandidateStatus.PUBLISHED)) is True
 
     for status in (
         CandidateStatus.NEW_FILING_EVENT, CandidateStatus.CANDIDATE_DETECTED, CandidateStatus.QUEUED_FOR_PROCESSING,
-        CandidateStatus.RETRIEVAL_IN_PROGRESS, CandidateStatus.EXTRACTION_PENDING, CandidateStatus.TRANSLATION_PENDING,
-        CandidateStatus.TRANSLATED, CandidateStatus.PROCESSING_DEFERRED, CandidateStatus.PARSE_FAILED,
-        CandidateStatus.RETRIEVAL_FAILED, CandidateStatus.TRANSLATION_UNAVAILABLE, CandidateStatus.PUBLISHED,
-        CandidateStatus.DISMISSED, CandidateStatus.NOT_MATERIAL,
+        CandidateStatus.RETRIEVAL_IN_PROGRESS, CandidateStatus.EXTRACTION_PENDING, CandidateStatus.EXTRACTED,
+        CandidateStatus.TRANSLATION_PENDING, CandidateStatus.TRANSLATED, CandidateStatus.NEEDS_REVIEW,
+        CandidateStatus.PROCESSING_DEFERRED, CandidateStatus.PARSE_FAILED, CandidateStatus.RETRIEVAL_FAILED,
+        CandidateStatus.TRANSLATION_UNAVAILABLE, CandidateStatus.DISMISSED, CandidateStatus.NOT_MATERIAL,
+        CandidateStatus.MONITORING,
     ):
         assert is_eligible_for_signal(_candidate(filing, status=status)) is False
 

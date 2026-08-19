@@ -37,12 +37,14 @@ from src.ui.components.analyst_view import (
     _why_entered_radar_phrases,
 )
 
-# Per the approved plan: only these two statuses promote a candidate to
-# Signals. Every other status (including PROCESSING_DEFERRED and
-# NOT_MATERIAL) is excluded by omission, not by name — an explicit
-# allowlist rather than a denylist, so a future status added to
-# CandidateStatus is excluded by default rather than silently included.
-_ELIGIBLE_STATUSES = frozenset({CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW})
+# Human-review gate (Stage 1): PUBLISHED is the only status that promotes
+# a candidate to Signals. Every other status — including EXTRACTED and
+# NEEDS_REVIEW (a human hasn't decided yet), MONITORING (reviewed,
+# deliberately deferred), DISMISSED (human-excluded), and NOT_MATERIAL
+# (automated/system exclusion) — is excluded by omission, not by name —
+# an explicit allowlist rather than a denylist, so a future status added
+# to CandidateStatus is excluded by default rather than silently included.
+_ELIGIBLE_STATUSES = frozenset({CandidateStatus.PUBLISHED})
 
 _STRENGTH_BY_CONFIDENCE = {"Low": Strength.WEAK, "Moderate": Strength.MODERATE, "High": Strength.STRONG}
 _EDGAR_SOURCE = "SEC EDGAR"

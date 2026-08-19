@@ -145,14 +145,57 @@ def test_extraction_state_matches_the_six_approved_states():
     }
 
 
-def test_candidate_status_matches_the_sixteen_approved_lifecycle_states():
+def test_candidate_status_matches_the_seventeen_approved_lifecycle_states():
     assert {s.value for s in CandidateStatus} == {
         "New filing event", "Candidate detected", "Queued for document processing",
         "Document retrieval in progress", "Extraction pending", "Extracted",
         "Translation pending", "Translated", "Needs review", "Processing deferred",
         "Parse failed", "Retrieval failed", "Translation unavailable",
-        "Published", "Dismissed", "Not material",
+        "Published", "Dismissed", "Not material", "Monitoring",
     }
+
+
+def test_monitoring_status_round_trips_through_the_real_candidate_store(tmp_path):
+    """Human-review gate (Stage 1): MONITORING must survive a real
+    persisted write/read cycle through the exact same candidate_store.py
+    code path production uses — zero candidate_store.py change was made
+    or is needed for this to work, since CandidateStatus(str, Enum)
+    serializes/deserializes generically for any valid member."""
+    from src.data_access.dart import candidate_store
+
+    filing = FilingEvent(
+        rcept_no="20260115000999", corp_code="00126380", corp_name="삼성전자",
+        stock_code="005930", report_nm="분기보고서", rcept_dt=_iso(0), flr_nm="삼성전자", pblntf_ty="A",
+    )
+    candidate = CandidateSignal(
+        id="c-monitoring-1", filing=filing, matched_rules=["capex_keyword"], confidence="Moderate",
+        status=CandidateStatus.MONITORING,
+        state_history=[StateTransition(status=CandidateStatus.MONITORING, at=_iso(0), detail="Reviewed — watching for confirmation.")],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    reloaded = candidate_store.load_candidates(tmp_path)[candidate.id]
+    assert reloaded.status == CandidateStatus.MONITORING
+    assert reloaded.state_history[-1].status == CandidateStatus.MONITORING
+    assert reloaded.state_history[-1].detail == "Reviewed — watching for confirmation."
+
+
+def test_monitoring_status_renders_with_a_valid_bucket_and_label():
+    """MONITORING must not fall through radar_status.py's status-bucket
+    mapping with no entry (which would render an unstyled/blank badge) —
+    same completeness discipline as every other real status."""
+    from src.ui.components.radar_status import _STATUS_BUCKET, RadarItem, status_label
+
+    filing = FilingEvent(
+        rcept_no="20260115000999", corp_code="00126380", corp_name="삼성전자",
+        stock_code="005930", report_nm="분기보고서", rcept_dt=_iso(0), flr_nm="삼성전자", pblntf_ty="A",
+    )
+    candidate = CandidateSignal(
+        id="c-monitoring-2", filing=filing, matched_rules=["capex_keyword"], confidence="Moderate",
+        status=CandidateStatus.MONITORING,
+    )
+    assert _STATUS_BUCKET.get(CandidateStatus.MONITORING) is not None
+    assert status_label(RadarItem(filing=filing, candidate=candidate)) == "Monitoring"
 
 
 def test_translation_state_matches_the_four_approved_states():

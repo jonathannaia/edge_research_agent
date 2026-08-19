@@ -285,6 +285,11 @@ class CandidateStatus(str, Enum):
     PUBLISHED = "Published"
     DISMISSED = "Dismissed"
     NOT_MATERIAL = "Not material"
+    # Human-reviewed, deliberately deferred — distinct from NEEDS_REVIEW
+    # (not yet reviewed at all) and from PROCESSING_DEFERRED (a scan-time
+    # processing-budget concept, unrelated to human review). Never
+    # eligible for Signal promotion — see signal_promotion.py.
+    MONITORING = "Monitoring"
 
 
 class TranslationState(str, Enum):

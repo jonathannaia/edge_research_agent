@@ -49,25 +49,25 @@ def _edgar_filing(rcept_no: str, theme_slug: str = "ai-buildout") -> FilingEvent
 def _candidate(candidate_id: str, filing: FilingEvent, status: CandidateStatus, matched_rules: list[str]) -> CandidateSignal:
     return CandidateSignal(
         id=candidate_id, filing=filing, matched_rules=matched_rules, confidence="Moderate", status=status,
-        extraction_state=ExtractionState.EXTRACTED if status in {CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW} else ExtractionState.NOT_FETCHED,
-        excerpt_original="본문" if status in {CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW} else None,
+        extraction_state=ExtractionState.EXTRACTED if status in {CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW, CandidateStatus.PUBLISHED} else ExtractionState.NOT_FETCHED,
+        excerpt_original="본문" if status in {CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW, CandidateStatus.PUBLISHED} else None,
         state_history=[StateTransition(status=status, at=_now_iso())],
     )
 
 
 def test_combines_eligible_candidates_from_all_three_sources(tmp_path):
-    dart_eligible = _candidate("cand-d1", _dart_filing("d1"), CandidateStatus.NEEDS_REVIEW, ["market_rumor_response:x:풍문"])
+    dart_eligible = _candidate("cand-d1", _dart_filing("d1"), CandidateStatus.PUBLISHED, ["market_rumor_response:x:풍문"])
     dart_ineligible = _candidate("cand-d2", _dart_filing("d2"), CandidateStatus.PROCESSING_DEFERRED, ["earnings:x:실적"])
     dart_not_material = _candidate("cand-d3", _dart_filing("d3"), CandidateStatus.NOT_MATERIAL, ["earnings:x:실적"])
     candidate_store.save_candidates(tmp_path, {c.id: c for c in [dart_eligible, dart_ineligible, dart_not_material]}, "dart_candidates.json")
 
-    edinet_eligible = _candidate("edinet-cand-e1", _edinet_filing("e1"), CandidateStatus.EXTRACTED, ["annual_securities_report:010:030000:120"])
+    edinet_eligible = _candidate("edinet-cand-e1", _edinet_filing("e1"), CandidateStatus.PUBLISHED, ["annual_securities_report:010:030000:120"])
     edinet_ineligible = _candidate("edinet-cand-e2", _edinet_filing("e2"), CandidateStatus.CANDIDATE_DETECTED, [])
     candidate_store.save_candidates(
         tmp_path, {c.id: c for c in [edinet_eligible, edinet_ineligible]}, edinet_pipeline.CANDIDATE_STORE_FILENAME,
     )
 
-    edgar_eligible = _candidate("edgar-cand-g1", _edgar_filing("0001045810-26-000069"), CandidateStatus.NEEDS_REVIEW, ["earnings_or_results:8-K item 2.02"])
+    edgar_eligible = _candidate("edgar-cand-g1", _edgar_filing("0001045810-26-000069"), CandidateStatus.PUBLISHED, ["earnings_or_results:8-K item 2.02"])
     edgar_ineligible = _candidate("edgar-cand-g2", _edgar_filing("0001045810-26-000070"), CandidateStatus.PROCESSING_DEFERRED, [])
     candidate_store.save_candidates(
         tmp_path, {c.id: c for c in [edgar_eligible, edgar_ineligible]}, edgar_pipeline.CANDIDATE_STORE_FILENAME,
@@ -81,8 +81,8 @@ def test_combines_eligible_candidates_from_all_three_sources(tmp_path):
 
 
 def test_get_signals_for_theme_filters_correctly(tmp_path):
-    memory_candidate = _candidate("cand-m1", _dart_filing("m1", theme_slug="memory"), CandidateStatus.NEEDS_REVIEW, ["earnings:x:실적"])
-    ai_candidate = _candidate("cand-a1", _dart_filing("a1", theme_slug="ai-buildout"), CandidateStatus.NEEDS_REVIEW, ["earnings:x:실적"])
+    memory_candidate = _candidate("cand-m1", _dart_filing("m1", theme_slug="memory"), CandidateStatus.PUBLISHED, ["earnings:x:실적"])
+    ai_candidate = _candidate("cand-a1", _dart_filing("a1", theme_slug="ai-buildout"), CandidateStatus.PUBLISHED, ["earnings:x:실적"])
     candidate_store.save_candidates(tmp_path, {c.id: c for c in [memory_candidate, ai_candidate]}, "dart_candidates.json")
 
     repo = RadarSignalRepository(Settings(cache_dir=tmp_path))

@@ -46,9 +46,9 @@ def test_signals_page_shows_real_dart_signal_with_no_sample_badge(tmp_path):
     filing = _dart_filing()
     candidate = CandidateSignal(
         id="cand-signals-page-1", filing=filing, matched_rules=["market_rumor_response:rumor_inquiry_or_response:풍문또는보도"],
-        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        confidence="Moderate", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
         excerpt_original="한국거래소의조회공시요구에대한답변...",
-        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+        state_history=[StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "dart_candidates.json")
 
@@ -105,9 +105,9 @@ def test_signals_page_shows_real_edgar_signal_with_direct_document_link(tmp_path
     )
     candidate = CandidateSignal(
         id="edgar-cand-0001045810-26-000069", filing=filing, matched_rules=["earnings_or_results:8-K item 2.02"],
-        confidence="High", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        confidence="High", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
         excerpt_original="Item 2.02 Results of Operations and Financial Condition.",
-        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+        state_history=[StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "edgar_candidates.json")
 
@@ -150,7 +150,7 @@ def test_signals_page_dart_bilingual_shows_english_first_korean_retained(tmp_pat
     filing = _dart_filing()
     candidate = CandidateSignal(
         id="cand-signals-page-bilingual", filing=filing, matched_rules=["market_rumor_response:rumor_inquiry_or_response:풍문또는보도"],
-        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        confidence="Moderate", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
         excerpt_original="한국거래소의조회공시요구에대한답변...", translation_state=TranslationState.TRANSLATED,
         title_translation=Translation(
             translated_text="Clarification Regarding Rumors (EN)", provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
@@ -159,7 +159,7 @@ def test_signals_page_dart_bilingual_shows_english_first_korean_retained(tmp_pat
             translated_text="In response to the exchange's inquiry, nothing has been confirmed.",
             provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
         ),
-        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+        state_history=[StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "dart_candidates.json")
 
@@ -193,10 +193,10 @@ def test_signals_page_edgar_shows_no_translation_status_noise(tmp_path):
     )
     candidate = CandidateSignal(
         id="edgar-cand-bilingual", filing=filing, matched_rules=["earnings_or_results:8-K item 2.02"],
-        confidence="High", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        confidence="High", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
         excerpt_original="Item 2.02 Results of Operations and Financial Condition.",
         translation_state=TranslationState.NOT_REQUESTED,
-        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+        state_history=[StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "edgar_candidates.json")
 
@@ -227,9 +227,9 @@ def test_signals_page_edinet_pending_shows_native_only_honest_status(tmp_path):
     )
     candidate = CandidateSignal(
         id="edinet-cand-bilingual", filing=filing, matched_rules=["annual_securities_report:010:030000:120"],
-        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        confidence="Moderate", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
         excerpt_original="有価証券報告書の記載内容です。", translation_state=TranslationState.PENDING,
-        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+        state_history=[StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "edinet_candidates.json")
 
@@ -257,9 +257,9 @@ def test_signals_page_unmatched_issuer_shows_plain_name_no_exchange_claim(tmp_pa
     )
     candidate = CandidateSignal(
         id="cand-unmatched-issuer", filing=filing, matched_rules=["earnings:earnings_or_results_report:실적"],
-        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        confidence="Moderate", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
         excerpt_original="본문 발췌.",
-        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+        state_history=[StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso())],
     )
     candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "dart_candidates.json")
 

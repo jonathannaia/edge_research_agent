@@ -55,6 +55,7 @@ _STATUS_BUCKET = {
     CandidateStatus.PUBLISHED: "pos",
     CandidateStatus.DISMISSED: "neutral",
     CandidateStatus.NOT_MATERIAL: "neutral",
+    CandidateStatus.MONITORING: "neutral",
 }
 
 
