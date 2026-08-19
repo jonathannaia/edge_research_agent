@@ -247,6 +247,67 @@ TRACKED_COMPANIES: tuple[TrackedCompany, ...] = (
             "submissions metadata; cached CIK 0000024741)."
         ),
     ),
+    # Radar expansion, Phase 1 (registry-only), third batch — four
+    # companies added after a controlled, explicitly-approved live
+    # cik_resolver.py validation (2026-08-19). corp_code left unset,
+    # same as every other EDGAR entry above. Subthemes deliberately left
+    # unset for all four (no `subthemes=` argument given, so each
+    # defaults to `()`) — a subtheme decision (e.g. "ai-infrastructure",
+    # "networking-interconnect") is explicitly deferred, not guessed.
+    TrackedCompany(
+        name="Nebius Group N.V.",
+        exchange="NASDAQ",
+        krx_code="NBIS",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001513845). SEC-registered "
+            "as a Netherlands-domiciled N.V.; cross-check passed against "
+            "its real submissions metadata regardless."
+        ),
+    ),
+    TrackedCompany(
+        name="Penguin Solutions, Inc.",
+        exchange="NASDAQ",
+        krx_code="PENG",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001616533)."
+        ),
+    ),
+    TrackedCompany(
+        name="Marvell Technology, Inc.",
+        exchange="NASDAQ",
+        krx_code="MRVL",
+        source="SEC EDGAR",
+        themes=("photonics",),
+        notes=(
+            "SEC EDGAR pilot cohort — Photonics. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001835632)."
+        ),
+    ),
+    TrackedCompany(
+        name="MaxLinear, Inc.",
+        exchange="NASDAQ",
+        krx_code="MXL",
+        source="SEC EDGAR",
+        themes=("photonics",),
+        notes=(
+            "SEC EDGAR pilot cohort — Photonics. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001288469)."
+        ),
+    ),
     # EDINET (Japan) pilot cohort (Gate 7) — one company per theme,
     # `krx_code`/`corp_code` hardcoded rather than left for runtime
     # resolution because both were already independently live-verified
