@@ -190,6 +190,26 @@ class Signal:
     source_name: str = ""
     source_url: str = ""
     excerpt: str | None = None
+    # Bilingual display — additive, real Radar promotion only. `title`/
+    # `excerpt` above stay exactly as-is (collapsed native-or-translated)
+    # for existing callers (the drawer's dialog title bar, Fact-chip
+    # gating); these six fields are the explicit bilingual pair a
+    # card/drawer can render both halves from. title_native/
+    # original_language are always populated for a real signal;
+    # title_translated/excerpt_translated are None unless
+    # CandidateSignal.translation_state was TRANSLATED — never guessed,
+    # never locally translated. translation_state carries the exact
+    # TranslationState enum value string verbatim (e.g. "Translation
+    # pending"), no new vocabulary invented. exchange_symbol is set only
+    # on an exact (source, stock_code) match against
+    # src/config/tracked_companies.py's static registry — None otherwise,
+    # never a guessed exchange or ticker.
+    title_native: str = ""
+    title_translated: str | None = None
+    excerpt_translated: str | None = None
+    original_language: str = ""
+    translation_state: str = ""
+    exchange_symbol: str | None = None
 
 
 @dataclass

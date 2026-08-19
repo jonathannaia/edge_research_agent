@@ -16,6 +16,7 @@ neutral default) — same "never invent a judgment" discipline as
 everywhere else in Radar."""
 from __future__ import annotations
 
+from src.config.tracked_companies import get_tracked_companies_for_source
 from src.models.models import (
     CandidateSignal,
     CandidateStatus,
@@ -24,6 +25,7 @@ from src.models.models import (
     Horizon,
     Signal,
     Strength,
+    TranslationState,
 )
 from src.ui.components.analyst_view import (
     _FOLLOWUP_FALLBACK,
@@ -101,6 +103,42 @@ def _source_url(filing: FilingEvent) -> str:
     return filing.source_url
 
 
+def _exchange_symbol(filing: FilingEvent) -> str | None:
+    """Only from the existing static registry (src/config/
+    tracked_companies.py), no live lookup, no guessed identity. `krx_code`
+    holds the source-native stock identifier for every source (DART's KRX
+    code, EDGAR's ticker, EDINET's 5-char securities code — see that
+    module's own docstring), the same slot FilingEvent.stock_code already
+    carries — so an exact (source, stock_code) match against
+    (entry.source, entry.krx_code) is the one correct, uniform rule
+    across all three sources. None on no match — never a fabricated
+    exchange/symbol."""
+    if not filing.stock_code:
+        return None
+    for company in get_tracked_companies_for_source(filing.source_name):
+        if company.krx_code == filing.stock_code:
+            return f"{company.exchange}:{company.krx_code}"
+    return None
+
+
+def _title_translated(candidate: CandidateSignal) -> str | None:
+    """Title translation has no separate state enum of its own (see
+    CandidateSignal's own docstring — it's tracked independently from the
+    excerpt's translation_state) — presence of title_translation is the
+    only real signal, same rule _title() above already uses."""
+    if candidate.title_translation is not None:
+        return candidate.title_translation.translated_text
+    return None
+
+
+def _excerpt_translated(candidate: CandidateSignal) -> str | None:
+    """Unlike the title, the excerpt has a real translation_state enum —
+    only trust it as TRANSLATED, never a partially-set object."""
+    if candidate.translation_state == TranslationState.TRANSLATED and candidate.excerpt_translation is not None:
+        return candidate.excerpt_translation.translated_text
+    return None
+
+
 def candidate_to_signal(candidate: CandidateSignal) -> Signal:
     filing = candidate.filing
     last_updated = candidate.reviewed_at or (
@@ -126,4 +164,10 @@ def candidate_to_signal(candidate: CandidateSignal) -> Signal:
         source_name=filing.source_name,
         source_url=_source_url(filing),
         excerpt=candidate.excerpt_original,
+        title_native=filing.report_nm,
+        title_translated=_title_translated(candidate),
+        excerpt_translated=_excerpt_translated(candidate),
+        original_language=filing.original_language,
+        translation_state=candidate.translation_state.value,
+        exchange_symbol=_exchange_symbol(filing),
     )

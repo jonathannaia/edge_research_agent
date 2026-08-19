@@ -133,15 +133,26 @@ def signal_card(
         with top[0]:
             dot = '<span class="er-unread-dot"></span>' if unread else ""
             st.markdown(f'<div class="er-card-title">{dot}{signal.title}</div>', unsafe_allow_html=True)
+            if signal.title_translated:
+                # signal.title above is already the translation (see
+                # signal_promotion._title) — this retains the original
+                # beneath it, explicitly labeled, never overwritten.
+                st.markdown(
+                    f'<div class="er-muted" style="font-size:0.78rem; margin-top:0.1rem;">'
+                    f'English — machine translation. Original ({signal.original_language}): {signal.title_native}</div>',
+                    unsafe_allow_html=True,
+                )
             tag_line = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
             st.markdown(f'<div class="er-muted">{tag_line}</div>', unsafe_allow_html=True)
             if signal.issuer:
                 # Real Radar promotion only (signal_promotion.py) — issuer/
                 # source name/date copied verbatim from the filing, never
-                # inferred. Empty for every demo signal.
+                # inferred. Empty for every demo signal. exchange_symbol
+                # only appears on an exact tracked-company registry match.
+                identity = f"{signal.issuer} · {signal.exchange_symbol}" if signal.exchange_symbol else signal.issuer
                 st.markdown(
                     f'<div class="er-muted" style="font-size:0.85rem; margin-top:0.15rem;">'
-                    f'{signal.issuer} · {signal.source_name} · {fmt_date(signal.last_updated)}</div>',
+                    f'{identity} · {signal.source_name} · {fmt_date(signal.last_updated)}</div>',
                     unsafe_allow_html=True,
                 )
         with top[1]:
@@ -152,11 +163,41 @@ def signal_card(
             f'<div style="margin:0.4rem 0; max-height:3.2em; overflow:hidden;">{signal.interpretation}</div>',
             unsafe_allow_html=True,
         )
-        if signal.excerpt:
+        if signal.excerpt_translated:
+            # English first, native retained below, never overwritten —
+            # the original stays the evidence of record.
+            st.markdown(
+                f'<div class="er-excerpt" style="font-size:0.85rem; margin:0.3rem 0;">{signal.excerpt_translated}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                '<div class="er-muted" style="font-size:0.72rem; margin-top:-0.15rem;">'
+                'English — machine translation. Original remains the evidence.</div>',
+                unsafe_allow_html=True,
+            )
+            if signal.excerpt:
+                st.markdown(
+                    f'<div class="er-muted" style="font-size:0.72rem; margin-top:0.3rem;">Original ({signal.original_language}):</div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    f'<div class="er-excerpt" style="font-size:0.85rem; margin:0.15rem 0 0.3rem;">{signal.excerpt}</div>',
+                    unsafe_allow_html=True,
+                )
+        elif signal.excerpt:
             st.markdown(
                 f'<div class="er-excerpt" style="font-size:0.85rem; margin:0.3rem 0;">{signal.excerpt}</div>',
                 unsafe_allow_html=True,
             )
+            if signal.translation_state and signal.translation_state != "Not requested":
+                # Honest status only — DART/EDINET pending/unavailable
+                # cases. EDGAR's "Not requested" never renders any
+                # translation-status line at all (English-original, per
+                # the approved plan).
+                st.markdown(
+                    f'<div class="er-muted" style="font-size:0.72rem;">{signal.translation_state}.</div>',
+                    unsafe_allow_html=True,
+                )
         st.markdown(
             f"""
             <div style="display:flex; gap:1.25rem; margin: 0.4rem 0;">

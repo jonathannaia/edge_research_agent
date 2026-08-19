@@ -16,7 +16,15 @@ from streamlit.testing.v1 import AppTest
 
 from src.config.settings import Settings
 from src.data_access.dart import candidate_store
-from src.models.models import CandidateSignal, CandidateStatus, ExtractionState, FilingEvent, StateTransition
+from src.models.models import (
+    CandidateSignal,
+    CandidateStatus,
+    ExtractionState,
+    FilingEvent,
+    StateTransition,
+    Translation,
+    TranslationState,
+)
 
 _HARNESS = Path(__file__).parent / "apptest_pages" / "signals_page.py"
 
@@ -136,6 +144,137 @@ def test_signals_page_shows_real_edgar_signal_with_direct_document_link(tmp_path
         link_buttons = at.get("link_button")
         assert len(link_buttons) == 1
         assert link_buttons[0].proto.url == direct_document_url
+
+
+def test_signals_page_dart_bilingual_shows_english_first_korean_retained(tmp_path):
+    filing = _dart_filing()
+    candidate = CandidateSignal(
+        id="cand-signals-page-bilingual", filing=filing, matched_rules=["market_rumor_response:rumor_inquiry_or_response:풍문또는보도"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="한국거래소의조회공시요구에대한답변...", translation_state=TranslationState.TRANSLATED,
+        title_translation=Translation(
+            translated_text="Clarification Regarding Rumors (EN)", provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
+        ),
+        excerpt_translation=Translation(
+            translated_text="In response to the exchange's inquiry, nothing has been confirmed.",
+            provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
+        ),
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "dart_candidates.json")
+
+    settings = Settings(cache_dir=tmp_path)
+    with patch("src.data_access.container.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        assert not at.exception
+        all_text = " ".join(m.value for m in at.markdown)
+        # English shown, machine-translation labeled.
+        assert "Clarification Regarding Rumors (EN)" in all_text
+        assert "In response to the exchange's inquiry, nothing has been confirmed." in all_text
+        assert "machine translation" in all_text
+        # Korean original always retained, explicitly labeled, never overwritten.
+        assert filing.report_nm in all_text
+        assert candidate.excerpt_original in all_text
+        assert "Original (Korean)" in all_text
+        # Registry-backed exchange symbol.
+        assert "KRX:000660" in all_text
+        assert ":gray-badge[Sample]" not in all_text
+
+
+def test_signals_page_edgar_shows_no_translation_status_noise(tmp_path):
+    filing = FilingEvent(
+        rcept_no="0001045810-26-000069", corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA",
+        report_nm="8-K", rcept_dt="2026-08-17", flr_nm="NVIDIA", pblntf_ty="8-K", theme_slug="ai-buildout",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+        retrieved_at=_now_iso(), source_name="SEC EDGAR", original_language="English",
+        primary_document="nvda-20260817.htm",
+    )
+    candidate = CandidateSignal(
+        id="edgar-cand-bilingual", filing=filing, matched_rules=["earnings_or_results:8-K item 2.02"],
+        confidence="High", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="Item 2.02 Results of Operations and Financial Condition.",
+        translation_state=TranslationState.NOT_REQUESTED,
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "edgar_candidates.json")
+
+    settings = Settings(cache_dir=tmp_path)
+    with patch("src.data_access.container.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        assert not at.exception
+        all_text = " ".join(m.value for m in at.markdown)
+        assert candidate.excerpt_original in all_text
+        assert "NASDAQ:NVDA" in all_text
+        # No translation-status noise of any kind for English-original EDGAR.
+        assert "Not requested" not in all_text
+        assert "Translation pending" not in all_text
+        assert "Translation unavailable" not in all_text
+        assert "machine translation" not in all_text
+        assert ":gray-badge[Sample]" not in all_text
+
+
+def test_signals_page_edinet_pending_shows_native_only_honest_status(tmp_path):
+    filing = FilingEvent(
+        rcept_no="S100YTEST", corp_code="E02778", corp_name="SoftBank Group Corp.", stock_code="99840",
+        report_nm="有価証券報告書－第46期", rcept_dt="2026-06-22", flr_nm="ソフトバンクグループ株式会社",
+        pblntf_ty="030000", pblntf_detail_ty="120", ordinance_code="010", theme_slug="ai-buildout",
+        source_url="https://api.edinet-fsa.go.jp/api/v2/documents/S100YTEST",
+        retrieved_at=_now_iso(), source_name="EDINET", original_language="Japanese",
+    )
+    candidate = CandidateSignal(
+        id="edinet-cand-bilingual", filing=filing, matched_rules=["annual_securities_report:010:030000:120"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="有価証券報告書の記載内容です。", translation_state=TranslationState.PENDING,
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "edinet_candidates.json")
+
+    settings = Settings(cache_dir=tmp_path)
+    with patch("src.data_access.container.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        assert not at.exception
+        all_text = " ".join(m.value for m in at.markdown)
+        assert filing.report_nm in all_text
+        assert candidate.excerpt_original in all_text
+        assert "Translation pending" in all_text
+        assert "TSE:99840" in all_text
+        # Never invent English text for a pending translation.
+        assert "machine translation" not in all_text
+        assert ":gray-badge[Sample]" not in all_text
+
+
+def test_signals_page_unmatched_issuer_shows_plain_name_no_exchange_claim(tmp_path):
+    filing = FilingEvent(
+        rcept_no="20260812000300", corp_code="00999999", corp_name="Unlisted Test Corp", stock_code="999999",
+        report_nm="실적 발표", rcept_dt="20260812", flr_nm="Unlisted Test Corp", theme_slug="memory",
+        source_url="https://dart.fss.or.kr/x", retrieved_at=_now_iso(), source_name="OpenDART / DART",
+    )
+    candidate = CandidateSignal(
+        id="cand-unmatched-issuer", filing=filing, matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="본문 발췌.",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "dart_candidates.json")
+
+    settings = Settings(cache_dir=tmp_path)
+    with patch("src.data_access.container.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        assert not at.exception
+        all_text = " ".join(m.value for m in at.markdown)
+        assert filing.corp_name in all_text
+        # No fabricated exchange/symbol anywhere for an unmatched issuer.
+        assert "KRX:999999" not in all_text
+        assert "NASDAQ:" not in all_text
+        assert "TSE:" not in all_text
 
 
 def test_signals_page_shows_truthful_empty_state_when_no_eligible_candidates(tmp_path):

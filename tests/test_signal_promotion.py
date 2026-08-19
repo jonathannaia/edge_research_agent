@@ -16,6 +16,7 @@ from src.models.models import (
     StateTransition,
     Strength,
     Translation,
+    TranslationState,
 )
 
 
@@ -196,6 +197,119 @@ def test_candidate_to_signal_dart_and_edinet_source_url_unchanged():
     )
     edinet_candidate = _candidate(edinet_filing, matched_rules=["annual_securities_report:010:030000:120"])
     assert candidate_to_signal(edinet_candidate).source_url == edinet_filing.source_url
+
+
+def test_candidate_to_signal_dart_translated_shows_english_first_korean_retained():
+    filing = _filing(source_name="OpenDART / DART", report_nm="네이티브 제목", corp_name="SK Hynix", stock_code="000660")
+    candidate = _candidate(
+        filing,
+        excerpt_original="원문 발췌 텍스트",
+        translation_state=TranslationState.TRANSLATED,
+        title_translation=Translation(
+            translated_text="Native Title (EN)", provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
+        ),
+        excerpt_translation=Translation(
+            translated_text="Translated excerpt text.", provider="DeepL", source_lang="ko", target_lang="en", translated_at=_now_iso(),
+        ),
+    )
+    signal = candidate_to_signal(candidate)
+
+    assert signal.title_translated == "Native Title (EN)"
+    assert signal.excerpt_translated == "Translated excerpt text."
+    # Original retained verbatim, never overwritten.
+    assert signal.title_native == "네이티브 제목"
+    assert signal.excerpt == "원문 발췌 텍스트"
+    assert signal.original_language == "Korean"
+    assert signal.translation_state == "Translated"
+
+
+def test_candidate_to_signal_edgar_shows_no_translation_state_noise():
+    filing = _filing(
+        source_name="SEC EDGAR", corp_name="NVIDIA", stock_code="NVDA", report_nm="8-K",
+        original_language="English", source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+    )
+    candidate = _candidate(
+        filing, matched_rules=["earnings_or_results:8-K item 2.02"],
+        excerpt_original="Item 2.02 Results of Operations.", translation_state=TranslationState.NOT_REQUESTED,
+    )
+    signal = candidate_to_signal(candidate)
+
+    assert signal.title_translated is None
+    assert signal.excerpt_translated is None
+    assert signal.translation_state == "Not requested"
+    assert signal.original_language == "English"
+    assert signal.title_native == "8-K"
+    assert signal.excerpt == "Item 2.02 Results of Operations."
+
+
+def test_candidate_to_signal_edinet_pending_shows_native_only_no_invented_english():
+    filing = _filing(
+        source_name="EDINET", corp_name="SoftBank Group Corp.", stock_code="99840",
+        report_nm="有価証券報告書", original_language="Japanese",
+        source_url="https://api.edinet-fsa.go.jp/api/v2/documents/S100YTEST",
+    )
+    candidate = _candidate(
+        filing, matched_rules=["annual_securities_report:010:030000:120"],
+        excerpt_original="有価証券報告書の記載内容です。", translation_state=TranslationState.PENDING,
+        title_translation=None, excerpt_translation=None,
+    )
+    signal = candidate_to_signal(candidate)
+
+    assert signal.title_translated is None
+    assert signal.excerpt_translated is None
+    assert signal.translation_state == "Translation pending"
+    assert signal.title_native == "有価証券報告書"
+    assert signal.excerpt == "有価証券報告書の記載内容です。"
+    assert signal.original_language == "Japanese"
+
+
+def test_candidate_to_signal_edinet_unavailable_shows_native_only_no_invented_english():
+    filing = _filing(
+        source_name="EDINET", corp_name="SoftBank Group Corp.", stock_code="99840",
+        report_nm="有価証券報告書", original_language="Japanese",
+    )
+    candidate = _candidate(
+        filing, matched_rules=["annual_securities_report:010:030000:120"],
+        excerpt_original="有価証券報告書の記載内容です。", translation_state=TranslationState.UNAVAILABLE,
+        title_translation=None, excerpt_translation=None,
+    )
+    signal = candidate_to_signal(candidate)
+
+    assert signal.title_translated is None
+    assert signal.excerpt_translated is None
+    assert signal.translation_state == "Translation unavailable"
+
+
+def test_candidate_to_signal_exchange_symbol_matches_registry_by_source_and_stock_code():
+    dart_filing = _filing(source_name="OpenDART / DART", corp_name="SK Hynix", stock_code="000660")
+    assert candidate_to_signal(_candidate(dart_filing)).exchange_symbol == "KRX:000660"
+
+    edgar_filing = _filing(source_name="SEC EDGAR", corp_name="NVIDIA", stock_code="NVDA", original_language="English")
+    edgar_candidate = _candidate(edgar_filing, matched_rules=["earnings_or_results:8-K item 2.02"])
+    assert candidate_to_signal(edgar_candidate).exchange_symbol == "NASDAQ:NVDA"
+
+    edinet_filing = _filing(source_name="EDINET", corp_name="SoftBank Group Corp.", stock_code="99840", original_language="Japanese")
+    edinet_candidate = _candidate(edinet_filing, matched_rules=["annual_securities_report:010:030000:120"])
+    assert candidate_to_signal(edinet_candidate).exchange_symbol == "TSE:99840"
+
+
+def test_candidate_to_signal_unmatched_issuer_falls_back_with_no_exchange_claim():
+    filing = _filing(source_name="OpenDART / DART", corp_name="Unlisted Test Corp", stock_code="999999")
+    signal = candidate_to_signal(_candidate(filing))
+
+    assert signal.exchange_symbol is None
+    assert signal.issuer == "Unlisted Test Corp"
+    # No fabricated exchange/symbol text anywhere on the signal.
+    combined = " ".join([signal.title, signal.interpretation, signal.issuer])
+    assert "NASDAQ" not in combined
+    assert "KRX" not in combined
+    assert "NYSE" not in combined
+    assert "TSE" not in combined
+
+
+def test_candidate_to_signal_no_stock_code_never_matches():
+    filing = _filing(source_name="OpenDART / DART", corp_name="No Ticker Corp", stock_code="")
+    assert candidate_to_signal(_candidate(filing)).exchange_symbol is None
 
 
 def test_candidate_to_signal_never_invents_amounts_or_counterparties():

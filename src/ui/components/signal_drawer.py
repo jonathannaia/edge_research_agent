@@ -26,7 +26,11 @@ def open_signal_drawer(signal: Signal, evidence_repository=None) -> None:
     @st.dialog(signal.title, width="large")
     def _drawer() -> None:
         tag = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
-        source_label = "EevaResearch Demo Data" if signal.is_demo else f"{signal.issuer} · {signal.source_name}"
+        if signal.is_demo:
+            source_label = "EevaResearch Demo Data"
+        else:
+            identity = f"{signal.issuer} · {signal.exchange_symbol}" if signal.exchange_symbol else signal.issuer
+            source_label = f"{identity} · {signal.source_name}"
         st.markdown(
             f'<div class="er-mono er-muted">{source_label} · {fmt_date(signal.last_updated)} · {tag}</div>',
             unsafe_allow_html=True,
@@ -61,11 +65,30 @@ def open_signal_drawer(signal: Signal, evidence_repository=None) -> None:
                     unsafe_allow_html=True,
                 )
         elif signal.excerpt:
-            # Real Radar promotion — the excerpt is copied verbatim from
-            # the extracted filing (CandidateSignal.excerpt_original),
-            # never generated or translated here.
+            # Real Radar promotion — both excerpt fields are copied
+            # verbatim from the extracted filing (CandidateSignal.
+            # excerpt_original / excerpt_translation), never generated or
+            # translated here.
             evidence_chip(ClaimType.FACT, has_source=bool(signal.source_url))
-            st.markdown(f'<div class="er-excerpt">{signal.excerpt}</div>', unsafe_allow_html=True)
+            if signal.excerpt_translated:
+                st.markdown(f'<div class="er-excerpt">{signal.excerpt_translated}</div>', unsafe_allow_html=True)
+                st.markdown(
+                    '<div class="er-muted" style="font-size:0.78rem; margin-top:-0.1rem;">'
+                    'English — machine translation. Original remains the evidence.</div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown(
+                    f'<div class="er-muted" style="font-size:0.78rem; margin-top:0.3rem;">Original ({signal.original_language}):</div>',
+                    unsafe_allow_html=True,
+                )
+                st.markdown(f'<div class="er-excerpt">{signal.excerpt}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="er-excerpt">{signal.excerpt}</div>', unsafe_allow_html=True)
+                if signal.translation_state and signal.translation_state != "Not requested":
+                    st.markdown(
+                        f'<div class="er-muted" style="font-size:0.78rem;">{signal.translation_state}.</div>',
+                        unsafe_allow_html=True,
+                    )
         else:
             st.markdown('<div class="er-muted">No excerpt available for this filing yet.</div>', unsafe_allow_html=True)
 
