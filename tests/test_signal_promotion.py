@@ -145,6 +145,59 @@ def test_candidate_to_signal_excerpt_is_none_when_not_extracted():
     assert candidate_to_signal(candidate).excerpt is None
 
 
+def test_candidate_to_signal_edgar_uses_direct_primary_document_url():
+    filing = _filing(
+        corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA", rcept_no="0001045810-26-000069",
+        report_nm="8-K", source_name="SEC EDGAR", original_language="English",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+        primary_document="nvda-20260817.htm",
+    )
+    candidate = _candidate(filing, matched_rules=["earnings_or_results:8-K item 2.02"], excerpt_original="Item 2.02 Results of Operations.")
+    signal = candidate_to_signal(candidate)
+
+    assert signal.source_url == "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"
+
+
+def test_candidate_to_signal_edgar_falls_back_to_accession_url_when_no_primary_document():
+    filing = _filing(
+        corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA", rcept_no="0001045810-26-000069",
+        report_nm="8-K", source_name="SEC EDGAR", original_language="English",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+        primary_document="",
+    )
+    candidate = _candidate(filing, matched_rules=["earnings_or_results:8-K item 2.02"])
+    signal = candidate_to_signal(candidate)
+
+    assert signal.source_url == "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/"
+
+
+def test_candidate_to_signal_edgar_falls_back_when_source_url_has_unexpected_shape():
+    """Defensive: never guess a URL join if source_url doesn't already
+    have the expected trailing-slash directory shape."""
+    filing = _filing(
+        corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA", rcept_no="0001045810-26-000069",
+        report_nm="8-K", source_name="SEC EDGAR", original_language="English",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069",  # no trailing slash
+        primary_document="nvda-20260817.htm",
+    )
+    candidate = _candidate(filing, matched_rules=["earnings_or_results:8-K item 2.02"])
+    signal = candidate_to_signal(candidate)
+
+    assert signal.source_url == "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069"
+
+
+def test_candidate_to_signal_dart_and_edinet_source_url_unchanged():
+    dart_filing = _filing(source_name="OpenDART / DART", source_url="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260812000001")
+    assert candidate_to_signal(_candidate(dart_filing)).source_url == dart_filing.source_url
+
+    edinet_filing = _filing(
+        source_name="EDINET", source_url="https://api.edinet-fsa.go.jp/api/v2/documents/S100YTEST",
+        original_language="Japanese",
+    )
+    edinet_candidate = _candidate(edinet_filing, matched_rules=["annual_securities_report:010:030000:120"])
+    assert candidate_to_signal(edinet_candidate).source_url == edinet_filing.source_url
+
+
 def test_candidate_to_signal_never_invents_amounts_or_counterparties():
     filing = _filing()
     signal = candidate_to_signal(_candidate(filing))

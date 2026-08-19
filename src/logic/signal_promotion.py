@@ -1,7 +1,7 @@
-"""Promotes eligible real Radar candidates (DART/EDINET) into the Signal
-model the Signals page renders — the "separate, human review step" that
-CandidateSignal's own docstring names as distinct from detection. Pure,
-no I/O: takes an already-loaded CandidateSignal, returns a bool or a
+"""Promotes eligible real Radar candidates (DART/EDINET/EDGAR) into the
+Signal model the Signals page renders — the "separate, human review step"
+that CandidateSignal's own docstring names as distinct from detection.
+Pure, no I/O: takes an already-loaded CandidateSignal, returns a bool or a
 Signal.
 
 Every judgment-shaped field below reuses the same deterministic,
@@ -43,6 +43,7 @@ from src.ui.components.analyst_view import (
 _ELIGIBLE_STATUSES = frozenset({CandidateStatus.EXTRACTED, CandidateStatus.NEEDS_REVIEW})
 
 _STRENGTH_BY_CONFIDENCE = {"Low": Strength.WEAK, "Moderate": Strength.MODERATE, "High": Strength.STRONG}
+_EDGAR_SOURCE = "SEC EDGAR"
 
 
 def is_eligible_for_signal(candidate: CandidateSignal) -> bool:
@@ -84,6 +85,22 @@ def _invalidation_criteria(candidate: CandidateSignal, filing: FilingEvent) -> s
     return _UNCONFIRMED_FALLBACK
 
 
+def _source_url(filing: FilingEvent) -> str:
+    """For EDGAR only, prefer a direct link to the primary readable
+    document over the bare accession-directory URL — using the exact
+    same concatenation EdgarClient.fetch_document() already performs
+    (source_url + primary_document; see src/data_access/edgar/client.py),
+    never a guessed or scraped filename. Falls back to the stored
+    source_url verbatim whenever primary_document is missing or
+    source_url doesn't have the expected trailing-slash directory shape
+    — no fabricated replacement. DART/EDINET are untouched: their
+    FilingEvent.primary_document is always empty, so this is a no-op for
+    both."""
+    if filing.source_name == _EDGAR_SOURCE and filing.primary_document and filing.source_url.endswith("/"):
+        return filing.source_url + filing.primary_document
+    return filing.source_url
+
+
 def candidate_to_signal(candidate: CandidateSignal) -> Signal:
     filing = candidate.filing
     last_updated = candidate.reviewed_at or (
@@ -107,6 +124,6 @@ def candidate_to_signal(candidate: CandidateSignal) -> Signal:
         is_demo=False,
         issuer=filing.corp_name,
         source_name=filing.source_name,
-        source_url=filing.source_url,
+        source_url=_source_url(filing),
         excerpt=candidate.excerpt_original,
     )

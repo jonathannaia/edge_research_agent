@@ -1,12 +1,14 @@
-"""RadarSignalRepository — combines real DART + EDINET candidate caches,
-filters to eligible statuses only, and never touches the demo seed file.
-No Streamlit runtime; writes only to tmp_path, never the real cache dir."""
+"""RadarSignalRepository — combines real DART + EDINET + EDGAR candidate
+caches, filters to eligible statuses only, and never touches the demo
+seed file. No Streamlit runtime; writes only to tmp_path, never the real
+cache dir."""
 from __future__ import annotations
 
 from datetime import datetime, timezone
 
 from src.config.settings import Settings
 from src.data_access.dart import candidate_store
+from src.data_access.edgar import edgar_pipeline
 from src.data_access.edinet import edinet_pipeline
 from src.data_access.live.radar_signal_repository import RadarSignalRepository
 from src.models.models import CandidateSignal, CandidateStatus, ExtractionState, FilingEvent, StateTransition
@@ -34,6 +36,16 @@ def _edinet_filing(rcept_no: str, theme_slug: str = "ai-buildout") -> FilingEven
     )
 
 
+def _edgar_filing(rcept_no: str, theme_slug: str = "ai-buildout") -> FilingEvent:
+    return FilingEvent(
+        rcept_no=rcept_no, corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA",
+        report_nm="8-K", rcept_dt="2026-08-17", flr_nm="NVIDIA", pblntf_ty="8-K",
+        theme_slug=theme_slug, source_url=f"https://www.sec.gov/Archives/edgar/data/1045810/{rcept_no.replace('-', '')}/",
+        retrieved_at=_now_iso(), source_name="SEC EDGAR", original_language="English",
+        primary_document="nvda-20260817.htm",
+    )
+
+
 def _candidate(candidate_id: str, filing: FilingEvent, status: CandidateStatus, matched_rules: list[str]) -> CandidateSignal:
     return CandidateSignal(
         id=candidate_id, filing=filing, matched_rules=matched_rules, confidence="Moderate", status=status,
@@ -43,7 +55,7 @@ def _candidate(candidate_id: str, filing: FilingEvent, status: CandidateStatus, 
     )
 
 
-def test_combines_eligible_candidates_from_both_sources(tmp_path):
+def test_combines_eligible_candidates_from_all_three_sources(tmp_path):
     dart_eligible = _candidate("cand-d1", _dart_filing("d1"), CandidateStatus.NEEDS_REVIEW, ["market_rumor_response:x:풍문"])
     dart_ineligible = _candidate("cand-d2", _dart_filing("d2"), CandidateStatus.PROCESSING_DEFERRED, ["earnings:x:실적"])
     dart_not_material = _candidate("cand-d3", _dart_filing("d3"), CandidateStatus.NOT_MATERIAL, ["earnings:x:실적"])
@@ -55,10 +67,16 @@ def test_combines_eligible_candidates_from_both_sources(tmp_path):
         tmp_path, {c.id: c for c in [edinet_eligible, edinet_ineligible]}, edinet_pipeline.CANDIDATE_STORE_FILENAME,
     )
 
+    edgar_eligible = _candidate("edgar-cand-g1", _edgar_filing("0001045810-26-000069"), CandidateStatus.NEEDS_REVIEW, ["earnings_or_results:8-K item 2.02"])
+    edgar_ineligible = _candidate("edgar-cand-g2", _edgar_filing("0001045810-26-000070"), CandidateStatus.PROCESSING_DEFERRED, [])
+    candidate_store.save_candidates(
+        tmp_path, {c.id: c for c in [edgar_eligible, edgar_ineligible]}, edgar_pipeline.CANDIDATE_STORE_FILENAME,
+    )
+
     repo = RadarSignalRepository(Settings(cache_dir=tmp_path))
     signals = repo.get_all_signals()
 
-    assert {s.id for s in signals} == {"signal-cand-d1", "signal-edinet-cand-e1"}
+    assert {s.id for s in signals} == {"signal-cand-d1", "signal-edinet-cand-e1", "signal-edgar-cand-g1"}
     assert all(s.is_demo is False for s in signals)
 
 

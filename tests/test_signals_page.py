@@ -87,6 +87,57 @@ def test_signals_page_shows_real_dart_signal_with_no_sample_badge(tmp_path):
         assert link_buttons[0].proto.label == "Open filing"
 
 
+def test_signals_page_shows_real_edgar_signal_with_direct_document_link(tmp_path):
+    filing = FilingEvent(
+        rcept_no="0001045810-26-000069", corp_code="0001045810", corp_name="NVIDIA", stock_code="NVDA",
+        report_nm="8-K", rcept_dt="2026-08-17", flr_nm="NVIDIA", pblntf_ty="8-K", theme_slug="ai-buildout",
+        source_url="https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+        retrieved_at=_now_iso(), source_name="SEC EDGAR", original_language="English",
+        primary_document="nvda-20260817.htm",
+    )
+    candidate = CandidateSignal(
+        id="edgar-cand-0001045810-26-000069", filing=filing, matched_rules=["earnings_or_results:8-K item 2.02"],
+        confidence="High", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="Item 2.02 Results of Operations and Financial Condition.",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate}, "edgar_candidates.json")
+
+    direct_document_url = "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"
+
+    settings = Settings(cache_dir=tmp_path)
+    with patch("src.data_access.container.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        assert not at.exception
+        all_text = " ".join(m.value for m in at.markdown)
+        assert filing.corp_name in all_text
+        assert filing.source_name in all_text
+        assert ":gray-badge[Sample]" not in all_text
+        assert "demo data in this phase" not in all_text
+        # The card's clickable source link must be the direct document
+        # URL, not the bare accession-directory URL.
+        assert direct_document_url in all_text
+        assert candidate.excerpt_original in all_text
+
+        drawer_buttons = [b for b in at.button if (b.key or "").startswith("open-drawer-")]
+        assert len(drawer_buttons) == 1
+        drawer_buttons[0].click().run()
+        assert not at.exception
+
+        drawer_text = " ".join(m.value for m in at.markdown)
+        assert "EevaResearch Demo Data" not in drawer_text
+        assert "sample evidence item" not in drawer_text
+        assert "No live filing connected in this phase" not in drawer_text
+        assert filing.corp_name in drawer_text
+        assert candidate.excerpt_original in drawer_text
+
+        link_buttons = at.get("link_button")
+        assert len(link_buttons) == 1
+        assert link_buttons[0].proto.url == direct_document_url
+
+
 def test_signals_page_shows_truthful_empty_state_when_no_eligible_candidates(tmp_path):
     deferred_filing = FilingEvent(
         rcept_no="20260812000201", corp_code="00164779", corp_name="SK Hynix", stock_code="000660",
