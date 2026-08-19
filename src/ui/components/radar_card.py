@@ -33,6 +33,16 @@ _PREPARING_SPINNER_TEXT = "Preparing analyst view — retrieving and interpretin
 _ANALYST_VIEW_CAPTION = "When ready, the analyst-ready summary appears in this filing’s Details."
 _UNAVAILABLE_REASON = "Preparation is unavailable until this source is configured."
 
+_REVIEW_NOTE_LABEL = "Review note"
+_REVIEW_NOTE_PLACEHOLDER = "Optional note (required for Exclude)…"
+_PUBLISH_LABEL = "Publish"
+_MONITOR_LABEL = "Monitor"
+_EXCLUDE_LABEL = "Exclude"
+_CONFIRM_EXCLUDE_LABEL = "Confirm exclude"
+_CANCEL_LABEL = "Cancel"
+_EXCLUDE_NOTE_REQUIRED_REASON = "A note is required before excluding — explain why this filing doesn't need review."
+_REVIEW_DECISION_ERROR = "Could not record this decision — the candidate may no longer exist. Refresh and try again."
+
 
 def _why_flagged_phrases(matched_rules: list[str]) -> list[str]:
     """Parses matched-rule strings into short, human-readable phrases —
@@ -120,8 +130,74 @@ def _render_process_action(candidate_id: str, label: str, key: str, ready: bool,
         st.markdown(f'<div class="er-muted" style="margin-top:0.2rem; font-size:0.78rem;">{st.session_state[error_key]}</div>', unsafe_allow_html=True)
 
 
+def _render_review_actions(
+    candidate: CandidateSignal,
+    on_review_decision: Callable[[str, CandidateStatus, str], CandidateSignal | None],
+) -> None:
+    """Publish / Monitor / Exclude — always offered regardless of the
+    candidate's current status, so an earlier reviewer decision can be
+    revised; every decision is recorded via the shared, source-agnostic
+    record_review_decision() seam (src/logic/review_actions.py), routed
+    to the right on-disk store by the render()-level closure passed in
+    as `on_review_decision` — this component has no source awareness of
+    its own, same separation the existing on_process callback already
+    uses. Exclude requires a non-whitespace note and a second, explicit
+    "Confirm exclude" click before anything is written; Publish/Monitor
+    are single-click with an optional note."""
+    note_key = f"radar-review-note-{candidate.id}"
+    pending_exclude_key = f"radar-exclude-pending-{candidate.id}"
+    error_key = f"radar-review-error-{candidate.id}"
+
+    st.markdown('<div class="er-muted" style="margin-top:0.4rem;"><strong>Review decision</strong></div>', unsafe_allow_html=True)
+    note = st.text_input(_REVIEW_NOTE_LABEL, key=note_key, label_visibility="collapsed", placeholder=_REVIEW_NOTE_PLACEHOLDER)
+    note_stripped = note.strip()
+
+    def _apply(status: CandidateStatus) -> None:
+        st.session_state.pop(error_key, None)
+        result = on_review_decision(candidate.id, status, note_stripped)
+        if result is None:
+            st.session_state[error_key] = _REVIEW_DECISION_ERROR
+            return
+        st.session_state.pop(note_key, None)
+        st.session_state.pop(pending_exclude_key, None)
+        st.rerun()
+
+    is_pending_exclude = st.session_state.get(pending_exclude_key, False)
+    review_cols = st.columns(4) if is_pending_exclude else st.columns(3)
+
+    with review_cols[0]:
+        if st.button(_PUBLISH_LABEL, key=f"publish-{candidate.id}", use_container_width=True):
+            _apply(CandidateStatus.PUBLISHED)
+    with review_cols[1]:
+        if st.button(_MONITOR_LABEL, key=f"monitor-{candidate.id}", use_container_width=True):
+            _apply(CandidateStatus.MONITORING)
+
+    if not is_pending_exclude:
+        with review_cols[2]:
+            if st.button(_EXCLUDE_LABEL, key=f"exclude-{candidate.id}", use_container_width=True):
+                st.session_state[pending_exclude_key] = True
+                st.rerun()
+    else:
+        with review_cols[2]:
+            if st.button(
+                _CONFIRM_EXCLUDE_LABEL, key=f"exclude-confirm-{candidate.id}",
+                use_container_width=True, disabled=not note_stripped,
+            ):
+                _apply(CandidateStatus.DISMISSED)
+        with review_cols[3]:
+            if st.button(_CANCEL_LABEL, key=f"exclude-cancel-{candidate.id}", use_container_width=True):
+                st.session_state.pop(pending_exclude_key, None)
+                st.rerun()
+        if not note_stripped:
+            st.markdown(f'<div class="er-muted" style="margin-top:0.15rem; font-size:0.78rem;">{_EXCLUDE_NOTE_REQUIRED_REASON}</div>', unsafe_allow_html=True)
+
+    if st.session_state.get(error_key):
+        st.markdown(f'<div class="er-muted" style="margin-top:0.15rem; font-size:0.78rem;">{st.session_state[error_key]}</div>', unsafe_allow_html=True)
+
+
 def candidate_row(
     item: RadarItem, on_process: Callable[[str], None] | None = None, process_ready: bool = True,
+    on_review_decision: Callable[[str, CandidateStatus, str], CandidateSignal | None] | None = None,
 ) -> None:
     filing = item.filing
     candidate = item.candidate
@@ -210,6 +286,9 @@ def candidate_row(
                             f"Retry available in {eligibility.cooldown_remaining_seconds}s",
                             key=f"retry-{candidate.id}", disabled=True, use_container_width=True,
                         )
+
+        if candidate is not None and on_review_decision is not None:
+            _render_review_actions(candidate, on_review_decision)
 
         if candidate is not None:
             with st.expander("Details"):

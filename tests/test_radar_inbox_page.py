@@ -1078,3 +1078,229 @@ def test_radar_inbox_clear_all_filters_restores_full_view(tmp_path):
     assert "특별한 제목 둘" in all_text
     assert "다른 제목 둘" in all_text
     assert at.text_input(key="radar-filter-search").value == ""
+
+
+# --- Stage 2B: Publish / Monitor / Exclude review-decision actions ---
+
+def _needs_review_candidate(candidate_id: str, filing: FilingEvent) -> CandidateSignal:
+    return CandidateSignal(
+        id=candidate_id, filing=filing, matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.NEEDS_REVIEW, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="본문 발췌.",
+        state_history=[StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso())],
+    )
+
+
+def test_radar_inbox_publish_action_updates_status_and_persists_note(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000100", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = _needs_review_candidate("cand-publish-1", filing)
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        at.text_input(key=f"radar-review-note-{candidate.id}").set_value("Confirmed material.")
+        at.run()
+        publish_button = next(b for b in at.button if b.key == f"publish-{candidate.id}")
+        publish_button.click()
+        at.run()
+
+    assert not at.exception
+    reloaded = candidate_store.load_candidates(tmp_path)[candidate.id]
+    assert reloaded.status == CandidateStatus.PUBLISHED
+    assert reloaded.reviewed_note == "Confirmed material."
+    assert reloaded.reviewed_at is not None
+    assert reloaded.state_history[-1].status == CandidateStatus.PUBLISHED
+    assert reloaded.state_history[-1].detail == "Confirmed material."
+
+
+def test_radar_inbox_monitor_action_updates_status(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000101", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = _needs_review_candidate("cand-monitor-1", filing)
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        monitor_button = next(b for b in at.button if b.key == f"monitor-{candidate.id}")
+        monitor_button.click()
+        at.run()
+
+    assert not at.exception
+    reloaded = candidate_store.load_candidates(tmp_path)[candidate.id]
+    assert reloaded.status == CandidateStatus.MONITORING
+    assert reloaded.reviewed_note == ""
+    assert reloaded.state_history[-1].detail == "Reviewer decision: Monitoring"
+
+
+def test_radar_inbox_exclude_requires_two_clicks_and_a_note(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000102", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = _needs_review_candidate("cand-exclude-1", filing)
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+    before = (tmp_path / "dart_candidates.json").read_text(encoding="utf-8")
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        # First click: only sets pending state, no write.
+        exclude_button = next(b for b in at.button if b.key == f"exclude-{candidate.id}")
+        exclude_button.click()
+        at.run()
+
+        after_first_click = (tmp_path / "dart_candidates.json").read_text(encoding="utf-8")
+        assert after_first_click == before  # byte-identical — no write yet
+
+        confirm_button = next(b for b in at.button if b.key == f"exclude-confirm-{candidate.id}")
+        assert confirm_button.disabled is True  # no note yet
+        all_text = " ".join(m.value for m in at.markdown)
+        assert "A note is required before excluding" in all_text
+
+        # Adding a note enables the confirm button.
+        at.text_input(key=f"radar-review-note-{candidate.id}").set_value("Routine, no new information.")
+        at.run()
+        confirm_button = next(b for b in at.button if b.key == f"exclude-confirm-{candidate.id}")
+        assert confirm_button.disabled is False
+
+        confirm_button.click()
+        at.run()
+
+    assert not at.exception
+    reloaded = candidate_store.load_candidates(tmp_path)[candidate.id]
+    assert reloaded.status == CandidateStatus.DISMISSED
+    assert reloaded.reviewed_note == "Routine, no new information."
+    assert reloaded.state_history[-1].status == CandidateStatus.DISMISSED
+    assert reloaded.state_history[-1].detail == "Routine, no new information."
+
+
+def test_radar_inbox_exclude_whitespace_only_note_keeps_confirm_disabled(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000103", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = _needs_review_candidate("cand-exclude-ws", filing)
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        exclude_button = next(b for b in at.button if b.key == f"exclude-{candidate.id}")
+        exclude_button.click()
+        at.run()
+
+        at.text_input(key=f"radar-review-note-{candidate.id}").set_value("    ")
+        at.run()
+        confirm_button = next(b for b in at.button if b.key == f"exclude-confirm-{candidate.id}")
+        assert confirm_button.disabled is True  # whitespace-only treated as empty
+
+    assert not at.exception
+
+
+def test_radar_inbox_exclude_cancel_clears_pending_without_writing(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000104", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = _needs_review_candidate("cand-exclude-cancel", filing)
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+    before = (tmp_path / "dart_candidates.json").read_text(encoding="utf-8")
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        exclude_button = next(b for b in at.button if b.key == f"exclude-{candidate.id}")
+        exclude_button.click()
+        at.run()
+
+        cancel_button = next(b for b in at.button if b.key == f"exclude-cancel-{candidate.id}")
+        cancel_button.click()
+        at.run()
+
+        # Pending state cleared — the plain "Exclude" button is back.
+        assert any(b.key == f"exclude-{candidate.id}" for b in at.button)
+        assert not any(b.key == f"exclude-confirm-{candidate.id}" for b in at.button)
+
+    after = (tmp_path / "dart_candidates.json").read_text(encoding="utf-8")
+    assert after == before  # byte-identical — cancel never writes
+    assert not at.exception
+
+
+def test_radar_inbox_review_actions_available_regardless_of_current_status(tmp_path):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000105", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    already_published = CandidateSignal(
+        id="cand-already-published", filing=filing, matched_rules=["earnings:earnings_or_results_report:실적"],
+        confidence="Moderate", status=CandidateStatus.PUBLISHED, extraction_state=ExtractionState.EXTRACTED,
+        excerpt_original="본문 발췌.", reviewed_at=_now_iso(), reviewed_note="Initial approval.",
+        state_history=[
+            StateTransition(status=CandidateStatus.NEEDS_REVIEW, at=_now_iso()),
+            StateTransition(status=CandidateStatus.PUBLISHED, at=_now_iso(), detail="Initial approval."),
+        ],
+    )
+    candidate_store.save_candidates(tmp_path, {already_published.id: already_published})
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        button_keys = {b.key for b in at.button}
+        assert f"publish-{already_published.id}" in button_keys
+        assert f"monitor-{already_published.id}" in button_keys
+        assert f"exclude-{already_published.id}" in button_keys
+
+        # Revising an already-published candidate to Monitoring appends,
+        # never overwrites, its prior history.
+        monitor_button = next(b for b in at.button if b.key == f"monitor-{already_published.id}")
+        monitor_button.click()
+        at.run()
+
+    assert not at.exception
+    reloaded = candidate_store.load_candidates(tmp_path)[already_published.id]
+    assert reloaded.status == CandidateStatus.MONITORING
+    assert len(reloaded.state_history) == 3
+    assert reloaded.state_history[1].status == CandidateStatus.PUBLISHED
+    assert reloaded.state_history[1].detail == "Initial approval."  # earlier decision preserved
+
+
+def test_radar_inbox_review_decision_none_result_shows_error_and_does_not_rerun_as_success(tmp_path, monkeypatch):
+    _seed_corp_codes(tmp_path)
+    filing = _filing("20260812000106", "실적 발표")
+    _seed_filing_events(tmp_path, [filing])
+    candidate = _needs_review_candidate("cand-vanishes", filing)
+    candidate_store.save_candidates(tmp_path, {candidate.id: candidate})
+
+    # Simulates the candidate having disappeared from the store between
+    # render and click (the one real case record_review_decision returns
+    # None for) — this must surface a candidate-specific error, not
+    # silently proceed as if the decision succeeded.
+    monkeypatch.setattr("src.ui.pages.radar_inbox.review_actions.record_review_decision", lambda *a, **kw: None)
+
+    settings = Settings(dart_api_key="dart-key", translation_api_key="deepl-key", cache_dir=tmp_path)
+    with patch("src.ui.pages.radar_inbox.get_settings", return_value=settings):
+        at = AppTest.from_file(str(_HARNESS), default_timeout=10)
+        at.run()
+
+        publish_button = next(b for b in at.button if b.key == f"publish-{candidate.id}")
+        publish_button.click()
+        at.run()
+
+    assert not at.exception
+    all_text = " ".join(m.value for m in at.markdown)
+    assert "Could not record this decision" in all_text
+    reloaded = candidate_store.load_candidates(tmp_path)[candidate.id]
+    assert reloaded.status == CandidateStatus.NEEDS_REVIEW  # unchanged — not silently treated as success

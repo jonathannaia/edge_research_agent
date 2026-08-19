@@ -35,6 +35,8 @@ from src.data_access.edgar import edgar_pipeline, edgar_service
 from src.data_access.edgar import scan_service as edgar_scan_service
 from src.data_access.edinet import edinet_pipeline, edinet_service
 from src.data_access.edinet import scan_service as edinet_scan_service
+from src.logic import review_actions
+from src.models.models import CandidateSignal, CandidateStatus
 from src.ui.components.empty_state import empty_state
 from src.ui.components.freshness import freshness_chip
 from src.ui.components.radar_card import candidate_row
@@ -369,6 +371,21 @@ def render() -> None:
             radar_service.process_candidate_now(settings, candidate_id)
         st.rerun()
 
+    def _on_review_decision(candidate_id: str, status: CandidateStatus, note: str) -> CandidateSignal | None:
+        # Same id-prefix routing as _on_process, kept independent of it —
+        # this picks the on-disk store filename only; the actual decision
+        # logic lives entirely in review_actions.record_review_decision,
+        # which has no source awareness of its own. The caller
+        # (radar_card.py) is responsible for rerunning on success and for
+        # showing an error (never silently proceeding) on a None result.
+        if candidate_id.startswith("edgar-cand-"):
+            filename = edgar_pipeline.CANDIDATE_STORE_FILENAME
+        elif candidate_id.startswith("edinet-cand-"):
+            filename = edinet_pipeline.CANDIDATE_STORE_FILENAME
+        else:
+            filename = candidate_store._CACHE_FILENAME
+        return review_actions.record_review_decision(settings.cache_dir, candidate_id, filename, status, note)
+
     # Reuses the exact same readiness objects computed at the top of
     # render() for the Scan buttons — a candidate's "Prepare analyst
     # view"/"Retry analyst view preparation" action needs its own
@@ -430,4 +447,5 @@ def render() -> None:
         candidate_row(
             item, on_process=_on_process,
             process_ready=process_readiness_by_source.get(item.filing.source_name, False),
+            on_review_decision=_on_review_decision,
         )
