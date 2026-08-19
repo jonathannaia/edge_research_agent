@@ -19,7 +19,6 @@ from src.data_access.demo.catalyst_repository import DemoCatalystRepository
 from src.data_access.demo.evidence_repository import DemoEvidenceRepository
 from src.data_access.demo.market_data_provider import DemoMarketDataProvider
 from src.data_access.demo.research_answer_provider import DemoResearchAnswerProvider
-from src.data_access.demo.signal_repository import DemoSignalRepository
 from src.data_access.demo.theme_repository import DemoThemeRepository
 from src.data_access.demo.ticker_repository import DemoTickerRepository
 from src.data_access.interfaces import (
@@ -31,6 +30,7 @@ from src.data_access.interfaces import (
     ThemeRepository,
     TickerRepository,
 )
+from src.data_access.live.radar_signal_repository import RadarSignalRepository
 
 
 @dataclass(frozen=True)
@@ -51,7 +51,7 @@ def get_repositories(settings: Settings | None = None) -> AppContext:
         ticker_repository=DemoTickerRepository(settings),
         evidence_repository=DemoEvidenceRepository(settings),
         catalyst_repository=DemoCatalystRepository(settings),
-        signal_repository=DemoSignalRepository(settings),
+        signal_repository=RadarSignalRepository(settings),
         market_data_provider=DemoMarketDataProvider(settings),
         research_answer_provider=DemoResearchAnswerProvider(settings),
     )

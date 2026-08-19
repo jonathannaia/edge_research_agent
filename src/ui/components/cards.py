@@ -136,7 +136,8 @@ def signal_card(
             tag_line = signal.theme_slug + (f" / {signal.subtheme_slug}" if signal.subtheme_slug else "")
             st.markdown(f'<div class="er-muted">{tag_line}</div>', unsafe_allow_html=True)
         with top[1]:
-            demo_badge("Sample")
+            if signal.is_demo:
+                demo_badge("Sample")
 
         st.markdown(
             f'<div style="margin:0.4rem 0; max-height:3.2em; overflow:hidden;">{signal.interpretation}</div>',

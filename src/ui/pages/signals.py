@@ -1,6 +1,9 @@
 """Signals — structured, filterable view of every tracked signal (brief §4:
 absorbs Signal Board; Watchlists fold in as sidebar filter entries rather
-than a standalone page). All signals are demo data.
+than a standalone page). Sourced from real DART/EDINET Radar candidates
+(src/data_access/live/radar_signal_repository.py) — only candidates
+eligible per src/logic/signal_promotion.py are ever shown; no demo/sample
+rows appear here.
 
 Opening this page is the trigger that advances `last_seen_at` (brief §10)
 — read the previous baseline first (for unread-dot display and the sidebar
@@ -42,14 +45,14 @@ def render() -> None:
         st.markdown('<div class="er-page-title">Signals</div>', unsafe_allow_html=True)
     with header_cols[1]:
         st.markdown('<div style="text-align:right; margin-top:0.8rem;">', unsafe_allow_html=True)
-        freshness_chip("demo", key="fresh-signals-head")
+        freshness_chip("live", key="fresh-signals-head")
         st.markdown("</div>", unsafe_allow_html=True)
-    st.write("Every tracked signal in one place — demo data in this phase, filterable by theme, direction, strength, and time horizon.")
+    st.write("Every tracked signal in one place — sourced from real DART and EDINET filings, filterable by theme, direction, strength, and time horizon.")
 
     if not signals:
         empty_state(
-            "No new signals since Thursday",
-            "The feed checks EDGAR, TDnet, DART, CNINFO, and HKEX every 15 minutes.",
+            "No eligible filings yet.",
+            "Radar Inbox scans DART and EDINET; a filing appears here once it reaches Extracted or Needs review status.",
         )
         return
 

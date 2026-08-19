@@ -1,7 +1,9 @@
 """Data-access tests: demo repositories satisfy their interfaces, real seed
 data parses into the right shapes, and a missing/malformed seed file
 degrades to an empty result rather than raising."""
+from src.config.settings import get_settings
 from src.data_access.container import AppContext, get_repositories
+from src.data_access.demo.signal_repository import DemoSignalRepository
 from src.data_access.interfaces import (
     CatalystRepository,
     EvidenceRepository,
@@ -77,10 +79,16 @@ def test_catalyst_repository_upcoming_sorted_by_date():
     assert dates == sorted(dates)
 
 
-def test_signal_repository_filters_by_theme():
-    ctx = get_repositories()
-    all_signals = ctx.signal_repository.get_all_signals()
-    photonics_signals = ctx.signal_repository.get_signals_for_theme("photonics")
+def test_demo_signal_repository_filters_by_theme():
+    """DemoSignalRepository itself, tested directly rather than via
+    get_repositories() — the container now wires signal_repository to
+    RadarSignalRepository (real DART/EDINET data), so this repository is
+    no longer reachable through the container at all; it's exercised
+    directly here purely to confirm the demo/seed data implementation
+    still behaves correctly in isolation."""
+    repo = DemoSignalRepository(get_settings())
+    all_signals = repo.get_all_signals()
+    photonics_signals = repo.get_signals_for_theme("photonics")
     assert len(photonics_signals) < len(all_signals)
     assert all(s.theme_slug == "photonics" for s in photonics_signals)
 
