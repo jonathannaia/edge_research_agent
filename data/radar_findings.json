@@ -1,6 +1,33 @@
 [
   {
     "niche": "Space",
+    "headline": "Rocket Lab to test Space Force data network connection in orbit in 2027",
+    "summary": "Rocket Lab will use a Photon spacecraft to test interoperability with the Space Force's Space Data Network infrastructure in orbit during 2027, including compatibility with SpaceX's core network systems.",
+    "source_url": "https://spacenews.com/rocket-lab-to-test-space-force-data-network-connection-in-orbit-in-2027/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Tue, 18 Aug 2026 22:52:36 +0000",
+    "retrieved_at": "2026-08-19T00:42:24+00:00",
+    "tickers": [
+      {
+        "ticker": "RKLB",
+        "company_name": "Rocket Lab USA Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "SPCE",
+        "company_name": "Virgin Galactic",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Directly addresses space launch and orbital spacecraft testing activity.",
+    "url_hash": "77bbfe18b40d4144",
+    "id": "77bbfe18b40d4144"
+  },
+  {
+    "niche": "Space",
     "headline": "Starship lives! SpaceX craft arrives at Christmas Island after 24-day ocean ordeal",
     "summary": "SpaceX recovery teams successfully towed the Starship vehicle across the Indian Ocean and arrived at Christmas Island after a 24-day operation following the craft's test launch and splashdown.",
     "source_url": "https://www.space.com/space-exploration/launches-spacecraft/starship-lives-spacex-craft-arrives-at-christmas-island-after-24-day-ocean-ordeal",
