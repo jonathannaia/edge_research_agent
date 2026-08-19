@@ -308,6 +308,104 @@ TRACKED_COMPANIES: tuple[TrackedCompany, ...] = (
             "submissions metadata; cached CIK 0001288469)."
         ),
     ),
+    # Radar expansion, Phase 1 (registry-only), fourth batch — six
+    # companies added after a controlled, explicitly-approved live
+    # cik_resolver.py validation (2026-08-19). corp_code left unset,
+    # same as every other EDGAR entry above. Subthemes deliberately
+    # reuse existing data/seed/themes.json vocabulary where a real match
+    # exists (interconnect-switching under photonics; compute-
+    # accelerators and power-cooling under ai-buildout) rather than
+    # inventing near-duplicate strings — see the theme-model audit this
+    # batch was approved from. semiconductor-test is the one genuinely
+    # new subtheme, added to themes.json alongside this entry.
+    TrackedCompany(
+        name="Nokia Corp",
+        exchange="NYSE",
+        krx_code="NOK",
+        source="SEC EDGAR",
+        themes=("photonics",),
+        subthemes=("interconnect-switching",),
+        notes=(
+            "SEC EDGAR pilot cohort — Photonics. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0000924613). SEC-registered "
+            "as a Finland-domiciled entity; cross-check passed against "
+            "its real submissions metadata regardless."
+        ),
+    ),
+    TrackedCompany(
+        name="Tower Semiconductor Ltd",
+        exchange="NASDAQ",
+        krx_code="TSEM",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("compute-accelerators",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0000928876). SEC-registered "
+            "as an Israel-domiciled entity; cross-check passed against "
+            "its real submissions metadata regardless."
+        ),
+    ),
+    TrackedCompany(
+        name="Aehr Test Systems",
+        exchange="NASDAQ",
+        krx_code="AEHR",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("semiconductor-test",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001040470)."
+        ),
+    ),
+    TrackedCompany(
+        name="Trio-Tech International",
+        exchange="NYSE American",
+        krx_code="TRT",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("semiconductor-test",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0000732026)."
+        ),
+    ),
+    TrackedCompany(
+        name="Navitas Semiconductor Corp",
+        exchange="NASDAQ",
+        krx_code="NVTS",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("power-cooling",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001821769)."
+        ),
+    ),
+    TrackedCompany(
+        name="Bloom Energy Corp",
+        exchange="NYSE",
+        krx_code="BE",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        subthemes=("power-cooling",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() validation, "
+            "2026-08-19 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001664703)."
+        ),
+    ),
     # EDINET (Japan) pilot cohort (Gate 7) — one company per theme,
     # `krx_code`/`corp_code` hardcoded rather than left for runtime
     # resolution because both were already independently live-verified

@@ -8,7 +8,8 @@
       {"slug": "data-center-infrastructure", "name": "Data Center Infrastructure", "description": "Facility construction, racks, and hyperscale build-out."},
       {"slug": "power-cooling", "name": "Power & Cooling", "description": "Grid connections, backup power, and thermal management for dense compute."},
       {"slug": "networking-interconnect", "name": "Networking & Interconnect", "description": "Switches, NICs, and the fabric linking accelerators within and across racks."},
-      {"slug": "storage-memory-systems", "name": "Storage & Memory Systems", "description": "High-throughput storage and memory feeding training/inference clusters."}
+      {"slug": "storage-memory-systems", "name": "Storage & Memory Systems", "description": "High-throughput storage and memory feeding training/inference clusters."},
+      {"slug": "semiconductor-test", "name": "Semiconductor Test", "description": "Test, burn-in, and reliability equipment supporting AI and data-center chip supply."}
     ]
   },
   {
