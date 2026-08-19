@@ -1,6 +1,55 @@
 [
   {
     "niche": "Space",
+    "headline": "A SpaceX rocket slammed into the moon this month — and a NASA spacecraft has spotted its lunar grave (photos)",
+    "summary": "NASA's Lunar Reconnaissance Orbiter spotted a crater approximately 60 feet wide on the moon created by a SpaceX rocket that impacted on August 5.",
+    "source_url": "https://www.space.com/astronomy/moon/a-spacex-rocket-slammed-into-the-moon-this-month-and-a-nasa-spacecraft-has-spotted-its-lunar-grave-photos",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 17:00:00 +0000",
+    "retrieved_at": "2026-08-19T18:21:04+00:00",
+    "tickers": [
+      {
+        "ticker": "SPACEX",
+        "company_name": "SpaceX",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly concerns space launch and lunar impact activity involving a SpaceX rocket.",
+    "url_hash": "662dbc3cbb601e10",
+    "id": "662dbc3cbb601e10"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Meet the startup helping Wall Street put a price on AI compute",
+    "summary": "A startup is developing tools to help financial firms price AI compute and hedge exposure to compute cost fluctuations as spending on data centers and GPUs reaches hundreds of billions annually.",
+    "source_url": "https://techcrunch.com/video/meet-the-startup-helping-wall-street-put-a-price-on-ai-compute/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 17:26:48 +0000",
+    "retrieved_at": "2026-08-19T18:20:50+00:00",
+    "tickers": [],
+    "relevance_reason": "Discusses pricing mechanisms and financial instruments for AI compute, a core component of AI infrastructure spending.",
+    "url_hash": "47420612f6317fbc",
+    "id": "47420612f6317fbc"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Plans filed for 10-story data center outside Brisbane, Australia",
+    "summary": "A 10-story data center is planned for construction outside Brisbane, Australia, to be situated near battery energy storage systems (BESS) and electrical substations.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/plans-filed-for-10-story-data-center-outside-brisbane-australia/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 13:45:08 +0000",
+    "retrieved_at": "2026-08-19T18:20:46+00:00",
+    "tickers": [],
+    "relevance_reason": "This is a planned data center facility development, directly relevant to AI buildout infrastructure scope.",
+    "url_hash": "62772b5b9b6e7ef9",
+    "id": "62772b5b9b6e7ef9"
+  },
+  {
+    "niche": "Space",
     "headline": "Mysterious Russian 'space activity' causes US Air Force flight to Antarctica to turn around: report",
     "summary": "A U.S. Air Force aircraft was forced to turn around during a flight to Antarctica on August 18 due to a possible space debris hazard caused by mysterious Russian space activity over the South Pacific.",
     "source_url": "https://www.space.com/space-exploration/launches-spacecraft/mysterious-russian-space-activity-causes-us-air-force-flight-to-antarctica-to-turn-around-report",
