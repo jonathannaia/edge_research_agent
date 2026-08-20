@@ -1,5 +1,68 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "AI Data Center Networking: Scaling Up, Out, and Across with 102.4T Ethernet",
+    "summary": "The article examines network silicon components from Cisco, Broadcom, and Nvidia designed to address networking bottlenecks in scaling AI clusters, including specific chip models like Cisco's Silicon One G300 and P200, Broadcom's Tomahawk 6, and Nvidia's Spectrum-6.",
+    "source_url": "https://www.datacenterknowledge.com/networking/ai-data-center-networking-scaling-up-out-and-across-with-102-4t-ethernet",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 09:00:00 GMT",
+    "retrieved_at": "2026-08-20T10:21:11+00:00",
+    "tickers": [
+      {
+        "ticker": "CSCO",
+        "company_name": "Cisco Systems",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Discusses network silicon chips essential for AI data center infrastructure scaling.",
+    "url_hash": "15c3dd5832ce046c",
+    "id": "15c3dd5832ce046c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Don’t Scrap It, Save It: Feedforward Control For Modern Semiconductor Manufacturing",
+    "summary": "The article describes a feedforward control approach where fabs measure wafers after lithography and adjust subsequent etch steps to recover defective wafers and improve yield rates.",
+    "source_url": "https://semiengineering.com/dont-scrap-it-save-it-feedforward-control-for-modern-semiconductor-manufacturing/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 07:06:29 +0000",
+    "retrieved_at": "2026-08-20T10:21:01+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses semiconductor manufacturing process optimization techniques relevant to chip supply chain and fab operations.",
+    "url_hash": "59c9a3932c115c46",
+    "id": "59c9a3932c115c46"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Plans for five data centers in King of Prussia, Pennsylvania, blocked",
+    "summary": "A developer's plans for five data centers in King of Prussia, Pennsylvania have been blocked, though the developer intends to appeal the decision.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/plans-for-five-data-centers-in-king-of-prussia-pennsylvania-blocked/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 09:18:25 +0000",
+    "retrieved_at": "2026-08-20T10:20:53+00:00",
+    "tickers": [],
+    "relevance_reason": "directly concerns data center development plans, a core AI infrastructure buildout component",
+    "url_hash": "a6cde63e3d6f6e01",
+    "id": "a6cde63e3d6f6e01"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Twenty markets account 60 percent of hyperscale data center capacity - Synergy",
+    "summary": "Northern Virginia and Beijing account for the largest share of global hyperscale data center capacity, with 20 markets collectively representing 60 percent of total capacity.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/twenty-markets-account-60-percent-of-hyperscale-data-center-capacity-synergy/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 09:58:30 +0000",
+    "retrieved_at": "2026-08-20T10:20:50+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses geographic distribution of hyperscale data center capacity, directly relevant to AI infrastructure buildout.",
+    "url_hash": "abc996f7cb75dca3",
+    "id": "abc996f7cb75dca3"
+  },
+  {
     "niche": "Space",
     "headline": "Watch Rocket Lab launch a private Japanese Earth-observing satellite to orbit today",
     "summary": "Rocket Lab is launching a private Japanese Earth-observing satellite for iQPS on its ninth mission for the company, with a live broadcast available.",
