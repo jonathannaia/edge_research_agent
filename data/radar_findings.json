@@ -1,6 +1,33 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "Zayo expands Corning partnership to secure long-term fiber supply for AI expansion",
+    "summary": "Zayo has expanded its partnership with Corning to secure long-term fiber supply to support its AI expansion, as the company pursues a target of adding 15,000 new route miles by 2030.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/zayo-expands-corning-partnership-to-secure-long-term-fiber-supply-for-ai-expansion/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 14:59:34 +0000",
+    "retrieved_at": "2026-08-20T16:24:02+00:00",
+    "tickers": [
+      {
+        "ticker": "ZAYO",
+        "company_name": "Zayo Group Holdings",
+        "jurisdiction": "United States",
+        "verified": false
+      },
+      {
+        "ticker": "GLW",
+        "company_name": "Corning Incorporated",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Zayo securing fiber supply for AI expansion directly relates to AI infrastructure buildout, a core component of data center connectivity and hyperscaler capex enablement.",
+    "url_hash": "1ae53b09e5863862",
+    "id": "1ae53b09e5863862"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "Micron Puts $10B Behind US AI Memory Research",
     "summary": "Micron is investing $10 billion in a new research hub in Boise focused on memory, compute, and packaging technologies for AI systems.",
     "source_url": "https://www.datacenterknowledge.com/data-center-chips/micron-puts-10b-behind-us-ai-memory-research",
