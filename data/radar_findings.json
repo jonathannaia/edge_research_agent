@@ -1,6 +1,76 @@
 [
   {
     "niche": "Space",
+    "headline": "Eartheye Space forges strategic partnership with IN2",
+    "summary": "Risk-management firm IN2 signed a memorandum of understanding on August 19 to gain access to Eartheye Space's multi-sensor satellite tasking and analytics capabilities.",
+    "source_url": "https://spacenews.com/eartheye-space-forges-strategic-partnership-with-in2/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 23:07:16 +0000",
+    "retrieved_at": "2026-08-20T00:42:30+00:00",
+    "tickers": [],
+    "relevance_reason": "Article describes a strategic partnership involving satellite tasking and analytics services, which falls directly within space infrastructure and satellite operations.",
+    "url_hash": "2aa9d6637ebb3ccb",
+    "id": "2aa9d6637ebb3ccb"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "eStruxture-occupied data center in Toronto, Canada, sold by landlord",
+    "summary": "An eStruxture-occupied data center facility in Toronto sold for CA$16.5 million, with the buyer not disclosed.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/estruxture-occupied-data-center-in-toronto-canada-sold-by-landlord/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 14:10:42 +0000",
+    "retrieved_at": "2026-08-20T00:42:06+00:00",
+    "tickers": [
+      {
+        "ticker": "UNIT",
+        "company_name": "eStruxture Energy",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Data center infrastructure asset sale directly relevant to AI Buildout scope.",
+    "url_hash": "e5980d215a09a9b7",
+    "id": "e5980d215a09a9b7"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "FBI puts out call for AI hardware procurement contracts",
+    "summary": "The FBI is seeking up to $88 million in AI hardware procurement contracts.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/fbi-puts-out-call-for-ai-hardware-procurement-contracts/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:20:32 +0000",
+    "retrieved_at": "2026-08-20T00:42:00+00:00",
+    "tickers": [],
+    "relevance_reason": "FBI's procurement of AI hardware directly relates to AI infrastructure buildout and GPU/accelerator demand.",
+    "url_hash": "56042f3fec6fbb67",
+    "id": "56042f3fec6fbb67"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Plans for potential data center in Modesto, California, spark public outcry",
+    "summary": "NorthPoint is rumored to be the developer of a proposed 45-acre data center project on a former chemical plant site in Modesto, California, which has generated public opposition.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/plans-for-potential-data-center-in-modesto-california-spark-public-outcry/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Wed, 19 Aug 2026 16:30:36 +0000",
+    "retrieved_at": "2026-08-20T00:41:59+00:00",
+    "tickers": [
+      {
+        "ticker": "NRP",
+        "company_name": "NorthPoint",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Data center development directly relates to AI infrastructure buildout scope.",
+    "url_hash": "9ea9b31ec3cdf5ad",
+    "id": "9ea9b31ec3cdf5ad"
+  },
+  {
+    "niche": "Space",
     "headline": "Private mission to save NASA's Swift space telescope fails",
     "summary": "A private spacecraft mission failed to boost the orbit of NASA's Swift Observatory, resulting in the telescope being expected to crash back to Earth later this year.",
     "source_url": "https://www.space.com/space-exploration/missions/private-mission-to-save-nasas-swift-space-telescope-fails",
