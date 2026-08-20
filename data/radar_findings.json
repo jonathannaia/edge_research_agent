@@ -1,6 +1,20 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "CFETs Forge Better Connections",
+    "summary": "The article examines how material choices and precise interconnect decisions influence the performance advantages of complementary field-effect transistors (CFETs) in semiconductor manufacturing.",
+    "source_url": "https://semiengineering.com/cfets-forge-better-connections/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 07:01:04 +0000",
+    "retrieved_at": "2026-08-20T20:19:13+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses CFET (complementary FET) interconnect technology, which is directly relevant to semiconductor chip design and the AI chip supply chain.",
+    "url_hash": "4fcc8cfa1b1d9b14",
+    "id": "4fcc8cfa1b1d9b14"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "100MW data center proposed in Allentown, Pennsylvania",
     "summary": "J.G. Petrucci Company is proposing to convert a planned warehouse site into a 100MW data center in Allentown, Pennsylvania.",
     "source_url": "https://www.datacenterdynamics.com/en/news/100mw-data-center-proposed-in-allentown-pennsylvania/",
