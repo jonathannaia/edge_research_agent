@@ -1,6 +1,62 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "I Squared Capital launches data center firm Saragon",
+    "summary": "I Squared Capital has launched a new data center company called Saragon, seeded with facilities acquired from Cogent.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/i-squared-capital-launches-data-center-firm-saragon/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 10:35:56 +0000",
+    "retrieved_at": "2026-08-20T12:28:20+00:00",
+    "tickers": [
+      {
+        "ticker": "COGENT",
+        "company_name": "Cogent Communications Holdings Inc.",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Data center company launch is directly relevant to AI Buildout scope",
+    "url_hash": "6500086418d1977b",
+    "id": "6500086418d1977b"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Bloom launches new deployment platform to expedite time-to-power for data center operators",
+    "summary": "Bloom has launched a new deployment platform designed to reduce onsite power installation time by more than 40 percent for data center operators.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/bloom-launches-new-deployment-platform-to-expedite-time-to-power-for-data-center-operators/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 10:40:37 +0000",
+    "retrieved_at": "2026-08-20T12:28:18+00:00",
+    "tickers": [],
+    "relevance_reason": "New platform addressing power infrastructure deployment speed for data centers, a core AI buildout component",
+    "url_hash": "5f042336b91716b3",
+    "id": "5f042336b91716b3"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Bitdeer AI deploys Nvidia GB300 NVL72 cluster in Malaysia",
+    "summary": "Bitdeer AI has deployed an Nvidia GB300 NVL72 cluster in Malaysia, with approximately half of the Malaysian data center's capacity already contracted.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/bitdeer-ai-deploys-nvidia-gb300-nvl72-cluster-in-malaysia/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 10:47:21 +0000",
+    "retrieved_at": "2026-08-20T12:28:17+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Deployment of Nvidia AI accelerators in a data center expansion directly relates to AI buildout infrastructure.",
+    "url_hash": "2535a0583e227e87",
+    "id": "2535a0583e227e87"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "AI Data Center Networking: Scaling Up, Out, and Across with 102.4T Ethernet",
     "summary": "The article examines network silicon components from Cisco, Broadcom, and Nvidia designed to address networking bottlenecks in scaling AI clusters, including specific chip models like Cisco's Silicon One G300 and P200, Broadcom's Tomahawk 6, and Nvidia's Spectrum-6.",
     "source_url": "https://www.datacenterknowledge.com/networking/ai-data-center-networking-scaling-up-out-and-across-with-102-4t-ethernet",
