@@ -62,6 +62,16 @@ class Settings:
     # (see edinet_service.edinet_readiness); no live request uses it yet.
     # Exactly one env var, no competing aliases, per the Gate 1 brief.
     edinet_subscription_key: str | None = field(default_factory=lambda: os.getenv("EDGE_EDINET_SUBSCRIPTION_KEY") or None)
+    # EDGAR issuer-discovery preview harness (Phase B — dormant, design/
+    # DECISIONS.md). Disabled by default, same "unset/blank/unrecognized ->
+    # disabled" parsing as private_beta_auth_enabled/remote_cache_enabled
+    # below. Nothing in the app reads this yet — src/data_access/edgar/
+    # discovery_service.py takes `discovery_enabled` as a plain bool
+    # argument rather than importing Settings itself (keeping that module
+    # dependency-free), so this flag has no call site in this phase; it
+    # exists so a future, separately-approved wiring step has a ready,
+    # already-fail-closed-by-default gate to read.
+    edgar_discovery_enabled: bool = field(default_factory=lambda: _parse_beta_auth_enabled("EDGE_EDGAR_DISCOVERY_ENABLED"))
     cache_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "cache")
     # Private-beta access foundation, Phase 1 — disabled by default so every
     # existing page keeps working with no configuration at all. The

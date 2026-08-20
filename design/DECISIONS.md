@@ -2446,3 +2446,90 @@ convention.
   cache write/candidate/Signal/UI change, or resolving any of the four
   documented conflicts. See `design/ISSUER_REGISTRY_FOUNDATION.md`'s
   "Explicitly deferred" section.
+
+## EDGAR issuer-discovery preview harness — Phase B, buildable/mocked slice only
+
+Implements the local, deterministic, fully-testable portion of an
+8-phase autonomous-radar rollout plan (produced from a prior read-only
+design pass). **This harness intentionally has no real cross-issuer SEC
+endpoint yet** — `EdgarClient.get_submissions(cik)`, the tracked
+pipeline's only filing-metadata method, requires an already-known CIK and
+so structurally cannot discover a company EevaResearch has never tracked
+(confirmed by direct inspection, not assumed). A genuine discovery feed
+needs a different SEC mechanism (SEC's full-text search API or the EDGAR
+daily-index files are the two candidates identified; neither has been
+read from live documentation or verified against a real pull this
+session) — choosing and implementing one is explicitly out of scope here
+and requires its own separate Gate-1 approval (read the live spec, make
+one small confirming pull) before any code depends on its exact shape.
+
+- **`src/data_access/edgar/discovery_rules.py`** — a stricter,
+  discovery-only gate in front of `edgar_rules`' existing pure item-
+  parsing/refinement functions (reused unchanged, `edgar_rules.py` itself
+  untouched). 8-K only; a match requires `items` metadata that parses to
+  at least one recognized, configured item number. Deliberately excludes
+  the tracked pipeline's generic `material_event_8k_pending_items:8-K`
+  fallback (which fires on missing/malformed `items`) — that fallback is
+  useful for the tracked pipeline because it already knows the company
+  and theme; a brand-new, unverified issuer has no such context, so the
+  same coarse "something happened" signal here would just be noise.
+- **`src/data_access/edgar/discovery_service.py`** — `IssuerDiscoveryProposal`
+  (standalone, NOT a `CandidateSignal`, NOT an `Issuer`, never written to
+  the registry), grouped/deduplicated by CIK across possibly-many matched
+  filings, confidence recomputed from the distinct-category count across
+  all accumulated evidence (same rule `edgar_rules._confidence_for` uses
+  within one filing, applied across a proposal's whole filing set).
+  Persists only to `data/cache/edgar_discovery_proposals.json` (gitignored,
+  isolated — nothing in `src/ui/` references it, verified by an AST-based
+  test, not assumed). Reads `SEED_ISSUERS` only, to exclude already-
+  tracked CIKs; never imports `document_service`, `document_extractor`,
+  `candidate_store`, `signal_promotion`, `review_actions`, DART/EDINET
+  clients, or `requests` (verified via `ast`-parsed import checks, not
+  substring search — a naive substring check is tripped by this module's
+  own docstring, which names those same modules in prose to explain the
+  isolation it guarantees).
+- **Known limitation, flagged rather than worked around**: the CIK
+  exclusion set is built only from `SEED_ISSUERS[i].identifiers["SEC
+  EDGAR"]` — the Issuer Registry's own approved boundary for this module.
+  As of the Phase A migration, none of the 22 real SEC EDGAR seed issuers
+  carry a populated identifier there (each CIK is resolved lazily into
+  `data/cache/edgar_ciks.json` at runtime, never stored in the static
+  tuple `SEED_ISSUERS` is generated from) — so the *logic* is correct
+  (proven by tests using synthetic `Issuer` records with populated
+  identifiers) but the *real* production exclusion set is empty today.
+  This must be closed before any live discovery run is approved,
+  independent of the endpoint-choice gate above.
+- **Disabled by default**: `EDGE_EDGAR_DISCOVERY_ENABLED`
+  (`Settings.edgar_discovery_enabled`), same `_parse_beta_auth_enabled`
+  parsing every other flag in this file already uses. `discovery_service.py`
+  itself takes `discovery_enabled: bool` as a plain argument rather than
+  importing `Settings` — keeping the module dependency-free — so this
+  flag has no call site yet; it exists ready for a future, separately-
+  approved wiring step, same "dormant infrastructure" posture the R2
+  remote-cache module already established.
+- **Budgets**: `MAX_EDGAR_DISCOVERY_METADATA_REQUESTS = 25`,
+  `MAX_EDGAR_DISCOVERY_ROWS = 500`, `MAX_EDGAR_DISCOVERY_PROPOSALS = 10`
+  (new-CIK proposals per run only — a CIK already known from a prior run
+  may still gain new matched filings uncapped), `DEFAULT_EDGAR_DISCOVERY_
+  LOOKBACK_DAYS = 1`. A request-budget breach fails the whole run closed
+  (nothing written). A new-proposal-cap breach defers the excess CIKs to
+  a future run rather than losing them — their filing keys are
+  deliberately never marked "seen" when capped out.
+- **Tests**: `test_edgar_discovery_rules.py` (8) and
+  `test_edgar_discovery_service.py` (26) — disabled-by-default/zero-call
+  proof, seed-CIK exclusion (including zero-padding normalization),
+  valid/rejected-row classification, multi-filing grouping and repeat-run
+  idempotence, the new-proposal cap and its future-run recovery, request/
+  row budget enforcement, field-provenance preservation (never inventing
+  a name/ticker/theme/layer), the two fixed status-string wordings, byte-
+  verified isolation of all seven existing DART/EDGAR/translation store
+  files, and the AST-based import guards above. Full existing suite (966
+  tests total, +34 from this phase) re-run and passes unmodified — zero
+  network calls anywhere.
+- **Explicitly not done**: choosing or implementing a real SEC endpoint;
+  any live request of any kind; closing the CIK-exclusion-set gap above;
+  any UI/Coverage-page change (the preview artifact has no reader
+  anywhere in the app yet, by design); any registry/candidate/Signal
+  write. A separate approval is required before the Gate-1 endpoint
+  verification step, and a further separate approval before any live
+  discovery run regardless of these budgets.
