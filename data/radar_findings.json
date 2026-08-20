@@ -1,6 +1,47 @@
 [
   {
     "niche": "Space",
+    "headline": "Watch Rocket Lab launch a private Japanese Earth-observing satellite to orbit today",
+    "summary": "Rocket Lab is launching a private Japanese Earth-observing satellite for iQPS on its ninth mission for the company, with a live broadcast available.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/rocket-lab-launch-private-japanese-earth-observing-sar-satellite-lightning-god-defends",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 04:05:00 +0000",
+    "retrieved_at": "2026-08-20T04:28:20+00:00",
+    "tickers": [
+      {
+        "ticker": "RKLB",
+        "company_name": "Rocket Lab USA Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "3916",
+        "company_name": "iQPS Inc.",
+        "jurisdiction": "Japan",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Article covers a commercial space launch of a satellite to orbit, which is directly within the Space scope.",
+    "url_hash": "ba87cf9acd105485",
+    "id": "ba87cf9acd105485"
+  },
+  {
+    "niche": "Space",
+    "headline": "Human-Related Microbes May Survive Moon’s South Pole, NASA Finds",
+    "summary": "NASA scientists published research indicating that Earth microbes transported by human explorers could survive in shaded regions of the Moon's South Pole, highlighting the need to better understand microbial persistence in lunar environments.",
+    "source_url": "https://science.nasa.gov/humans-in-space/human-related-microbes-may-survive-moons-south-pole-nasa-finds/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Wed, 19 Aug 2026 18:02:40 +0000",
+    "retrieved_at": "2026-08-20T04:28:12+00:00",
+    "tickers": [],
+    "relevance_reason": "Article addresses NASA's research on microbial survival in lunar environments, directly relevant to space exploration and lunar operations.",
+    "url_hash": "47fc094e321146c5",
+    "id": "47fc094e321146c5"
+  },
+  {
+    "niche": "Space",
     "headline": "Eartheye Space forges strategic partnership with IN2",
     "summary": "Risk-management firm IN2 signed a memorandum of understanding on August 19 to gain access to Eartheye Space's multi-sensor satellite tasking and analytics capabilities.",
     "source_url": "https://spacenews.com/eartheye-space-forges-strategic-partnership-with-in2/",
