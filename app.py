@@ -24,6 +24,7 @@ from src.ui.beta_gate import evaluate_beta_gate
 from src.ui.pages import (
     about,
     company,
+    coverage,
     dashboard,
     disclaimer,
     home,
@@ -48,6 +49,7 @@ st.set_page_config(
 _RENDER_FNS = {
     "dashboard": dashboard.render,
     "radar_inbox": radar_inbox.render,
+    "coverage": coverage.render,
     "themes": themes.render,
     "signals": signals.render,
     "research": research.render,
@@ -58,6 +60,7 @@ _RENDER_FNS = {
 _URL_PATHS = {
     "dashboard": "dashboard",
     "radar_inbox": "radar-inbox",
+    "coverage": "coverage",
     "themes": "themes",
     "signals": "signals",
     "research": "research",

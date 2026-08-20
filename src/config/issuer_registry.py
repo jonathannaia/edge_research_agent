@@ -348,6 +348,16 @@ DISCOVERY_STUBS: tuple[Issuer, ...] = (
 )
 
 
+def source_name_for_seed_issuer(issuer: Issuer) -> str:
+    """Public accessor for the source-display-name a `SEED_ISSUERS` entry's
+    `issuer_id` prefix maps back to (e.g. "dart:005930" -> "OpenDART /
+    DART"). Returns "Unknown" for anything outside that prefix scheme —
+    concretely, any `DISCOVERY_STUBS` entry, which uses the "stub:"
+    namespace and has no single source by design (see module docstring)."""
+    prefix = issuer.issuer_id.split(":", 1)[0]
+    return _PREFIX_TO_SOURCE.get(prefix, "Unknown")
+
+
 def get_seed_issuers() -> tuple[Issuer, ...]:
     return SEED_ISSUERS
 

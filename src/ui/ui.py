@@ -26,6 +26,11 @@ METHODOLOGY_STATEMENT = (
 PRIMARY_NAV: list[tuple[str, str]] = [
     ("dashboard", "Dashboard"),
     ("radar_inbox", "Radar Inbox"),
+    # Coverage (Phase A, Issuer Registry — design/ISSUER_REGISTRY_FOUNDATION.md):
+    # a read-only observability map over the registry, placed next to Radar
+    # Inbox since both are "what's in our system" views, distinct from the
+    # theme-browsing/published-Signal pages that follow.
+    ("coverage", "Coverage"),
     ("themes", "Themes"),
     ("signals", "Signals"),
     ("research", "Research"),
