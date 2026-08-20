@@ -2376,3 +2376,73 @@ steps established repeatedly.
   this local session, on the browser/setup used for that check — it is
   not a claim of universal browser/device coverage, and no hosted/
   deployed instance has been verified.
+
+## Issuer Registry Foundation — Phase A (registry/ontology import, no network)
+
+Approved as the first slice of an 8-phase (A–H) autonomous global research-
+radar rollout plan, itself produced from a prior read-only deployment-
+checkpoint-and-architecture-planning task. Full rationale in
+`design/ISSUER_REGISTRY_FOUNDATION.md`; summarized here per this log's own
+convention.
+
+- **Source-agnostic `Issuer` model** (`src/models/issuer.py`) added
+  alongside, not in place of, `TrackedCompany` — an issuer's identity is
+  now independent of any one source (`identifiers` is an open
+  `{source_name: native_id}` map, not a fixed cik/corp_code/edinet_code
+  field set), while `TrackedCompany` keeps meaning exactly what it always
+  has: a per-source scan configuration record.
+- **`src/config/tracked_companies.py` left byte-identical** — zero lines
+  changed. Rather than repoint existing pipelines at a new adapter (risking
+  a subtle behavior change to three already-live-verified pipelines), the
+  new `SEED_ISSUERS` collection (`src/config/issuer_registry.py`) is
+  *generated* from the live `TRACKED_COMPANIES` tuple, and a
+  `tracked_companies_from_issuer_registry()` adapter converts it back —
+  tested for exact equivalence (`orig == regen`) on every field, both
+  `active_only=True` and `False`. No existing page/pipeline imports
+  anything from the new modules.
+- **Real count correction**: the approval message assumed 28 existing
+  `TrackedCompany` entries (carried forward from an earlier, uncorrected
+  count in this session's own prior planning report). The actual,
+  programmatically-verified count is **29** (2 DART, 22 SEC EDGAR, 5
+  EDINET) — `SEED_ISSUERS` reflects the real number, not the assumed one.
+- **21 unverified `DISCOVERY_STUBS`** added for the user-provided
+  portfolio-map seed-list companies not already covered by `SEED_ISSUERS`
+  (41 seed-list entries total; 20 already tracked, 21 not). Every stub has
+  `identifiers={}` — no CIK/corp_code/EDINET code invented for any of
+  them, even where a plausible match exists (e.g. `PDFS`/`AXTI`/`FCEL`
+  look SEC EDGAR-eligible by ticker format, but none is confirmed). Three
+  tickers (`BURUN`, `SHT.ST`, `P4O`) are explicitly flagged as ambiguous —
+  not even a listing exchange could be confidently inferred. 13 of the 21
+  sit in five jurisdictions (Taiwan/TWSE, Germany/Bundesanzeiger, UK/FCA,
+  France/AMF, Sweden) with no source adapter of any kind today.
+  `tracked_companies_from_issuer_registry()` only ever reads
+  `SEED_ISSUERS`, never `DISCOVERY_STUBS` — structurally, not just by
+  filter, a stub cannot reach anything an existing pipeline calls.
+- **Ontology foundation** (`src/config/ontology.py`): `PRIMARY_THEMES`
+  (the existing five dashboard themes) and a new `SUPPLY_CHAIN_LAYERS`
+  (16 layers, from the approved product-direction brief) as separate,
+  deliberately un-merged vocabularies — a theme is a dashboard-facing
+  cross-layer grouping, a layer is a supply-chain position, and a company
+  can span multiple layers within one theme. Four real, already-known
+  classification disagreements recorded as `KNOWN_CATEGORY_CONFLICTS`
+  (explicit unresolved metadata) rather than silently picked one way: MRVL
+  (registry theme `photonics` vs. seed list's `AI compute/cloud`), TSEM
+  (registry `ai-buildout` vs. seed list's `Foundry/manufacturing`), the
+  `networking-interconnect`/`interconnect-switching` naming overlap in
+  `data/seed/themes.json` (the demo catalog, already known to be
+  disconnected from the real pipeline), and Kioxia's seed-list ticker
+  `285A.T` vs. the registry's EDINET-native `285A0` (very likely the same
+  instrument, not independently re-verified).
+- **Tests**: three new files —
+  `test_issuer_model.py`/`test_ontology.py`/`test_issuer_registry.py` —
+  covering all eight invariants the approval required (lossless seed
+  coverage, compatibility-adapter equivalence, identifier/source fidelity,
+  structural stub exclusion, unique issuer IDs, ontology validity, and
+  known-conflict metadata as explicit unresolved records). Full existing
+  suite (902 tests, unchanged files) re-run and passes unmodified — zero
+  network calls anywhere in either the new or existing suites.
+- **Explicitly not done**: any stub verification, any new-jurisdiction
+  adapter, IR/earnings/news adapters, scheduled/autonomous scanning, any
+  cache write/candidate/Signal/UI change, or resolving any of the four
+  documented conflicts. See `design/ISSUER_REGISTRY_FOUNDATION.md`'s
+  "Explicitly deferred" section.
