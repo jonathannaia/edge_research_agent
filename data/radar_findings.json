@@ -1,6 +1,47 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "Micron Puts $10B Behind US AI Memory Research",
+    "summary": "Micron is investing $10 billion in a new research hub in Boise focused on memory, compute, and packaging technologies for AI systems.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-chips/micron-puts-10b-behind-us-ai-memory-research",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 14:11:06 GMT",
+    "retrieved_at": "2026-08-20T14:26:44+00:00",
+    "tickers": [
+      {
+        "ticker": "MU",
+        "company_name": "Micron Technology",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "MLCO",
+        "company_name": "Micron Leadership",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Micron is making a $10B investment in AI memory research infrastructure, which directly relates to AI chip supply chain and buildout.",
+    "url_hash": "33de97c9aeab5754",
+    "id": "33de97c9aeab5754"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "InfraTech to invest $2.7bn to develop data center campus in Carson County, Texas",
+    "summary": "InfraTech announced a $2.7 billion investment to develop a data center campus in Carson County, Texas.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/infratech-to-invest-27bn-to-develop-data-center-campus-in-carson-county-texas/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 14:20:34 +0000",
+    "retrieved_at": "2026-08-20T14:26:21+00:00",
+    "tickers": [],
+    "relevance_reason": "Article concerns major data center capital investment, directly relevant to AI infrastructure buildout scope",
+    "url_hash": "5614b20bdc285140",
+    "id": "5614b20bdc285140"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "I Squared Capital launches data center firm Saragon",
     "summary": "I Squared Capital has launched a new data center company called Saragon, seeded with facilities acquired from Cogent.",
     "source_url": "https://www.datacenterdynamics.com/en/news/i-squared-capital-launches-data-center-firm-saragon/",
