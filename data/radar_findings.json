@@ -1,6 +1,20 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "100MW data center proposed in Allentown, Pennsylvania",
+    "summary": "J.G. Petrucci Company is proposing to convert a planned warehouse site into a 100MW data center in Allentown, Pennsylvania.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/100mw-data-center-proposed-in-allentown-pennsylvania/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 14:50:31 +0000",
+    "retrieved_at": "2026-08-20T18:24:49+00:00",
+    "tickers": [],
+    "relevance_reason": "Proposes a data center project which is part of AI infrastructure buildout",
+    "url_hash": "9f03f21503eda82f",
+    "id": "9f03f21503eda82f"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "Zayo expands Corning partnership to secure long-term fiber supply for AI expansion",
     "summary": "Zayo has expanded its partnership with Corning to secure long-term fiber supply to support its AI expansion, as the company pursues a target of adding 15,000 new route miles by 2030.",
     "source_url": "https://www.datacenterdynamics.com/en/news/zayo-expands-corning-partnership-to-secure-long-term-fiber-supply-for-ai-expansion/",
