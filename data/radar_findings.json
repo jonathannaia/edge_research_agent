@@ -1,5 +1,19 @@
 [
   {
+    "niche": "AI Buildout",
+    "headline": "Starcloud raises $250 million for orbital data centers as launch options dry up",
+    "summary": "Starcloud has raised $250 million to develop orbital data centers as launch capacity becomes constrained.",
+    "source_url": "https://techcrunch.com/2026/08/21/starcloud-raises-200-million-for-orbital-data-centers-as-launch-options-dry-up/",
+    "source_name": "TechCrunch — AI",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 14:00:00 +0000",
+    "retrieved_at": "2026-08-21T22:14:43+00:00",
+    "tickers": [],
+    "relevance_reason": "Involves data center infrastructure development for space, which relates to AI infrastructure buildout and power/cooling challenges in novel environments.",
+    "url_hash": "6ac7852311e20805",
+    "id": "6ac7852311e20805"
+  },
+  {
     "niche": "Space",
     "headline": "Trump to award NASA's Artemis II astronauts the Congressional Space Medal of Honor",
     "summary": "NASA astronauts from the Artemis II mission, which flew around the moon, will receive the Congressional Space Medal of Honor on August 28.",
