@@ -1,5 +1,82 @@
 [
   {
+    "niche": "Space",
+    "headline": "Landspace aims to refly recovered Zhuque-3 booster within six months",
+    "summary": "Chinese commercial launch firm Landspace successfully achieved a vertical landing of its Zhuque-3 first stage booster on August 18 and is targeting a reflight of the recovered booster within six months.",
+    "source_url": "https://spacenews.com/landspace-aims-to-refly-recovered-zhuque-3-booster-within-six-months/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 08:54:11 +0000",
+    "retrieved_at": "2026-08-21T14:26:23+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses space launch reusability and booster recovery, core to the Space scope.",
+    "url_hash": "2625b5a0a3359f4f",
+    "id": "2625b5a0a3359f4f"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "EdgeCore Says Data Centers Should Pay Their Own Power Costs",
+    "summary": "EdgeCore, a data center developer-operator, states it will fund the power infrastructure needed for its campuses, though the interpretation of \"full cost\" hinges on how utilities allocate broader grid investment costs.",
+    "source_url": "https://www.datacenterknowledge.com/data-center-construction/edgecore-says-data-centers-should-pay-their-own-power-costs",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 21:09:41 GMT",
+    "retrieved_at": "2026-08-21T14:26:03+00:00",
+    "tickers": [],
+    "relevance_reason": "EdgeCore's strategy to fund power infrastructure for its data center campuses directly addresses the critical power and cooling infrastructure requirements for AI buildout.",
+    "url_hash": "4687e3dceda53a24",
+    "id": "4687e3dceda53a24"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Evolution DC secures long-term lease for land in Ho Chi Minh City, Vietnam",
+    "summary": "Evolution DC has secured a long-term land lease in Ho Chi Minh City, Vietnam, where it plans to build a 52MW data center in Saigon Hi-Tech Park.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/evolution-dc-secures-long-term-lease-for-land-in-ho-chi-minh-city-vietnam/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 12:31:26 +0000",
+    "retrieved_at": "2026-08-21T14:25:44+00:00",
+    "tickers": [],
+    "relevance_reason": "Article concerns data center infrastructure development, which is core AI Buildout scope.",
+    "url_hash": "154948310539589d",
+    "id": "154948310539589d"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "STT GDC backs out of planned Vietnam data center project",
+    "summary": "STT GDC is withdrawing from a planned Vietnam data center project in Ho Chi Minh City, with VNG seeking to acquire STT GDC's stake in the joint venture and develop alternative facilities.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/stt-gdc-backs-out-of-planned-vietnam-data-center-project/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 12:35:58 +0000",
+    "retrieved_at": "2026-08-21T14:25:43+00:00",
+    "tickers": [
+      {
+        "ticker": "VNG",
+        "company_name": "VNG Corporation",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Data center project cancellation directly impacts AI infrastructure buildout planning in the region.",
+    "url_hash": "9b0c6e792362a18a",
+    "id": "9b0c6e792362a18a"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "The what, where, and why of high-temperature superconducting feeders in data centers",
+    "summary": "The article examines high-temperature superconducting (HTS) feeders as a potential technology solution for data center operators, discussing the rationale and applicability of HTS technology in data center power systems.",
+    "source_url": "https://www.datacenterdynamics.com/en/opinions/the-what-where-and-why-of-high-temperature-superconducting-feeders-in-data-centers/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 13:30:29 +0000",
+    "retrieved_at": "2026-08-21T14:25:41+00:00",
+    "tickers": [],
+    "relevance_reason": "directly addresses high-temperature superconducting technology for data center power infrastructure, which is relevant to AI buildout power/cooling solutions",
+    "url_hash": "ec1af63707dca822",
+    "id": "ec1af63707dca822"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "PJM 5-Year Strategy Wrestles With Data Center Boom",
     "summary": "PJM, a major grid operator, is developing a 5-year strategy to address the infrastructure demands created by the data center boom, calling for faster development of generation and transmission capacity and improved visibility into large load requirements.",
