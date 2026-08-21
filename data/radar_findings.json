@@ -1,6 +1,67 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "AI Infrastructure Pushes Data Center Capex Forecast Above $3 Trillion",
+    "summary": "Global data center capex is forecast to exceed $3 trillion by 2030, driven by hyperscaler and AI-specialized cloud infrastructure spending.",
+    "source_url": "https://www.datacenterknowledge.com/ai-data-centers/ai-infrastructure-pushes-data-center-capex-forecast-above-3-trillion",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 09:00:00 GMT",
+    "retrieved_at": "2026-08-21T10:21:07+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses AI infrastructure capex and hyperscaler data center spending, core components of the AI Buildout scope.",
+    "url_hash": "cf9e2b68777ee91d",
+    "id": "cf9e2b68777ee91d"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Singapore gov't allocates 200MW of power for four data center developers on Jurong Island",
+    "summary": "Singapore's government allocated 200MW of power capacity on Jurong Island, with 50MW each going to Digital Realty, Equinix, Keppel Data Centers, and ST Telemedia Global Data Centers.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/singapore-govt-allocates-200mw-of-power-for-four-data-center-developers-on-jurong-island/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 09:43:54 +0000",
+    "retrieved_at": "2026-08-21T10:20:55+00:00",
+    "tickers": [
+      {
+        "ticker": "DLR",
+        "company_name": "Digital Realty",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "EQIX",
+        "company_name": "Equinix",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "KPLAC",
+        "company_name": "Keppel Data Centers",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly concerns power infrastructure allocation for AI data center development",
+    "url_hash": "068f06791cf59e8c",
+    "id": "068f06791cf59e8c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "US utility TVA imposes new rates on data center firms",
+    "summary": "The Tennessee Valley Authority (TVA) is imposing approximately 10 percent higher power rates on data center firms operating in its service territory.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/us-utility-tva-imposes-new-rates-on-data-center-firms/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 10:19:17 +0000",
+    "retrieved_at": "2026-08-21T10:20:48+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses power infrastructure costs for data center operators, a core component of AI infrastructure buildout.",
+    "url_hash": "567fb9d3a1b7d721",
+    "id": "567fb9d3a1b7d721"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "DCD Talks: Rethinking data center power resilience with Eric Dupont, PowerSecure",
     "summary": "PowerSecure's SVP of Customer Care discusses long-term data center resilience and the role of bridging power in data center operations.",
     "source_url": "https://www.datacenterdynamics.com/en/videos/dcd-talks-rethinking-data-center-power-resilience-with-eric-dupont-powersecure/",
