@@ -2,16 +2,16 @@
   "AAOI": {
     "ticker": "AAOI",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:05+00:00",
+    "retrieved_at": "2026-08-21T06:31:21+00:00",
     "errors": [],
     "price": {
       "ticker": "AAOI",
       "last_price": 129.1,
       "fifty_two_week_low": 18.5,
       "fifty_two_week_high": 233.67,
-      "pct_change_3m": -0.294759,
-      "pct_change_1y": 4.366271,
-      "avg_volume_30d": 11924920.0,
+      "pct_change_3m": -0.24648299999999998,
+      "pct_change_1y": 4.886913,
+      "avg_volume_30d": 11908200.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -151,16 +151,16 @@
   "ABCL": {
     "ticker": "ABCL",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:13+00:00",
+    "retrieved_at": "2026-08-21T06:31:28+00:00",
     "errors": [],
     "price": {
       "ticker": "ABCL",
       "last_price": 11.57,
       "fifty_two_week_low": 2.745,
       "fifty_two_week_high": 12.15,
-      "pct_change_3m": 1.887019,
-      "pct_change_1y": 1.799534,
-      "avg_volume_30d": 8176570.0,
+      "pct_change_3m": 1.85679,
+      "pct_change_1y": 1.77458,
+      "avg_volume_30d": 8212850.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -300,16 +300,16 @@
   "AEHR": {
     "ticker": "AEHR",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:21+00:00",
+    "retrieved_at": "2026-08-21T06:31:35+00:00",
     "errors": [],
     "price": {
       "ticker": "AEHR",
       "last_price": 105.97,
       "fifty_two_week_low": 16.38,
       "fifty_two_week_high": 147.4,
-      "pct_change_3m": 0.29185099999999997,
-      "pct_change_1y": 5.1375779999999995,
-      "avg_volume_30d": 2753110.0,
+      "pct_change_3m": 0.306014,
+      "pct_change_1y": 5.097238,
+      "avg_volume_30d": 2736010.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -449,16 +449,16 @@
   "ARM": {
     "ticker": "ARM",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:27+00:00",
+    "retrieved_at": "2026-08-21T06:31:41+00:00",
     "errors": [],
     "price": {
       "ticker": "ARM",
       "last_price": 250.72,
       "fifty_two_week_low": 100.02,
       "fifty_two_week_high": 452.7,
-      "pct_change_3m": 0.15907400000000002,
-      "pct_change_1y": 0.860607,
-      "avg_volume_30d": 9314140.0,
+      "pct_change_3m": 0.123549,
+      "pct_change_1y": 0.911558,
+      "avg_volume_30d": 9290940.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -547,7 +547,7 @@
   "AVGO": {
     "ticker": "AVGO",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:33+00:00",
+    "retrieved_at": "2026-08-21T06:31:47+00:00",
     "errors": [],
     "price": {
       "ticker": "AVGO",
@@ -696,16 +696,16 @@
   "AXTI": {
     "ticker": "AXTI",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:40+00:00",
+    "retrieved_at": "2026-08-21T06:31:53+00:00",
     "errors": [],
     "price": {
       "ticker": "AXTI",
       "last_price": 73.12,
-      "fifty_two_week_low": 2.07,
+      "fifty_two_week_low": 2.2,
       "fifty_two_week_high": 143.16,
-      "pct_change_3m": -0.306479,
-      "pct_change_1y": 33.313083,
-      "avg_volume_30d": 10930050.0,
+      "pct_change_3m": -0.352232,
+      "pct_change_1y": 28.131475000000002,
+      "avg_volume_30d": 10913450.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -845,16 +845,16 @@
   "BE": {
     "ticker": "BE",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:46+00:00",
+    "retrieved_at": "2026-08-21T06:31:58+00:00",
     "errors": [],
     "price": {
       "ticker": "BE",
       "last_price": 202.48,
       "fifty_two_week_low": 40.56,
       "fifty_two_week_high": 351.28,
-      "pct_change_3m": -0.201306,
-      "pct_change_1y": 3.7942,
-      "avg_volume_30d": 13404480.0,
+      "pct_change_3m": -0.225224,
+      "pct_change_1y": 3.54909,
+      "avg_volume_30d": 13405620.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -994,7 +994,7 @@
   "CLS": {
     "ticker": "CLS",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:52+00:00",
+    "retrieved_at": "2026-08-21T06:32:04+00:00",
     "errors": [],
     "price": {
       "ticker": "CLS",
@@ -1143,16 +1143,16 @@
   "COHR": {
     "ticker": "COHR",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:30:58+00:00",
+    "retrieved_at": "2026-08-21T06:32:10+00:00",
     "errors": [],
     "price": {
       "ticker": "COHR",
       "last_price": 290.03,
       "fifty_two_week_low": 84.35,
       "fifty_two_week_high": 440.0,
-      "pct_change_3m": -0.207701,
-      "pct_change_1y": 2.275638,
-      "avg_volume_30d": 6186560.0,
+      "pct_change_3m": -0.179849,
+      "pct_change_1y": 2.351011,
+      "avg_volume_30d": 6191700.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -1292,7 +1292,7 @@
   "CRDO": {
     "ticker": "CRDO",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:05+00:00",
+    "retrieved_at": "2026-08-21T06:32:16+00:00",
     "errors": [],
     "price": {
       "ticker": "CRDO",
@@ -1441,7 +1441,7 @@
   "DRAM": {
     "ticker": "DRAM",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:10+00:00",
+    "retrieved_at": "2026-08-21T06:32:21+00:00",
     "errors": [
       "valuation: No market cap from Finnhub for 'DRAM'.",
       "insiders: No SEC EDGAR CIK found for ticker 'DRAM' — not a US-listed filer, or the ticker is wrong.",
@@ -1470,16 +1470,16 @@
   "INTC": {
     "ticker": "INTC",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:16+00:00",
+    "retrieved_at": "2026-08-21T06:32:26+00:00",
     "errors": [],
     "price": {
       "ticker": "INTC",
       "last_price": 92.13,
       "fifty_two_week_low": 22.78,
       "fifty_two_week_high": 142.35,
-      "pct_change_3m": -0.142091,
-      "pct_change_1y": 2.666535,
-      "avg_volume_30d": 128644849.99999999,
+      "pct_change_3m": -0.168502,
+      "pct_change_1y": 2.913764,
+      "avg_volume_30d": 128350890.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -1586,16 +1586,16 @@
   "IREN": {
     "ticker": "IREN",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:27+00:00",
+    "retrieved_at": "2026-08-21T06:32:36+00:00",
     "errors": [],
     "price": {
       "ticker": "IREN",
       "last_price": 42.6,
       "fifty_two_week_low": 17.22,
       "fifty_two_week_high": 76.87,
-      "pct_change_3m": -0.151011,
-      "pct_change_1y": 1.28724,
-      "avg_volume_30d": 46649160.0,
+      "pct_change_3m": -0.107667,
+      "pct_change_1y": 1.15587,
+      "avg_volume_30d": 46710090.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -1713,16 +1713,16 @@
   "LITE": {
     "ticker": "LITE",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:36+00:00",
+    "retrieved_at": "2026-08-21T06:32:44+00:00",
     "errors": [],
     "price": {
       "ticker": "LITE",
       "last_price": 879.28,
       "fifty_two_week_low": 111.2,
       "fifty_two_week_high": 1085.68,
-      "pct_change_3m": -0.06483799999999999,
-      "pct_change_1y": 6.015938,
-      "avg_volume_30d": 5496670.0,
+      "pct_change_3m": -0.012145,
+      "pct_change_1y": 6.587195,
+      "avg_volume_30d": 5471130.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -1862,16 +1862,16 @@
   "LPTH": {
     "ticker": "LPTH",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:46+00:00",
+    "retrieved_at": "2026-08-21T06:32:51+00:00",
     "errors": [],
     "price": {
       "ticker": "LPTH",
       "last_price": 13.02,
       "fifty_two_week_low": 3.36,
       "fifty_two_week_high": 18.94,
-      "pct_change_3m": 0.064309,
-      "pct_change_1y": 2.688022,
-      "avg_volume_30d": 3443210.0,
+      "pct_change_3m": -0.061959999999999994,
+      "pct_change_1y": 2.8181819999999997,
+      "avg_volume_30d": 3419720.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2011,16 +2011,16 @@
   "MP": {
     "ticker": "MP",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:31:52+00:00",
+    "retrieved_at": "2026-08-21T06:32:57+00:00",
     "errors": [],
     "price": {
       "ticker": "MP",
       "last_price": 55.04,
       "fifty_two_week_low": 37.81,
       "fifty_two_week_high": 100.251,
-      "pct_change_3m": 0.00017600000000000002,
-      "pct_change_1y": -0.18198899999999998,
-      "avg_volume_30d": 6238360.0,
+      "pct_change_3m": 0.002003,
+      "pct_change_1y": -0.192607,
+      "avg_volume_30d": 6229140.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2160,16 +2160,16 @@
   "MRVL": {
     "ticker": "MRVL",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:00+00:00",
+    "retrieved_at": "2026-08-21T06:33:05+00:00",
     "errors": [],
     "price": {
       "ticker": "MRVL",
       "last_price": 251.01,
       "fifty_two_week_low": 61.44,
       "fifty_two_week_high": 329.88,
-      "pct_change_3m": 0.404546,
-      "pct_change_1y": 2.292216,
-      "avg_volume_30d": 36667320.0,
+      "pct_change_3m": 0.424009,
+      "pct_change_1y": 2.524431,
+      "avg_volume_30d": 36644680.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2309,16 +2309,16 @@
   "MU": {
     "ticker": "MU",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:08+00:00",
+    "retrieved_at": "2026-08-21T06:33:11+00:00",
     "errors": [],
     "price": {
       "ticker": "MU",
       "last_price": 974.33,
       "fifty_two_week_low": 113.46,
       "fifty_two_week_high": 1255.0,
-      "pct_change_3m": 0.374982,
-      "pct_change_1y": 6.6780420000000005,
-      "avg_volume_30d": 48284570.0,
+      "pct_change_3m": 0.39441000000000004,
+      "pct_change_1y": 7.3126869999999995,
+      "avg_volume_30d": 48153420.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2458,16 +2458,16 @@
   "MXL": {
     "ticker": "MXL",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:14+00:00",
+    "retrieved_at": "2026-08-21T06:33:16+00:00",
     "errors": [],
     "price": {
       "ticker": "MXL",
       "last_price": 65.28,
       "fifty_two_week_low": 12.77,
       "fifty_two_week_high": 128.3,
-      "pct_change_3m": -0.240453,
-      "pct_change_1y": 3.6260449999999995,
-      "avg_volume_30d": 4759900.0,
+      "pct_change_3m": -0.311828,
+      "pct_change_1y": 3.574632,
+      "avg_volume_30d": 4766740.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2607,16 +2607,16 @@
   "NBIS": {
     "ticker": "NBIS",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:20+00:00",
+    "retrieved_at": "2026-08-21T06:33:22+00:00",
     "errors": [],
     "price": {
       "ticker": "NBIS",
       "last_price": 220.11,
       "fifty_two_week_low": 62.01,
       "fifty_two_week_high": 299.86,
-      "pct_change_3m": 0.120284,
-      "pct_change_1y": 2.332341,
-      "avg_volume_30d": 20240930.0,
+      "pct_change_3m": 0.11318500000000001,
+      "pct_change_1y": 2.262339,
+      "avg_volume_30d": 20296910.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2705,16 +2705,16 @@
   "PLTR": {
     "ticker": "PLTR",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:25+00:00",
+    "retrieved_at": "2026-08-21T06:33:28+00:00",
     "errors": [],
     "price": {
       "ticker": "PLTR",
       "last_price": 173.96,
       "fifty_two_week_low": 106.37,
       "fifty_two_week_high": 207.52,
-      "pct_change_3m": 0.296359,
-      "pct_change_1y": 0.110555,
-      "avg_volume_30d": 43546990.0,
+      "pct_change_3m": 0.286116,
+      "pct_change_1y": 0.11505699999999999,
+      "avg_volume_30d": 43116390.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -2854,16 +2854,16 @@
   "RKLB": {
     "ticker": "RKLB",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:32+00:00",
+    "retrieved_at": "2026-08-21T06:33:34+00:00",
     "errors": [],
     "price": {
       "ticker": "RKLB",
       "last_price": 72.95,
       "fifty_two_week_low": 37.57,
       "fifty_two_week_high": 150.9999,
-      "pct_change_3m": -0.421775,
-      "pct_change_1y": 0.8533719999999999,
-      "avg_volume_30d": 24922580.0,
+      "pct_change_3m": -0.426989,
+      "pct_change_1y": 0.792824,
+      "avg_volume_30d": 24907920.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -3003,7 +3003,7 @@
   "SIVE": {
     "ticker": "SIVE",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:38+00:00",
+    "retrieved_at": "2026-08-21T06:33:39+00:00",
     "errors": [
       "price: No quote data from Finnhub for 'SIVE'.",
       "valuation: No market cap from Finnhub for 'SIVE'.",
@@ -3022,7 +3022,7 @@
   "SKHY": {
     "ticker": "SKHY",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:42+00:00",
+    "retrieved_at": "2026-08-21T06:33:44+00:00",
     "errors": [],
     "price": {
       "ticker": "SKHY",
@@ -3064,16 +3064,16 @@
   "SMCI": {
     "ticker": "SMCI",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:48+00:00",
+    "retrieved_at": "2026-08-21T06:33:50+00:00",
     "errors": [],
     "price": {
       "ticker": "SMCI",
       "last_price": 36.5,
       "fifty_two_week_low": 19.48,
       "fifty_two_week_high": 58.78,
-      "pct_change_3m": 0.18573699999999999,
-      "pct_change_1y": -0.154024,
-      "avg_volume_30d": 51955740.0,
+      "pct_change_3m": 0.19437200000000002,
+      "pct_change_1y": -0.143394,
+      "avg_volume_30d": 52192000.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -3157,16 +3157,16 @@
   "SMTC": {
     "ticker": "SMTC",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:32:59+00:00",
+    "retrieved_at": "2026-08-21T06:33:59+00:00",
     "errors": [],
     "price": {
       "ticker": "SMTC",
       "last_price": 124.88,
       "fifty_two_week_low": 46.02,
       "fifty_two_week_high": 177.35,
-      "pct_change_3m": -0.053101,
-      "pct_change_1y": 1.5826120000000001,
-      "avg_volume_30d": 3235290.0,
+      "pct_change_3m": -0.073522,
+      "pct_change_1y": 1.576439,
+      "avg_volume_30d": 3231220.0,
       "trend_note": "Live price data from Finnhub (free tier). Volume figure is a 3-month average, not exactly 30 days — Finnhub's free tier doesn't expose that window. Not a trading signal on its own.",
       "as_of_date": "2026-08-21",
       "is_mock": false
@@ -3306,7 +3306,7 @@
   "SNDK": {
     "ticker": "SNDK",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:33:06+00:00",
+    "retrieved_at": "2026-08-21T06:34:05+00:00",
     "errors": [],
     "price": {
       "ticker": "SNDK",
@@ -3455,7 +3455,7 @@
   "SOI": {
     "ticker": "SOI",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:33:12+00:00",
+    "retrieved_at": "2026-08-21T06:34:11+00:00",
     "errors": [
       "price: No quote data from Finnhub for 'SOI'.",
       "insiders: No SEC EDGAR CIK found for ticker 'SOI' — not a US-listed filer, or the ticker is wrong.",
@@ -3482,7 +3482,7 @@
   "SPCX": {
     "ticker": "SPCX",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:33:16+00:00",
+    "retrieved_at": "2026-08-21T06:34:15+00:00",
     "errors": [],
     "price": {
       "ticker": "SPCX",
@@ -3587,7 +3587,7 @@
   "TSEM": {
     "ticker": "TSEM",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:33:22+00:00",
+    "retrieved_at": "2026-08-21T06:34:21+00:00",
     "errors": [],
     "price": {
       "ticker": "TSEM",
@@ -3685,7 +3685,7 @@
   "USAR": {
     "ticker": "USAR",
     "jurisdiction": "United States",
-    "retrieved_at": "2026-08-21T04:33:28+00:00",
+    "retrieved_at": "2026-08-21T06:34:26+00:00",
     "errors": [],
     "price": {
       "ticker": "USAR",
