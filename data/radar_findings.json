@@ -1,6 +1,125 @@
 [
   {
     "niche": "Space",
+    "headline": "SpaceX launches 29 Starlink satellites, lands rocket on ship at sea (video, photos)",
+    "summary": "SpaceX launched 29 Starlink satellites to orbit on August 21 from Florida's Space Coast and landed the rocket on a ship at sea.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-launch-group-10-39-falcon-9-asog",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 15:28:24 +0000",
+    "retrieved_at": "2026-08-21T18:23:59+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla Inc. (SpaceX parent)",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Substantive reporting on SpaceX's satellite launch operations directly related to space infrastructure deployment.",
+    "url_hash": "15eb5bfdb8fb599f",
+    "id": "15eb5bfdb8fb599f"
+  },
+  {
+    "niche": "Space",
+    "headline": "SpaceX fires up Starship ahead of megarocket’s 1st orbital flight (video)",
+    "summary": "SpaceX completed a single-engine test-firing of its Starship spacecraft in preparation for an upcoming test flight that will be the vehicle's first attempt to reach orbit.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-fires-up-starship-ahead-of-megarockets-1st-orbital-flight-video",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 16:00:00 +0000",
+    "retrieved_at": "2026-08-21T18:23:57+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Article concerns SpaceX Starship's preparation for orbital test flight, directly relevant to space launch scope.",
+    "url_hash": "8c40156c59b81fd9",
+    "id": "8c40156c59b81fd9"
+  },
+  {
+    "niche": "Space",
+    "headline": "Japan unveils Mars moon sample-return spacecraft ahead of Oct. 19 launch (photos)",
+    "summary": "Japan revealed its MMX (Mars Motionless Explorer) spacecraft designed to collect samples from the Martian moon Phobos and return them to Earth, with a planned launch on October 19.",
+    "source_url": "https://www.space.com/astronomy/mars/japan-unveils-mars-moon-sample-return-spacecraft-ahead-of-oct-19-launch-photos",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 18:00:00 +0000",
+    "retrieved_at": "2026-08-21T18:23:55+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly concerns a spacecraft mission to Mars and sample collection/return, which is substantively about space operations",
+    "url_hash": "f04b1b46807f1822",
+    "id": "f04b1b46807f1822"
+  },
+  {
+    "niche": "Space",
+    "headline": "Europe cancels planned upgrades for Ariane 6 rocket",
+    "summary": "Europe has cancelled planned upgrades for the Ariane 6 rocket. Arianespace has not publicly disclosed the cost for an Ariane 6 launch.",
+    "source_url": "https://arstechnica.com/space/2026/08/europe-cancels-planned-upgrades-for-ariane-6-rocket/",
+    "source_name": "Ars Technica — Space",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 21:40:52 +0000",
+    "retrieved_at": "2026-08-21T18:23:53+00:00",
+    "tickers": [],
+    "relevance_reason": "Article concerns Ariane 6 rocket development and launch capability, directly relevant to space launch scope.",
+    "url_hash": "d1c9793a08a75ae7",
+    "id": "d1c9793a08a75ae7"
+  },
+  {
+    "niche": "Space",
+    "headline": "NASA’s Artemis II Crew Set to Receive Congressional Space Medal of Honor",
+    "summary": "President Trump will award the Congressional Space Medal of Honor to NASA's Artemis II crew members—Reid Wiseman, Victor Glover, Christina Koch, and Canadian astronaut Jeremy Hansen—at a ceremony on August 28 at NASA's Johnson Space Center in Houston.",
+    "source_url": "https://www.nasa.gov/news-release/nasas-artemis-ii-crew-set-to-receive-congressional-space-medal-of-honor/",
+    "source_name": "NASA News Releases",
+    "source_type": "Regulatory/Gov Release",
+    "published_at": "Fri, 21 Aug 2026 17:06:36 +0000",
+    "retrieved_at": "2026-08-21T18:23:48+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses NASA's Artemis II program, a major human spaceflight initiative within the space exploration scope.",
+    "url_hash": "2eceb862c5de4085",
+    "id": "2eceb862c5de4085"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Nvidia backs data center powered land company Cloverleaf",
+    "summary": "Nvidia is backing Cloverleaf, a land company focused on data center projects, with support based on Nvidia's DSX platform to help bring projects to completion.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/nvidia-backs-data-center-powered-land-company-cloverleaf/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 16:20:47 +0000",
+    "retrieved_at": "2026-08-21T18:23:19+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Nvidia is backing a data center infrastructure company, directly supporting AI buildout and hyperscaler capex enablement.",
+    "url_hash": "869460688ef473f9",
+    "id": "869460688ef473f9"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Vapat Enters the data center market with a 160MW project in Valladolid",
+    "summary": "Vapat is developing a 160MW data center project in Valladolid consisting of two buildings with eight IT rooms each.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/vapat-enters-the-data-center-market-with-a-160mw-project-in-valladolid/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 16:47:08 +0000",
+    "retrieved_at": "2026-08-21T18:23:18+00:00",
+    "tickers": [],
+    "relevance_reason": "new data center construction project directly relevant to AI infrastructure buildout",
+    "url_hash": "7bae2bcb12c01127",
+    "id": "7bae2bcb12c01127"
+  },
+  {
+    "niche": "Space",
     "headline": "Rocket Lab launches 9th satellite for iQPS",
     "summary": "Rocket Lab launched its ninth satellite for Japanese radar-imaging company iQPS on August 20, 2026.",
     "source_url": "https://spacenews.com/rocket-lab-launches-9th-satellite-for-iqps/",
