@@ -73,6 +73,35 @@ class Settings:
     # already-fail-closed-by-default gate to read.
     edgar_discovery_enabled: bool = field(default_factory=lambda: _parse_beta_auth_enabled("EDGE_EDGAR_DISCOVERY_ENABLED"))
     cache_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "cache")
+    # Durable-State Phase 1 (dormant — see src/data_access/state_db/).
+    # "json" (the default, used whenever this var is unset/blank/
+    # unrecognized) keeps every existing JSON-cache-backed code path
+    # exactly as-is; "sqlite" is a local-development/test-only opt-in —
+    # nothing in the app actually branches on this value yet, since no
+    # pipeline/container wiring is part of this phase. A SQLite file is
+    # NOT a hosted-durable-storage answer on its own — treat it as
+    # ephemeral on Streamlit Community Cloud unless a persistent volume
+    # is separately verified and explicitly approved (see
+    # design/DECISIONS.md).
+    db_backend: str = field(default_factory=lambda: (os.getenv("EDGE_DB_BACKEND") or "json").strip().lower())
+    # Local filesystem path to the SQLite database file. Deliberately a
+    # dedicated EDGE_STATE_DB_* name, not EDGE_DB_PATH — this repo's real
+    # local .env already defines an unrelated, pre-"foundation rebuild"
+    # EDGE_DB_PATH (see design/DECISIONS.md); this field never reads that
+    # name and never will (no backward-compatible alias). None (the
+    # default) means unconfigured; a caller choosing db_backend="sqlite"
+    # is responsible for providing one — this field never invents a
+    # default path itself, the same "None means not configured, never
+    # guessed" convention every other optional Settings field follows.
+    state_db_path: Path | None = field(
+        default_factory=lambda: Path(os.getenv("EDGE_STATE_DB_PATH")) if os.getenv("EDGE_STATE_DB_PATH") else None
+    )
+    # Reserved for a future managed-database connection string. Same
+    # dedicated EDGE_STATE_DB_* naming as above, for the same reason.
+    # Read for presence only — never parsed, validated, or connected to
+    # in this phase; this field must never be the trigger for a network
+    # call.
+    state_db_url: str | None = field(default_factory=lambda: os.getenv("EDGE_STATE_DB_URL") or None)
     # Private-beta access foundation, Phase 1 — disabled by default so every
     # existing page keeps working with no configuration at all. The
     # allowlist alone is authorization, not authentication (see

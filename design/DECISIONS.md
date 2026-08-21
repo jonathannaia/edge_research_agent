@@ -2580,3 +2580,83 @@ part of the live-verified gate (only ticker, legal name, and CIK were).
   the registry growing, not a page/UI behavior change — `coverage.py`
   itself derives every count dynamically and was not touched). Full
   suite re-run and passes.
+
+## Durable-State Phase 1 — local SQLite foundation (code-only, no wiring)
+
+A `src/data_access/state_db/` package (stdlib `sqlite3` only, no new
+dependency): connection lifecycle + transaction helper, an explicit
+forward-only `schema_version`/migration runner, and SQLite-backed
+repository implementations for candidates (all 3 sources), filing
+events, state-transition/review-audit history, and resolved identifiers
+(EDGAR CIK + DART corp-code caches — EDINET's own resolver cache is out
+of scope, see schema.py's own docstring for why). A `SqliteSignalRepository`
+reuses `signal_promotion.py`'s existing `is_eligible_for_signal`/
+`candidate_to_signal` unchanged — **no `signals` table exists, and none
+should ever be added**; Signals stay derived from `PUBLISHED` candidates,
+exactly like the existing JSON-backed `RadarSignalRepository`.
+
+**Nothing in the running app reads or writes through this package yet** —
+no `container.py`/pipeline wiring in this phase, by design. The existing
+JSON-backed stores (`candidate_store.py`, each source's `scan_service.py`,
+`cik_resolver.py`, `corp_code_resolver.py`) are completely untouched and
+remain the only backend actually in use.
+
+**Deliberate divergence from the JSON stores' read behavior**: a JSON
+loader treats a missing/corrupt file as an empty result and never raises.
+This package's readers do the opposite on purpose — a database failure
+propagates as a real `sqlite3.Error`, per this phase's explicit
+requirement not to convert a database failure into an apparently-
+successful empty read.
+
+**Optimistic concurrency**: `candidate_repository.update_candidate()`
+takes an `expected_version` and does `UPDATE ... WHERE id = ? AND
+version = ?`; a version mismatch returns `UpdateOutcome(status=
+"conflict", current=<the newer stored record, untouched>)` rather than
+overwriting it — closing the real, code-documented race
+`candidate_store.update_candidate()`'s own docstring already
+acknowledged ("Streamlit's single-process model makes this safe without
+file locking at this pilot's scale").
+
+**Real finding, corrected before commit rather than silently worked
+around**: this repository's actual local `.env` already defines
+`EDGE_DB_PATH` (value: a `data/edge_research.db` path, and that exact
+file already exists on disk, dated 2026-08-14 — predating this session)
+and `EDGE_DATA_MODE=mock` — both stale leftovers from the pre-"foundation
+rebuild" product (see `MIGRATION_NOTES.md`), never read by
+`foundation-rebuild`'s own `settings.py` before this phase. The field was
+originally named `Settings.db_path`/`EDGE_DB_PATH`, which would have
+given that old, unrelated value its first-ever read path in this
+codebase — a naming coincidence, not something this phase intended.
+**Corrected**: the new fields are `Settings.state_db_path`/
+`EDGE_STATE_DB_PATH` and `Settings.state_db_url`/`EDGE_STATE_DB_URL` —
+a dedicated namespace with **no backward-compatible alias** to the
+retired `EDGE_DB_PATH`/`EDGE_DB_URL` names, verified by a dedicated test
+(`test_settings_field_reads_the_dedicated_state_db_env_var_not_the_legacy_one`)
+proving the legacy name has zero effect on the new field. The legacy
+`.env` and its pre-existing `data/edge_research.db` file were not read,
+opened, or modified at any point — confirmed by structural tests scoped
+to the `state_db` package.
+
+**SQLite-on-Streamlit-Cloud caveat, stated explicitly and repeated in
+`.env.example`**: a local SQLite file is not a hosted-durable-storage
+answer on its own — it must be treated as ephemeral on Streamlit
+Community Cloud unless a persistent volume is separately verified and
+explicitly approved. This phase does not claim, configure, or test
+otherwise; a managed database (`EDGE_STATE_DB_URL`, reserved/unused)
+remains the deferred hosted-durable-store decision from the prior
+architecture report.
+
+- **Tests**: 41 new, across `test_state_db_schema.py` (migration
+  idempotency, schema-version recording, FK enforcement, transaction
+  rollback), `test_state_db_candidate_repository.py` (idempotent upsert,
+  full round-trip including translations/history, optimistic-lock
+  conflict/success/not-found), `test_state_db_filing_event_repository.py`
+  (source-aware dedup identity), `test_state_db_identifier_repository.py`
+  (EDGAR/DART round-trip, source isolation), `test_state_db_signal_
+  repository.py` (Signal derivation matches the existing ID scheme;
+  non-published candidates never produce one), and
+  `test_state_db_settings_and_isolation.py` (backend-selector defaults;
+  structural proof the package never references the real cache directory
+  and imports no network-capable client or new ORM dependency). Full
+  suite re-run and passes; zero real `data/cache/` access anywhere in
+  the new tests.
