@@ -1,6 +1,104 @@
 [
   {
     "niche": "Space",
+    "headline": "Trump to award NASA's Artemis II astronauts the Congressional Space Medal of Honor",
+    "summary": "NASA astronauts from the Artemis II mission, which flew around the moon, will receive the Congressional Space Medal of Honor on August 28.",
+    "source_url": "https://www.space.com/space-exploration/artemis/trump-to-award-nasas-artemis-ii-astronauts-the-congressional-space-medal-of-honor",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 19:30:51 +0000",
+    "retrieved_at": "2026-08-21T20:16:07+00:00",
+    "tickers": [],
+    "relevance_reason": "Article concerns NASA's Artemis program, a major space exploration initiative.",
+    "url_hash": "8235d6bd7e42095f",
+    "id": "8235d6bd7e42095f"
+  },
+  {
+    "niche": "Space",
+    "headline": "Trump signs new national space policy to enable 1,000 US rocket launches per year",
+    "summary": "The United States is updating its space policy to support more than 1,000 rocket launches per year by 2030, expanding the nation's spaceflight capabilities.",
+    "source_url": "https://www.space.com/space-exploration/trump-signs-new-national-space-policy-to-enable-1-000-us-rocket-launches-per-year",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 20:00:46 +0000",
+    "retrieved_at": "2026-08-21T20:16:05+00:00",
+    "tickers": [],
+    "relevance_reason": "This article directly concerns national space policy affecting rocket launch capacity, a core element of the Space scope.",
+    "url_hash": "629d8109835eb491",
+    "id": "629d8109835eb491"
+  },
+  {
+    "niche": "Space",
+    "headline": "New Novaspace forecast: 6,500+ EO satellites to launch by 2035",
+    "summary": "Novaspace forecasts that more than 6,500 Earth observation satellites will launch by 2035, generating $155.9 billion in manufacturing revenues as governments expand sovereign intelligence and surveillance capabilities.",
+    "source_url": "https://spacenews.com/new-novaspace-forecast-6500-eo-satellites-to-launch-by-2035/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 19:48:14 +0000",
+    "retrieved_at": "2026-08-21T20:16:01+00:00",
+    "tickers": [],
+    "relevance_reason": "Article forecasts significant Earth observation satellite launches through 2035, directly addressing space infrastructure buildout.",
+    "url_hash": "d7419d7ef9dca290",
+    "id": "d7419d7ef9dca290"
+  },
+  {
+    "niche": "Space",
+    "headline": "Chinese radio-frequency intelligence startup StarRF closes new funding round",
+    "summary": "Chinese startup Xingkan Jiuzhou Technology (StarRF) has closed a new funding round to develop a satellite constellation designed to detect and geolocate radio-frequency emissions from orbit as part of China's expanding commercial space sector.",
+    "source_url": "https://spacenews.com/chinese-radio-frequency-intelligence-startup-starrf-closes-new-funding-round/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 20:08:59 +0000",
+    "retrieved_at": "2026-08-21T20:16:00+00:00",
+    "tickers": [],
+    "relevance_reason": "Chinese startup building orbital satellite constellation for radio-frequency intelligence detection represents commercial space sector activity.",
+    "url_hash": "c74fed0d18b33d3a",
+    "id": "c74fed0d18b33d3a"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "Schaeffler plans to mass produce gearboxes for humanoid robots in 2027",
+    "summary": "Schaeffler is developing strain wave gearboxes using forming technology to enable mass production of components for humanoid robots, with plans to begin in 2027.",
+    "source_url": "https://www.therobotreport.com/schaeffler-plans-to-mass-manufacture-gearboxes-for-humanoids-in-2027/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 19:27:22 +0000",
+    "retrieved_at": "2026-08-21T20:15:54+00:00",
+    "tickers": [
+      {
+        "ticker": "SHA",
+        "company_name": "Schaeffler AG",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly addresses humanoid robot component manufacturing and mass production timeline.",
+    "url_hash": "8d6a499113817b64",
+    "id": "8d6a499113817b64"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Zayo Locks Up Corning Fiber Capacity for AI Network Buildout",
+    "summary": "Zayo has secured fiber capacity from Corning to support its 15,000 route-mile network expansion through 2030, which is designated for AI infrastructure buildout.",
+    "source_url": "https://www.datacenterknowledge.com/networking/zayo-locks-up-corning-fiber-capacity-for-ai-network-buildout",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 17:04:27 GMT",
+    "retrieved_at": "2026-08-21T20:15:44+00:00",
+    "tickers": [
+      {
+        "ticker": "ZAYO",
+        "company_name": "Zayo Group Holdings",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly addresses AI network infrastructure buildout through fiber capacity procurement for data center connectivity.",
+    "url_hash": "1f5f393587235310",
+    "id": "1f5f393587235310"
+  },
+  {
+    "niche": "Space",
     "headline": "SpaceX launches 29 Starlink satellites, lands rocket on ship at sea (video, photos)",
     "summary": "SpaceX launched 29 Starlink satellites to orbit on August 21 from Florida's Space Coast and landed the rocket on a ship at sea.",
     "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-launch-group-10-39-falcon-9-asog",
