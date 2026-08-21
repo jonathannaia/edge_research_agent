@@ -57,30 +57,49 @@ def filing_event_exists(conn: sqlite3.Connection, source_name: str, corp_code: s
     return row is not None
 
 
+def _upsert_filing_event_no_transaction(conn: sqlite3.Connection, filing: FilingEvent) -> bool:
+    """The raw insert-if-absent logic behind upsert_filing_event(), with
+    no transaction management of its own. For use only by a caller that
+    already holds an open outer transaction on `conn` — today, that's
+    exclusively candidate_repository.upsert_new_candidates()'s own batch
+    transaction, which must ensure each new candidate's parent
+    filing_events row exists without opening a second, nested
+    transaction on the same connection (connection.transaction()'s own
+    docstring: "Nesting is not supported"). Calling this directly outside
+    an already-open transaction leaves any INSERT it makes uncommitted
+    until the caller itself commits — see upsert_filing_event() below for
+    the atomic, standalone-safe public entry point."""
+    existing = filing_event_exists(conn, filing.source_name, filing.corp_code, filing.rcept_no)
+    if existing:
+        return False
+    conn.execute(
+        """
+        INSERT INTO filing_events (
+            source_name, corp_code, rcept_no, corp_name, stock_code, report_nm, rcept_dt, flr_nm,
+            pblntf_ty, pblntf_detail_ty, theme_slug, subtheme_slug, source_url, retrieved_at,
+            original_language, is_demo, primary_document, ordinance_code
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            filing.source_name, filing.corp_code, filing.rcept_no, filing.corp_name, filing.stock_code,
+            filing.report_nm, filing.rcept_dt, filing.flr_nm, filing.pblntf_ty, filing.pblntf_detail_ty,
+            filing.theme_slug, filing.subtheme_slug, filing.source_url, filing.retrieved_at,
+            filing.original_language, int(filing.is_demo), filing.primary_document,
+            filing.ordinance_code,
+        ),
+    )
+    return True
+
+
 def upsert_filing_event(conn: sqlite3.Connection, filing: FilingEvent) -> bool:
     """Inserts `filing` if its (source, corp_code, rcept_no) isn't
     already present; leaves an existing row untouched otherwise (a
     FilingEvent is never mutated after creation in the existing JSON
     stores either). Returns True if a new row was inserted, False if it
-    already existed. One transaction per call."""
+    already existed. One transaction per call — the public, standalone-
+    safe entry point. Never call this from inside another already-open
+    transaction on the same connection; use
+    _upsert_filing_event_no_transaction directly for that case (see its
+    own docstring)."""
     with transaction(conn):
-        existing = filing_event_exists(conn, filing.source_name, filing.corp_code, filing.rcept_no)
-        if existing:
-            return False
-        conn.execute(
-            """
-            INSERT INTO filing_events (
-                source_name, corp_code, rcept_no, corp_name, stock_code, report_nm, rcept_dt, flr_nm,
-                pblntf_ty, pblntf_detail_ty, theme_slug, subtheme_slug, source_url, retrieved_at,
-                original_language, is_demo, primary_document, ordinance_code
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                filing.source_name, filing.corp_code, filing.rcept_no, filing.corp_name, filing.stock_code,
-                filing.report_nm, filing.rcept_dt, filing.flr_nm, filing.pblntf_ty, filing.pblntf_detail_ty,
-                filing.theme_slug, filing.subtheme_slug, filing.source_url, filing.retrieved_at,
-                filing.original_language, int(filing.is_demo), filing.primary_document,
-                filing.ordinance_code,
-            ),
-        )
-        return True
+        return _upsert_filing_event_no_transaction(conn, filing)

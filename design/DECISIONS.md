@@ -2869,3 +2869,65 @@ deduplication, migration, dual-read, dual-write, or reconciliation.
 Those remain future migration/cutover concerns and are not reachable in
 production because no real service entry point passes the injected
 repository in this phase.
+
+## Durable-State Phase 3B-0 — batch-atomicity repair (SQLite candidate batch)
+
+A read-only Phase 3B design audit reasoned, from static reading of
+`state_db/connection.py`'s `transaction()` docstring ("Nesting is not
+supported") against `candidate_repository.upsert_new_candidates()`'s own
+per-candidate call into `filing_event_repository.upsert_filing_event()`
+(which opened its own nested `transaction()`), that a batch of new
+candidates was not actually atomic: an inner commit could flush earlier,
+still-pending writes, so a later failure in the same batch would leave
+partial rows. This phase verified that reasoning by execution before
+changing any behavior, per explicit instruction not to assume the static
+analysis was correct.
+
+**Confirmed by execution, not just static reading**: a synthetic
+two-candidate batch with a forced failure on the second candidate's
+insert left, before the repair, exactly 1 `candidates` row, 2
+`filing_events` rows, and 1 `state_transitions` row — the first
+candidate's data (and the second candidate's own filing-event row,
+orphaned with no candidate) durably committed despite the batch's own
+docstring promising all-or-nothing behavior. The static audit's concern
+was correct.
+
+**Repair**: the smallest possible fix, with no change to
+`connection.py`'s `transaction()` helper and no new transaction
+primitive of any kind. `filing_event_repository.py` gained
+`_upsert_filing_event_no_transaction()` — the same insert-if-absent SQL
+`upsert_filing_event()` always ran, with no transaction management of
+its own; `upsert_filing_event()` itself became a thin wrapper
+(`with transaction(conn): return _upsert_filing_event_no_transaction(...)`),
+preserving its existing atomic, standalone-safe public behavior exactly.
+`candidate_repository.upsert_new_candidates()` now calls the
+transaction-free variant inside its own single outer `with
+transaction(conn):` block — no nested transaction, no nested commit,
+anywhere in the batch path. Re-running the same forced-failure scenario
+after the repair left zero rows of every kind — confirmed true
+all-or-nothing batch atomicity, including for the earlier-processed
+candidate in the batch that previously survived a later failure.
+
+**Deliberately not done**: no savepoints, no general nested-transaction
+support, no implicit retry, no broader transaction refactoring — the
+narrow extract-a-transaction-free-helper approach was sufficient and is
+the smallest change that satisfies the required contract. No pipeline,
+service-entry, UI, backend-factory, or settings file was touched; no
+production/service entry point is wired to SQLite by this work — that
+remains exactly as unreached as it was after Phase 3A.
+
+- **Tests**: 10 new in `test_state_db_candidate_repository.py` —
+  successful multi-candidate batch persistence; the mid-batch-failure
+  regression test itself (asserting zero partial rows, the corrected
+  behavior); pre-existing-row survival across a later failed batch;
+  standalone `upsert_filing_event` atomicity outside any candidate
+  batch; idempotent identical-batch re-run; a no-hidden-commit proof
+  (exactly one `transaction()` context entered per batch, plus a direct
+  bytecode check that the transaction-free helper never references
+  `transaction` at all); and a full candidate-batch-to-review-to-derived-
+  Signal round trip (published → `signal-{id}`, non-published → no
+  Signal) proving no regression to Phase 2A/2B/3A behavior. Full suite
+  (1096 tests, +10) re-run and passes; zero access to the real cache
+  directory, `.env`, the Streamlit secrets file, or the pre-existing
+  legacy database at any point; every test uses `:memory:` SQLite and
+  synthetic fixtures only.

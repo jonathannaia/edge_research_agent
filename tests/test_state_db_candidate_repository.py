@@ -8,9 +8,14 @@ the existing JSON test file to share fixtures is out of this phase's
 scope. In-memory SQLite only."""
 from __future__ import annotations
 
+from contextlib import contextmanager
 from datetime import datetime, timezone
+from pathlib import Path
 
-from src.data_access.state_db import candidate_repository, connection, schema
+import pytest
+
+from src.data_access.state_db import candidate_repository, connection, filing_event_repository, schema
+from src.data_access.state_db.signal_repository import SqliteSignalRepository
 from src.models.models import CandidateSignal, CandidateStatus, FilingEvent, StateTransition, Translation
 
 
@@ -238,3 +243,213 @@ def test_correct_version_update_succeeds_and_increments_version():
     outcome = candidate_repository.update_candidate(conn, published, expected_version=v1)
     assert outcome.status == "updated"
     assert candidate_repository.get_candidate_version(conn, candidate.id) == 2
+
+
+# --- Durable-State Phase 3B-0: batch-atomicity repair for
+# upsert_new_candidates() (see filing_event_repository._upsert_filing_
+# event_no_transaction and this module's own upsert_new_candidates
+# docstring). Confirmed by execution, not just static reading, that the
+# pre-fix nested transaction(conn) call inside the per-candidate loop
+# caused an earlier iteration's pending writes to commit early, so a
+# later failure in the same batch left partial rows — including a
+# filing_events row with no corresponding candidate. All tests below use
+# only in-memory SQLite and synthetic fixtures. ---
+
+def _rig_mid_batch_candidate_failure(monkeypatch, fail_on_call: int = 2):
+    """Forces _insert_candidate to raise RuntimeError on the Nth call
+    within a batch, real behavior otherwise. Returns nothing — installs
+    the monkeypatch directly."""
+    real_insert = candidate_repository._insert_candidate
+    call_count = {"n": 0}
+
+    def _boom(conn_arg, candidate, now):
+        call_count["n"] += 1
+        if call_count["n"] == fail_on_call:
+            raise RuntimeError("synthetic mid-batch failure")
+        return real_insert(conn_arg, candidate, now)
+
+    monkeypatch.setattr(candidate_repository, "_insert_candidate", _boom)
+
+
+def test_successful_two_candidate_batch_persists_both_together(monkeypatch):
+    conn = _conn()
+    filing_a = _edgar_filing(rcept_no="AAA", corp_code="0000000001")
+    filing_b = _edgar_filing(rcept_no="BBB", corp_code="0000000002")
+    candidate_a = _candidate("edgar-cand-AAA", filing_a)
+    candidate_b = _candidate("edgar-cand-BBB", filing_b)
+
+    result = candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate_a, candidate_b])
+
+    assert set(result.keys()) == {"edgar-cand-AAA", "edgar-cand-BBB"}
+    assert candidate_repository.get_candidate(conn, "edgar-cand-AAA") is not None
+    assert candidate_repository.get_candidate(conn, "edgar-cand-BBB") is not None
+    assert len(filing_event_repository.load_filing_events(conn, "SEC EDGAR")) == 2
+
+
+def test_mid_batch_candidate_failure_leaves_zero_partial_rows(monkeypatch):
+    conn = _conn()
+    filing_a = _edgar_filing(rcept_no="AAA", corp_code="0000000001")
+    filing_b = _edgar_filing(rcept_no="BBB", corp_code="0000000002")
+    candidate_a = _candidate("edgar-cand-AAA", filing_a)
+    candidate_b = _candidate("edgar-cand-BBB", filing_b)
+    _rig_mid_batch_candidate_failure(monkeypatch, fail_on_call=2)
+
+    with pytest.raises(RuntimeError, match="synthetic mid-batch failure"):
+        candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate_a, candidate_b])
+
+    # Confirmed by execution: before the repair, this left 1 candidates
+    # row, 2 filing_events rows (one orphaned), and 1 state_transitions
+    # row. After the repair, the whole batch — including candidate A,
+    # which was processed successfully before candidate B's failure —
+    # rolls back completely.
+    assert conn.execute("SELECT COUNT(*) AS n FROM candidates").fetchone()["n"] == 0
+    assert conn.execute("SELECT COUNT(*) AS n FROM filing_events").fetchone()["n"] == 0
+    assert conn.execute("SELECT COUNT(*) AS n FROM state_transitions").fetchone()["n"] == 0
+
+
+def test_preexisting_rows_survive_a_later_failed_batch(monkeypatch):
+    conn = _conn()
+    pre_filing = _edgar_filing(rcept_no="PRE", corp_code="0000000099")
+    pre_candidate = _candidate("edgar-cand-PRE", pre_filing)
+    candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [pre_candidate])
+
+    filing_a = _edgar_filing(rcept_no="AAA", corp_code="0000000001")
+    filing_b = _edgar_filing(rcept_no="BBB", corp_code="0000000002")
+    candidate_a = _candidate("edgar-cand-AAA", filing_a)
+    candidate_b = _candidate("edgar-cand-BBB", filing_b)
+    _rig_mid_batch_candidate_failure(monkeypatch, fail_on_call=2)
+
+    with pytest.raises(RuntimeError, match="synthetic mid-batch failure"):
+        candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate_a, candidate_b])
+
+    # The pre-existing row from the earlier, separate, successful call
+    # is untouched; the later failed batch contributed nothing at all.
+    assert candidate_repository.get_candidate(conn, "edgar-cand-PRE") is not None
+    assert conn.execute("SELECT COUNT(*) AS n FROM candidates").fetchone()["n"] == 1
+    assert conn.execute("SELECT COUNT(*) AS n FROM filing_events").fetchone()["n"] == 1
+    assert conn.execute("SELECT rcept_no FROM filing_events").fetchone()["rcept_no"] == "PRE"
+
+
+def test_standalone_filing_event_upsert_still_commits_atomically_and_independently():
+    conn = _conn()
+    filing = _edgar_filing(rcept_no="STANDALONE", corp_code="0000000001")
+
+    inserted = filing_event_repository.upsert_filing_event(conn, filing)
+
+    assert inserted is True
+    assert filing_event_repository.filing_event_exists(conn, "SEC EDGAR", "0000000001", "STANDALONE")
+    # A second call for the same identity is a true no-op, not a duplicate.
+    assert filing_event_repository.upsert_filing_event(conn, filing) is False
+    assert len(filing_event_repository.load_filing_events(conn, "SEC EDGAR")) == 1
+
+
+def test_identical_batch_rerun_does_not_duplicate_rows():
+    conn = _conn()
+    filing_a = _edgar_filing(rcept_no="AAA", corp_code="0000000001")
+    candidate_a = _candidate("edgar-cand-AAA", filing_a)
+
+    candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate_a])
+    candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate_a])  # identical re-run
+
+    assert conn.execute("SELECT COUNT(*) AS n FROM candidates").fetchone()["n"] == 1
+    assert conn.execute("SELECT COUNT(*) AS n FROM filing_events").fetchone()["n"] == 1
+    assert conn.execute("SELECT COUNT(*) AS n FROM state_transitions").fetchone()["n"] == 1
+
+
+def test_batch_upsert_opens_exactly_one_transaction_for_the_whole_batch(monkeypatch):
+    """No hidden commit: the per-candidate filing-event helper invoked by
+    upsert_new_candidates() must never open its own transaction context —
+    proven two ways: (1) exactly one transaction() context is entered for
+    a whole multi-candidate batch, and (2) the helper's own bytecode
+    contains no reference to `transaction` at all."""
+    conn = _conn()
+    filing_a = _edgar_filing(rcept_no="AAA", corp_code="0000000001")
+    filing_b = _edgar_filing(rcept_no="BBB", corp_code="0000000002")
+    candidate_a = _candidate("edgar-cand-AAA", filing_a)
+    candidate_b = _candidate("edgar-cand-BBB", filing_b)
+
+    real_transaction = candidate_repository.transaction
+    call_count = {"n": 0}
+
+    @contextmanager
+    def _counting_transaction(conn_arg):
+        call_count["n"] += 1
+        with real_transaction(conn_arg) as c:
+            yield c
+
+    monkeypatch.setattr(candidate_repository, "transaction", _counting_transaction)
+
+    candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate_a, candidate_b])
+
+    assert call_count["n"] == 1
+    assert "transaction" not in filing_event_repository._upsert_filing_event_no_transaction.__code__.co_names
+
+
+def test_candidate_from_repaired_batch_can_be_published_and_derives_expected_signal():
+    conn = _conn()
+    filing = _edgar_filing(rcept_no="SIGTEST", corp_code="0000000001")
+    candidate = _candidate("edgar-cand-SIGTEST", filing)
+    candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate])
+    version = candidate_repository.get_candidate_version(conn, candidate.id)
+
+    published = _candidate(candidate.id, filing, status=CandidateStatus.PUBLISHED, reviewed_at=_now(), reviewed_note="ok")
+    outcome = candidate_repository.update_candidate(conn, published, expected_version=version)
+    assert outcome.status == "updated"
+
+    signal_repo = SqliteSignalRepository(conn)
+    assert [s.id for s in signal_repo.get_all_signals()] == ["signal-edgar-cand-SIGTEST"]
+
+
+def test_non_published_candidate_from_repaired_batch_yields_no_signal():
+    conn = _conn()
+    filing = _edgar_filing(rcept_no="NOSIG", corp_code="0000000001")
+    candidate = _candidate("edgar-cand-NOSIG", filing)
+    candidate_repository.upsert_new_candidates(conn, "SEC EDGAR", [candidate])
+
+    signal_repo = SqliteSignalRepository(conn)
+    assert signal_repo.get_all_signals() == []
+
+
+# --- Source guard: this phase's modified/new files must never reference
+# real local state (same pattern established in Phase 2A/2B/3A). ---
+
+_PHASE3B0_FILES = (
+    Path(__file__).resolve(),
+    Path(__file__).resolve().parent.parent / "src" / "data_access" / "state_db" / "candidate_repository.py",
+    Path(__file__).resolve().parent.parent / "src" / "data_access" / "state_db" / "filing_event_repository.py",
+    Path(__file__).resolve().parent.parent / "design" / "DECISIONS.md",
+)
+_FORBIDDEN_REAL_STATE_REFERENCES = (
+    "data/cache",
+    "data/edge_research.db",
+    ".streamlit/secrets.toml",
+    "signal-cand-20260819000254",
+    "signal-edgar-cand-0001193125-26-354029",
+    "signal-edgar-cand-0001193125-26-356217",
+)
+
+
+def _source_excluding_this_guards_own_string_list(path: Path) -> str:
+    text = path.read_text(encoding="utf-8")
+    if path.name == "test_state_db_candidate_repository.py":
+        start = text.index("_FORBIDDEN_REAL_STATE_REFERENCES = (")
+        end = text.index(")\n", start) + len(")\n")
+        return text[:start] + text[end:]
+    if path.name == "DECISIONS.md":
+        marker = "## Durable-State Phase 3B-0"
+        if marker not in text:
+            return ""
+        return text[text.index(marker):]
+    return text
+
+
+def test_phase3b0_files_never_reference_real_local_state_or_real_signal_ids():
+    offenders = []
+    for path in _PHASE3B0_FILES:
+        if not path.exists():
+            continue
+        source = _source_excluding_this_guards_own_string_list(path)
+        for forbidden in _FORBIDDEN_REAL_STATE_REFERENCES:
+            if forbidden in source:
+                offenders.append(f"{path.name}: contains {forbidden!r}")
+    assert not offenders, offenders

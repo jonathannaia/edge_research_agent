@@ -138,17 +138,24 @@ def upsert_new_candidates(
 ) -> dict[str, CandidateSignal]:
     """Adds any candidate ID not already present (inserting its parent
     filing_events row first, idempotently, via
-    filing_event_repository.upsert_filing_event); leaves an existing
-    entry's processing state untouched — same semantics as
-    candidate_store.upsert_new_candidates. Returns the full, current
-    store for `source` after the operation."""
+    filing_event_repository._upsert_filing_event_no_transaction — the
+    transaction-free variant, so the whole batch stays inside this
+    function's own single outer transaction rather than opening a nested
+    one per candidate; see that function's own docstring); leaves an
+    existing entry's processing state untouched — same semantics as
+    candidate_store.upsert_new_candidates. True batch atomicity: if any
+    candidate in the batch fails, the whole transaction rolls back —
+    every candidate/filing-event/state-transition row this call would
+    have inserted, including for candidates processed earlier in the
+    same batch, is undone; rows from before this call are untouched.
+    Returns the full, current store for `source` after the operation."""
     now = datetime.now(timezone.utc).isoformat()
     with transaction(conn):
         for candidate in new_candidates:
             exists = conn.execute("SELECT 1 FROM candidates WHERE id = ?", (candidate.id,)).fetchone()
             if exists is not None:
                 continue
-            filing_event_repository.upsert_filing_event(conn, candidate.filing)
+            filing_event_repository._upsert_filing_event_no_transaction(conn, candidate.filing)
             _insert_candidate(conn, candidate, now)
     return load_candidates(conn, source)
 
