@@ -1,6 +1,97 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "PJM 5-Year Strategy Wrestles With Data Center Boom",
+    "summary": "PJM, a major grid operator, is developing a 5-year strategy to address the infrastructure demands created by the data center boom, calling for faster development of generation and transmission capacity and improved visibility into large load requirements.",
+    "source_url": "https://www.datacenterknowledge.com/energy-power-supply/pjm-5-year-strategy-wrestles-with-data-center-boom",
+    "source_name": "Data Center Knowledge",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 11:13:14 GMT",
+    "retrieved_at": "2026-08-21T12:28:24+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses grid infrastructure challenges created by rapid data center expansion, a core component of AI infrastructure buildout.",
+    "url_hash": "ac2949d5ee04d39c",
+    "id": "ac2949d5ee04d39c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Itochu to begin data center development, plans 10 new facilities by 2030",
+    "summary": "Itochu plans to develop 10 new data center facilities by 2030, requiring an investment of several hundred billion yen.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/itochu-to-begin-data-center-development-plans-10-new-facilities-by-2030/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 10:26:24 +0000",
+    "retrieved_at": "2026-08-21T12:28:12+00:00",
+    "tickers": [
+      {
+        "ticker": "8001",
+        "company_name": "Itochu Corporation",
+        "jurisdiction": "Japan",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Itochu is planning significant data center development with 10 new facilities, directly addressing AI infrastructure buildout.",
+    "url_hash": "44d0c865206bcd8a",
+    "id": "44d0c865206bcd8a"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Prometheus Hyperscale partners with Istmo to develop up to 2.5GW gas powered data center in Reeves County, Texas",
+    "summary": "Prometheus Hyperscale and Istmo are partnering to develop a gas-powered data center with up to 2.5GW capacity in Reeves County, Texas, with first power expected next year.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/prometheus-hyperscale-partners-with-istmo-to-develop-up-to-25gw-gas-powered-data-center-in-reeves-county-texas/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 10:33:49 +0000",
+    "retrieved_at": "2026-08-21T12:28:10+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses hyperscaler data center capex and AI infrastructure buildout with specific capacity and timeline.",
+    "url_hash": "35cb78de475ac492",
+    "id": "35cb78de475ac492"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Nvidia and South Korean chip startup Rebellions discussing potential collaboration – report",
+    "summary": "Nvidia and South Korean chip startup Rebellions are reportedly discussing a potential collaboration. The report comes as Nvidia denies claims it has been developing a China-specific LPU (Liquid Processing Unit).",
+    "source_url": "https://www.datacenterdynamics.com/en/news/nvidia-and-south-korean-chip-startup-rebellions-discussing-potential-collaboration-report/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 10:36:51 +0000",
+    "retrieved_at": "2026-08-21T12:28:08+00:00",
+    "tickers": [
+      {
+        "ticker": "NVDA",
+        "company_name": "Nvidia Corporation",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Potential collaboration between Nvidia and a chip startup directly relevant to AI chip supply chain and semiconductor ecosystem.",
+    "url_hash": "19b71f27ccdab250",
+    "id": "19b71f27ccdab250"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Alibaba Cloud plans to lean on its self-developed chips moving forward",
+    "summary": "Alibaba Cloud plans to increase its use of self-developed chips to improve operational margins and profitability.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/alibaba-cloud-plans-to-lean-on-its-self-developed-chips-moving-forward/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 11:52:24 +0000",
+    "retrieved_at": "2026-08-21T12:28:07+00:00",
+    "tickers": [
+      {
+        "ticker": "BABA",
+        "company_name": "Alibaba Group Holding Limited",
+        "jurisdiction": "China",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Alibaba Cloud's reliance on self-developed chips directly relates to the AI chip supply chain and data center infrastructure buildout.",
+    "url_hash": "22271c4b8665a1f5",
+    "id": "22271c4b8665a1f5"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "AI Infrastructure Pushes Data Center Capex Forecast Above $3 Trillion",
     "summary": "Global data center capex is forecast to exceed $3 trillion by 2030, driven by hyperscaler and AI-specialized cloud infrastructure spending.",
     "source_url": "https://www.datacenterknowledge.com/ai-data-centers/ai-infrastructure-pushes-data-center-capex-forecast-above-3-trillion",
