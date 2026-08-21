@@ -20,6 +20,7 @@ from src.config.settings import Settings
 from src.config.tracked_companies import TrackedCompany, get_tracked_companies_for_source, with_resolved_corp_codes
 
 _DART_SOURCE = "OpenDART / DART"
+from src.data_access import backend_factory
 from src.data_access.dart import corp_code_resolver, radar_pipeline, scan_service
 from src.data_access.dart.client import DartClient
 from src.data_access.translation.deepl_provider import DeepLProvider
@@ -37,11 +38,24 @@ class RadarReadiness:
         return self.dart_key_configured and self.translation_key_configured and not self.unresolved_companies
 
 
-def get_radar_companies(cache_dir: Path) -> tuple[TrackedCompany, ...]:
+def get_radar_companies(cache_dir: Path, settings: Settings | None = None) -> tuple[TrackedCompany, ...]:
     """DART-only — filtered by source so the SEC EDGAR pilot cohort
     (added in milestone 8, same shared registry) never leaks into a DART
-    scan/readiness check. EDGAR has its own get_edgar_companies()."""
-    resolved = {krx: record.corp_code for krx, record in corp_code_resolver.load_cached_corp_codes(cache_dir).items()}
+    scan/readiness check. EDGAR has its own get_edgar_companies().
+
+    `settings` is additive and optional (Durable-State Phase 2B) — see
+    backend_factory.py's module docstring. Omitted, behavior is
+    unchanged. Supplied with `settings.db_backend == "sqlite"`, reads the
+    SQLite-backed identifier repository instead of
+    the on-disk dart_corp_codes.json cache — a read-only lookup either way,
+    never a live resolution. `run_scan`/`process_candidate_now` below
+    deliberately do NOT pass `settings` here — see their own note."""
+    use_sqlite = settings is not None and (settings.db_backend or "json").strip().lower() == "sqlite"
+    if use_sqlite:
+        records = backend_factory.get_identifier_repository(settings, _DART_SOURCE).load_identifiers()
+        resolved = {krx: record.identifier for krx, record in records.items()}
+    else:
+        resolved = {krx: record.corp_code for krx, record in corp_code_resolver.load_cached_corp_codes(cache_dir).items()}
     return with_resolved_corp_codes(get_tracked_companies_for_source(_DART_SOURCE), resolved)
 
 
@@ -49,7 +63,7 @@ def radar_readiness(settings: Settings) -> RadarReadiness:
     """Never raises and never makes a network call — a page-load-time
     check only, so a missing key or an unresolved company shows a clear
     empty state instead of a crash or a silent demo fallback."""
-    companies = get_radar_companies(settings.cache_dir)
+    companies = get_radar_companies(settings.cache_dir, settings)
     unresolved = tuple(c.name for c in companies if not c.corp_code)
     return RadarReadiness(
         dart_key_configured=bool(settings.dart_api_key),

@@ -2721,5 +2721,71 @@ of scope ("do not alter source adapters").
   Signal IDs. Full suite (1052 tests, +29) re-run and passes; every test
   uses `tmp_path`-derived or `:memory:` paths and synthetic fixture
   records only.
-  paths, never the real cache directory, `.env`, or the pre-existing
-  legacy database.
+
+## Durable-State Phase 2B — extending selection into review/display/identifier paths
+
+Discovery pass before writing code confirmed exactly which real call
+sites are safely separable from live network calls and which aren't
+(see backend_factory.py's own module docstring for the full list).
+**Wired**: `review_actions.record_review_decision()` (the human review
+action — always pure, no network call ever), `radar_inbox._build_items`/
+`_edinet_scope_line` (Radar Inbox's read-only display path), and
+`edgar_service.get_edgar_companies`/`dart/radar_service.
+get_radar_companies` (identifier-cache reads used only by the
+non-network `edgar_readiness`/`radar_readiness` checks). Every one of
+these gained a strictly additive, optional `settings: Settings | None =
+None` parameter — every existing caller/test that doesn't pass it keeps
+today's exact JSON behavior; `radar_inbox.py`'s own real call sites were
+updated to pass `settings` through, so flipping `EDGE_DB_BACKEND=sqlite`
+genuinely changes what the running app does for these paths.
+
+**Deliberately NOT wired, with reasons** (per the discovery pass, not
+discovered mid-implementation): candidate persistence *during* a scan or
+a "Process" action (`run_pipeline()`/`process_single_candidate()` in all
+three pipelines) — those functions call `candidate_store.
+upsert_new_candidates()`/`update_candidate()` from inside the same
+function bodies that make live network calls; there is no already-
+separated persistence-only seam to swap without restructuring live,
+already-production-validated control flow (these pipelines processed
+real AMD/Marvell/SK Hynix/Trio-Tech/Rocket Lab filings earlier this
+session). `run_scan()`/`process_candidate_now()` in both
+`edgar_service.py` and `dart/radar_service.py` deliberately do **not**
+pass `settings` into their own `get_edgar_companies`/`get_radar_companies`
+calls, for the same reason — verified by a dedicated test that inspects
+those functions' source rather than running them. EDINET's identifier
+cache has no read function to wire at all — its five companies'
+identifiers are hardcoded in `tracked_companies.py`, never resolved from
+a runtime cache. `candidate_backfill.py` is out of scope — a separate,
+already-executed, one-off tool with its own bespoke atomic transaction,
+not an ongoing pipeline path.
+
+**Optimistic-concurrency fix found and corrected during this phase**:
+Phase 2A's `SqliteCandidateRepository.update_candidate()` re-fetched the
+current version at write time when `expected_version` was omitted —
+meaning a caller that didn't explicitly carry a version from its own
+earlier read got *no* real conflict protection, only the appearance of
+it. `get_candidate_version()` was added to
+`CandidateRepositoryProtocol` (and both adapters — `None` always for
+JSON, which has no version concept) so `record_review_decision()` can
+capture the version from its own read and pass it explicitly to
+`update_candidate()`, making the compare-and-swap genuine. Verified with
+a real two-writer race test: a second, stale write is rejected
+(`status="conflict"`) and the first writer's decision is preserved
+exactly.
+
+- **Tests**: 19 new in `test_backend_factory_phase2b.py` — JSON-default
+  parity for all four newly-wired paths; SQLite selection verified for
+  each of EDGAR/DART/EDINET synthetic filing+candidate pairs through
+  `_build_items`; full candidate round-trip; a real review-decision
+  state-transition append; the genuine stale-write conflict scenario;
+  synthetic-only identifier round-trips for both `get_edgar_companies`
+  and `get_radar_companies`; a source-inspection test proving
+  `run_scan`/`process_candidate_now` never pass `settings` into their
+  identifier lookups; Signal identity/absence through the selected
+  repository; backend isolation (SQLite paths never touch the JSON cache
+  directory, JSON paths never open a SQLite file); and the same
+  real-local-state source guard pattern established in Phase 2A, scoped
+  to every file this phase touched. Full suite (1071 tests, +19) re-run
+  and passes; zero access to the real cache directory, `.env`, the
+  Streamlit secrets file, or the pre-existing legacy database at any
+  point.

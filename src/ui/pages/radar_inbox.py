@@ -28,7 +28,8 @@ from datetime import date, datetime
 
 import streamlit as st
 
-from src.config.settings import get_settings
+from src.config.settings import Settings, get_settings
+from src.data_access import backend_factory
 from src.data_access.dart import candidate_store, radar_service
 from src.data_access.dart import scan_service as dart_scan_service
 from src.data_access.edgar import edgar_pipeline, edgar_service
@@ -81,15 +82,28 @@ def _clear_filters() -> None:
     st.session_state["radar-page"] = 1
 
 
-def _edinet_scope_line(cache_dir) -> str:
+def _edinet_scope_line(cache_dir, settings: Settings | None = None) -> str:
     """Truthful configured-but-not-scanned wording (Gate 7.1) — replaces
     the earlier, now-stale "no tracked companies yet" line from before
     the five-company registry addition (Gate 7). Deliberately does not
     claim EDINET is calibrated, actively monitored, current, autonomous,
-    or producing live signals — it isn't; zero live scans have run."""
+    or producing live signals — it isn't; zero live scans have run.
+
+    `settings` is additive and optional (Durable-State Phase 2B) — see
+    backend_factory.py's module docstring. Omitted, behavior is
+    unchanged. `get_edinet_companies` is untouched either way — EDINET's
+    five tracked companies have their identifiers hardcoded directly in
+    tracked_companies.py, never resolved from a runtime cache (see that
+    module's own docstring), so there is no identifier-cache read here
+    to wire in the first place."""
     company_count = len(edinet_service.get_edinet_companies(cache_dir))
-    filing_count = len(edinet_scan_service.load_filing_events(cache_dir))
-    candidate_count = len(candidate_store.load_candidates(cache_dir, edinet_pipeline.CANDIDATE_STORE_FILENAME))
+    use_sqlite = settings is not None and (settings.db_backend or "json").strip().lower() == "sqlite"
+    if use_sqlite:
+        filing_count = len(backend_factory.get_filing_event_repository(settings, "EDINET").load_filing_events())
+        candidate_count = len(backend_factory.get_candidate_repository(settings, "EDINET").load_candidates())
+    else:
+        filing_count = len(edinet_scan_service.load_filing_events(cache_dir))
+        candidate_count = len(candidate_store.load_candidates(cache_dir, edinet_pipeline.CANDIDATE_STORE_FILENAME))
     return (
         f"EDINET (Japan) · {company_count} tracked companies configured; no live scan completed yet · "
         f"FilingEvents: {filing_count} · CandidateSignals: {candidate_count} · last scan: none"
@@ -141,21 +155,41 @@ def _parse_rcept_date(raw: str) -> date | None:
         return None
 
 
-def _build_items(cache_dir) -> list[RadarItem]:
+def _build_items(cache_dir, settings: Settings | None = None) -> list[RadarItem]:
+    """`settings` is additive and optional (Durable-State Phase 2B) —
+    see backend_factory.py's module docstring. Omitted, every read goes
+    through scan_service.py/candidate_store.py directly, exactly as
+    before this phase. Supplied with `settings.db_backend == "sqlite"`,
+    every read instead goes through the SQLite-backed filing-event/
+    candidate repositories — this is a read-only display path either
+    way; no write happens here regardless of backend."""
+    use_sqlite = settings is not None and (settings.db_backend or "json").strip().lower() == "sqlite"
     items: list[RadarItem] = []
 
-    dart_filings = dart_scan_service.load_filing_events(cache_dir)
-    dart_candidates = candidate_store.load_candidates(cache_dir)
+    if use_sqlite:
+        dart_filings = backend_factory.get_filing_event_repository(settings, "OpenDART / DART").load_filing_events()
+        dart_candidates = backend_factory.get_candidate_repository(settings, "OpenDART / DART").load_candidates()
+    else:
+        dart_filings = dart_scan_service.load_filing_events(cache_dir)
+        dart_candidates = candidate_store.load_candidates(cache_dir)
     dart_by_rcept_no = {c.filing.rcept_no: c for c in dart_candidates.values()}
     items += [RadarItem(filing=f, candidate=dart_by_rcept_no.get(f.rcept_no)) for f in dart_filings]
 
-    edgar_filings = edgar_scan_service.load_filing_events(cache_dir)
-    edgar_candidates = candidate_store.load_candidates(cache_dir, edgar_pipeline.CANDIDATE_STORE_FILENAME)
+    if use_sqlite:
+        edgar_filings = backend_factory.get_filing_event_repository(settings, "SEC EDGAR").load_filing_events()
+        edgar_candidates = backend_factory.get_candidate_repository(settings, "SEC EDGAR").load_candidates()
+    else:
+        edgar_filings = edgar_scan_service.load_filing_events(cache_dir)
+        edgar_candidates = candidate_store.load_candidates(cache_dir, edgar_pipeline.CANDIDATE_STORE_FILENAME)
     edgar_by_accession_no = {c.filing.rcept_no: c for c in edgar_candidates.values()}
     items += [RadarItem(filing=f, candidate=edgar_by_accession_no.get(f.rcept_no)) for f in edgar_filings]
 
-    edinet_filings = edinet_scan_service.load_filing_events(cache_dir)
-    edinet_candidates = candidate_store.load_candidates(cache_dir, edinet_pipeline.CANDIDATE_STORE_FILENAME)
+    if use_sqlite:
+        edinet_filings = backend_factory.get_filing_event_repository(settings, "EDINET").load_filing_events()
+        edinet_candidates = backend_factory.get_candidate_repository(settings, "EDINET").load_candidates()
+    else:
+        edinet_filings = edinet_scan_service.load_filing_events(cache_dir)
+        edinet_candidates = candidate_store.load_candidates(cache_dir, edinet_pipeline.CANDIDATE_STORE_FILENAME)
     edinet_by_doc_id = {c.filing.rcept_no: c for c in edinet_candidates.values()}
     items += [RadarItem(filing=f, candidate=edinet_by_doc_id.get(f.rcept_no)) for f in edinet_filings]
 
@@ -211,7 +245,7 @@ def render() -> None:
     if edgar_readiness.ready:
         st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">{_EDGAR_SCOPE_LINE}</div>', unsafe_allow_html=True)
     if edinet_readiness.ready:
-        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">{_edinet_scope_line(settings.cache_dir)}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="er-muted" style="margin-top:0.2rem;">{_edinet_scope_line(settings.cache_dir, settings)}</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="er-muted" style="margin-top:0.2rem;">Live primary filings · Korea DART + SEC EDGAR pilots '
         '(EDINET seam present, not yet a live pilot)</div>',
@@ -273,7 +307,7 @@ def render() -> None:
         _render_scan_result("edgar_last_scan_report", "edgar_last_scan_error")
         _render_scan_result("edinet_last_scan_report", "edinet_last_scan_error")
 
-    items = _build_items(settings.cache_dir)
+    items = _build_items(settings.cache_dir, settings)
 
     if not items:
         empty_state(
@@ -384,7 +418,7 @@ def render() -> None:
             filename = edinet_pipeline.CANDIDATE_STORE_FILENAME
         else:
             filename = candidate_store._CACHE_FILENAME
-        return review_actions.record_review_decision(settings.cache_dir, candidate_id, filename, status, note)
+        return review_actions.record_review_decision(settings.cache_dir, candidate_id, filename, status, note, settings=settings)
 
     # Reuses the exact same readiness objects computed at the top of
     # render() for the Scan buttons — a candidate's "Prepare analyst

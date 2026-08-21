@@ -1,27 +1,42 @@
-"""Durable-State Phase 2A — the one composition seam that decides
-JSON-backed vs. SQLite-backed collaborators, based on `Settings.db_backend`.
-No source service (a pipeline, a resolver, a UI page) imports `sqlite3`
-or picks its own storage here — this module is the single place that
-does, matching the existing `container.py` composition-root pattern
-exactly (its own docstring: "Phase 2 swaps in real implementations here
-only, without touching any page or component code").
+"""Durable-State — the one composition seam that decides JSON-backed vs.
+SQLite-backed collaborators, based on `Settings.db_backend`. No source
+service (a pipeline, a resolver, a UI page) imports `sqlite3` or picks
+its own storage here — this module is the single place that does,
+matching the existing `container.py` composition-root pattern exactly
+(its own docstring: "Phase 2 swaps in real implementations here only,
+without touching any page or component code").
 
-**Only `get_signal_repository()` is actually wired into the running
-app** (via `container.py`'s `get_repositories()`) — it's the one place
-in the whole codebase that already has a real interface seam
-(`SignalRepository`, already implemented by both `RadarSignalRepository`
-and Phase 1's `SqliteSignalRepository`). `get_candidate_repository()`,
-`get_filing_event_repository()`, and `get_identifier_repository()` below
-exist and are fully tested for cross-backend behavioral equivalence, but
-have **no real application call site yet** — every existing pipeline
-(`edgar_pipeline.py`, `radar_pipeline.py`, `edinet_pipeline.py`,
-`radar_inbox.py`, `review_actions.py`, `cik_resolver.py`,
-`corp_code_resolver.py`) still calls `candidate_store.py`/
-`scan_service.py`/the resolver caches directly — rewiring those call
-sites would mean touching source-adapter/business-rule files, which is
-explicitly out of this phase's scope. See design/DECISIONS.md's
-"smallest viable wiring seam" note for the full inspection this was
-based on.
+**Phase 2A** wired only `get_signal_repository()` into the running app
+(via `container.py`). **Phase 2B** additionally wires the standalone,
+already-network-free application-facing paths: Radar Inbox's display
+read path (`radar_inbox._build_items`/`_edinet_scope_line`), human
+review decisions (`review_actions.record_review_decision`), and
+identifier-cache reads used for readiness/company resolution
+(`edgar_service.get_edgar_companies`, `dart/radar_service.
+get_radar_companies`) — each via an **additive, optional `settings`
+parameter** that preserves every existing caller/test exactly when
+omitted.
+
+**Deliberately NOT wired this phase, and why**: `run_pipeline()`/
+`process_single_candidate()` in all three pipelines
+(`edgar_pipeline.py`, `radar_pipeline.py`, `edinet_pipeline.py`) call
+`candidate_store.upsert_new_candidates()`/`update_candidate()` from
+*inside* the same function bodies that make live network calls
+(`document_service`, translation, `scan_service.scan()` itself) — there
+is no already-separated persistence-only seam within those functions to
+swap without restructuring live, already-production-validated control
+flow (these exact pipelines processed real AMD/Marvell/SK Hynix/
+Trio-Tech/Rocket Lab filings earlier this session). Candidate
+persistence *during a scan or a "Process" action* therefore remains
+JSON-only regardless of `EDGE_DB_BACKEND` — a deliberate, documented
+limitation, not an oversight (see design/DECISIONS.md). EDINET's
+identifier cache has no equivalent read function to wire at all: its
+five tracked companies' identifiers are hardcoded directly in
+`tracked_companies.py`, never resolved from a runtime cache (confirmed
+by that module's own docstring) — not a gap, genuinely not applicable.
+`candidate_backfill.py` is out of scope too — a separate, already-
+executed, one-off production tool with its own bespoke atomic
+multi-file rollback transaction, not an ongoing pipeline path.
 
 "json" (the default, whenever `EDGE_DB_BACKEND` is unset/blank/
 unrecognized) always returns exactly today's existing collaborators,
@@ -110,6 +125,7 @@ class UpdateOutcome:
 class CandidateRepositoryProtocol(Protocol):
     def load_candidates(self) -> dict[str, CandidateSignal]: ...
     def get_candidate(self, candidate_id: str) -> CandidateSignal | None: ...
+    def get_candidate_version(self, candidate_id: str) -> int | None: ...
     def upsert_new_candidates(self, new_candidates: list[CandidateSignal]) -> dict[str, CandidateSignal]: ...
     def update_candidate(self, candidate: CandidateSignal, expected_version: int | None = None) -> UpdateOutcome: ...
 
@@ -133,6 +149,12 @@ class JsonCandidateRepository:
     def get_candidate(self, candidate_id: str) -> CandidateSignal | None:
         return self.load_candidates().get(candidate_id)
 
+    def get_candidate_version(self, candidate_id: str) -> int | None:
+        # JSON has no version concept at all — always None, honestly,
+        # rather than faking a number update_candidate() below ignores
+        # anyway (see this class's own docstring).
+        return None
+
     def upsert_new_candidates(self, new_candidates: list[CandidateSignal]) -> dict[str, CandidateSignal]:
         return candidate_store.upsert_new_candidates(self.cache_dir, new_candidates, self.filename)
 
@@ -143,6 +165,19 @@ class JsonCandidateRepository:
 
 @dataclass(frozen=True)
 class SqliteCandidateRepository:
+    """`update_candidate`'s `expected_version` is a real optimistic-lock
+    check when the caller supplies one obtained from its own earlier
+    `get_candidate`/`get_candidate_version` call — a mismatch at write
+    time means someone else changed the row in between, and the write is
+    rejected (see UpdateOutcome). Left as `None` (the default), this
+    class re-reads the current version immediately before writing —
+    convenient for a caller that only wants "write, don't care about
+    races" (matches Phase 2A's original scope), but that path provides
+    *no* actual conflict protection, since the version it compares
+    against is fetched fresh rather than carried from an earlier read.
+    `review_actions.record_review_decision` (Phase 2B) always supplies
+    an explicit `expected_version` for exactly this reason."""
+
     conn: sqlite3.Connection
     source: str
 
@@ -151,6 +186,9 @@ class SqliteCandidateRepository:
 
     def get_candidate(self, candidate_id: str) -> CandidateSignal | None:
         return sqlite_candidates.get_candidate(self.conn, candidate_id)
+
+    def get_candidate_version(self, candidate_id: str) -> int | None:
+        return sqlite_candidates.get_candidate_version(self.conn, candidate_id)
 
     def upsert_new_candidates(self, new_candidates: list[CandidateSignal]) -> dict[str, CandidateSignal]:
         return sqlite_candidates.upsert_new_candidates(self.conn, self.source, new_candidates)
@@ -169,6 +207,17 @@ def get_candidate_repository(settings: Settings, source: str) -> CandidateReposi
     if backend == "sqlite":
         return SqliteCandidateRepository(conn=_require_sqlite_connection(settings), source=source)
     return JsonCandidateRepository(cache_dir=settings.cache_dir, filename=_CANDIDATE_FILENAME_BY_SOURCE[source])
+
+
+_SOURCE_BY_CANDIDATE_FILENAME = {filename: source for source, filename in _CANDIDATE_FILENAME_BY_SOURCE.items()}
+
+
+def source_for_candidate_filename(filename: str) -> str:
+    """Reverse lookup for callers (review_actions.py) that only have the
+    JSON filename on hand — the same routing-by-id-prefix convention
+    radar_inbox.py already uses to pick that filename in the first
+    place."""
+    return _SOURCE_BY_CANDIDATE_FILENAME[filename]
 
 
 # --- Filing-event repository — read-only in both backends (see module docstring) ---
