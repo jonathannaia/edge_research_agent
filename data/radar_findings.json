@@ -1,6 +1,27 @@
 [
   {
     "niche": "AI Buildout",
+    "headline": "DCD Talks: Rethinking data center power resilience with Eric Dupont, PowerSecure",
+    "summary": "PowerSecure's SVP of Customer Care discusses long-term data center resilience and the role of bridging power in data center operations.",
+    "source_url": "https://www.datacenterdynamics.com/en/videos/dcd-talks-rethinking-data-center-power-resilience-with-eric-dupont-powersecure/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 06:52:57 +0000",
+    "retrieved_at": "2026-08-21T08:28:52+00:00",
+    "tickers": [
+      {
+        "ticker": "POWR",
+        "company_name": "PowerSecure",
+        "jurisdiction": "United States",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Discussion of data center power infrastructure and resilience directly addresses AI Buildout scope.",
+    "url_hash": "c37d916db43a46f1",
+    "id": "c37d916db43a46f1"
+  },
+  {
+    "niche": "AI Buildout",
     "headline": "Keel decommissions all US cryptomining sites ahead of AI pivot",
     "summary": "Keel decommissioned all four of its US Bitcoin mining sites as part of a strategic pivot toward AI infrastructure.",
     "source_url": "https://www.datacenterdynamics.com/en/news/keel-decommissions-all-us-cryptomining-sites-ahead-of-ai-pivot/",
