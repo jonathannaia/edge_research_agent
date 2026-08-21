@@ -2660,3 +2660,66 @@ architecture report.
   and imports no network-capable client or new ORM dependency). Full
   suite re-run and passes; zero real `data/cache/` access anywhere in
   the new tests.
+
+## Durable-State Phase 2A — backend-selection wiring (one real seam only)
+
+Inspected the composition root (`container.py`) and every JSON-store call
+site (`candidate_store.py`, each source's `scan_service.py`,
+`cik_resolver.py`, `corp_code_resolver.py`) before writing any code.
+**Finding**: `container.py`'s `AppContext.signal_repository` is the only
+place in the entire app already behind a real interface
+(`SignalRepository`, already implemented by both `RadarSignalRepository`
+and Phase 1's `SqliteSignalRepository`) — every other JSON store
+(candidates, filing events, identifiers) is called *directly* by
+`edgar_pipeline.py`/`radar_pipeline.py`/`edinet_pipeline.py`/
+`radar_inbox.py`/`review_actions.py`/`cik_resolver.py`/
+`corp_code_resolver.py`, with no abstraction to swap. Building one there
+would mean editing those pipeline/business-rule files — explicitly out
+of scope ("do not alter source adapters").
+
+- **`src/data_access/backend_factory.py`** (new) — the one composition
+  seam. `get_signal_repository(settings)` is **the only factory function
+  actually wired into `container.py`** — "json" (default) returns
+  `RadarSignalRepository` unchanged; "sqlite" requires an explicit,
+  non-empty `EDGE_STATE_DB_PATH` and raises `BackendConfigurationError`
+  otherwise (never a silent JSON fallback). `get_candidate_repository()`/
+  `get_filing_event_repository()`/`get_identifier_repository()` exist and
+  are fully tested for cross-backend equivalence, but — honestly, per the
+  finding above — **have no real application call site yet**.
+- **Real architectural asymmetry found, not papered over**: JSON's
+  candidate store and filing-event store are separate files with no
+  automatic sync outside a live `scan_service.scan()` call; SQLite's
+  schema has a real FK from `candidates` to `filing_events`, so a SQLite
+  candidate insert *does* create its parent filing-event row
+  transactionally. The filing-event/identifier adapters are therefore
+  **read-only** for both backends in this phase — matching what each
+  backend can genuinely support without a live scan/resolution, rather
+  than inventing a JSON write path that doesn't exist in production.
+- **`container.py`**: one line changed —
+  `signal_repository=backend_factory.get_signal_repository(settings)`
+  instead of a hardcoded `RadarSignalRepository(settings)`. Verified
+  entirely against synthetic fixture data under `tmp_path` — a
+  `Settings` object with an explicit temporary `cache_dir` and no env
+  overrides still selects `RadarSignalRepository`, and a synthetic
+  `PUBLISHED` candidate written only to that temporary directory
+  produces the expected `signal-{candidate.id}` identity. No real local
+  cache directory, `.env`, or published Signal was read to verify this
+  phase — that boundary is enforced by a dedicated source-guard test
+  (see below) scanning this phase's own files for any such reference.
+- **Tests**: 29 new in `test_backend_factory.py` — default/blank/
+  unrecognized → JSON; explicit `sqlite` + explicit path → SQLite with
+  schema migrated; missing/blank path fails closed
+  (`BackendConfigurationError`), never silently uses JSON;
+  `EDGE_STATE_DB_URL` never read; the retired `EDGE_DB_PATH`/
+  `EDGE_DB_URL` proven to have zero effect; cross-backend equivalence for
+  candidate retrieval/idempotent insertion/review update/Signal identity;
+  non-published candidates produce no Signal under either backend;
+  each backend proven never to touch the other's storage; a dedicated
+  source-guard test confirms this phase's own factory/container/test
+  files never reference the real cache directory, the real legacy
+  database, the real secrets file, or any of the three real published
+  Signal IDs. Full suite (1052 tests, +29) re-run and passes; every test
+  uses `tmp_path`-derived or `:memory:` paths and synthetic fixture
+  records only.
+  paths, never the real cache directory, `.env`, or the pre-existing
+  legacy database.

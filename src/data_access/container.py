@@ -15,6 +15,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from src.config.settings import Settings, get_settings
+from src.data_access import backend_factory
 from src.data_access.demo.catalyst_repository import DemoCatalystRepository
 from src.data_access.demo.evidence_repository import DemoEvidenceRepository
 from src.data_access.demo.market_data_provider import DemoMarketDataProvider
@@ -30,7 +31,6 @@ from src.data_access.interfaces import (
     ThemeRepository,
     TickerRepository,
 )
-from src.data_access.live.radar_signal_repository import RadarSignalRepository
 
 
 @dataclass(frozen=True)
@@ -51,7 +51,12 @@ def get_repositories(settings: Settings | None = None) -> AppContext:
         ticker_repository=DemoTickerRepository(settings),
         evidence_repository=DemoEvidenceRepository(settings),
         catalyst_repository=DemoCatalystRepository(settings),
-        signal_repository=RadarSignalRepository(settings),
+        # Durable-State Phase 2A: JSON (RadarSignalRepository) by default,
+        # exactly as before — SQLite (SqliteSignalRepository) only when
+        # settings.db_backend is explicitly "sqlite". See
+        # backend_factory.py's own module docstring for why this is the
+        # one collaborator actually wired here in this phase.
+        signal_repository=backend_factory.get_signal_repository(settings),
         market_data_provider=DemoMarketDataProvider(settings),
         research_answer_provider=DemoResearchAnswerProvider(settings),
     )
