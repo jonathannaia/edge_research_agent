@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 from dataclasses import asdict
 from pathlib import Path
+from typing import Protocol
 
 from src.models.models import (
     CandidateSignal,
@@ -29,6 +30,46 @@ from src.models.models import (
 )
 
 _CACHE_FILENAME = "dart_candidates.json"
+
+
+class CandidatePersistence(Protocol):
+    """Durable-State Phase 3A — narrow, source-neutral candidate
+    persistence collaborator: the exact operations edgar_pipeline.py/
+    radar_pipeline.py/edinet_pipeline.py already perform against this
+    module's own JSON functions. Defined here rather than imported from
+    backend_factory.py because backend_factory.py already imports every
+    one of those pipeline modules — a reverse import would be circular.
+    Structural typing means any object with this shape works as-is,
+    including backend_factory's own JsonCandidateRepository/
+    SqliteCandidateRepository, with no import relationship required
+    between the two modules.
+
+    When a pipeline function's optional `candidate_repository` parameter
+    is omitted, none of this is used — every existing call goes to this
+    module's own load_candidates/upsert_new_candidates/update_candidate
+    exactly as before. When supplied, every candidate-store touch within
+    that one call (including the read used to pick eligible/already-
+    existing candidates) routes through the same collaborator, so a
+    single call's own writes are visible to its own later reads —
+    filing-event, excerpt, translation, identifier, discovery, and Signal
+    persistence are never touched by this collaborator.
+
+    **Single-backend atomicity, by contract, not by accident**: one
+    invocation uses exactly one candidate store for every read and write
+    it performs — either this module's own JSON functions throughout, or
+    the supplied collaborator throughout, never a mix within the same
+    call. There is no cross-backend lookup, dedup, migration, dual-read,
+    or dual-write of any kind — a JSON-mode call and a separate
+    SQLite-mode call for the same candidate ID are two independent
+    stores that do not see each other. That's an intentional scope
+    boundary, not a gap: no real service entry point calls this phase's
+    functions with an injected collaborator at all (see each pipeline
+    module's own docstring), so the cross-invocation case never actually
+    arises in production this phase."""
+
+    def load_candidates(self) -> dict[str, CandidateSignal]: ...
+    def upsert_new_candidates(self, new_candidates: list[CandidateSignal]) -> dict[str, CandidateSignal]: ...
+    def update_candidate(self, candidate: CandidateSignal, expected_version: int | None = None) -> object: ...
 
 
 def _cache_path(cache_dir: Path, filename: str = _CACHE_FILENAME) -> Path:

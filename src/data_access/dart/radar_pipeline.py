@@ -24,6 +24,7 @@ from pathlib import Path
 
 from src.config.tracked_companies import TrackedCompany
 from src.data_access.dart import candidate_store, document_service, ownership_materiality, scan_service
+from src.data_access.dart.candidate_store import CandidatePersistence
 from src.data_access.dart.client import DartClient
 from src.data_access.dart.document_extractor import assess_excerpt_quality
 from src.data_access.translation.interfaces import TranslationProvider
@@ -185,6 +186,7 @@ def run_pipeline(
     cache_dir: Path,
     lookback_days: int = scan_service.DEFAULT_LOOKBACK_DAYS,
     max_candidates_to_process: int = DEFAULT_MAX_CANDIDATES_PER_SCAN,
+    candidate_repository: CandidatePersistence | None = None,
 ) -> ScanReport:
     """One bounded, idempotent pipeline run. Re-running with the same
     scope never creates duplicate FilingEvents/CandidateSignals (scan_
@@ -192,7 +194,19 @@ def run_pipeline(
     re-translates an already-processed candidate (document_service's and
     translation_service's own per-ID/per-hash caches) — this function's
     only new responsibility is deciding *which* eligible candidates get
-    processed this run, bounded by `max_candidates_to_process`."""
+    processed this run, bounded by `max_candidates_to_process`.
+
+    `candidate_repository` (Durable-State Phase 3A) is additive and
+    optional. Omitted (the only path any real service entry point uses
+    this phase), every candidate-store touch below is exactly today's
+    JSON behavior via candidate_store.py. Supplied — synthetic tests
+    only this phase — every candidate-store touch in this one call (the
+    post-scan upsert, the eligibility-selection read, and both
+    processing-loop writes) routes through the same collaborator, so
+    candidates this call just detected are visible to its own
+    eligibility selection and processing loops. scan_service.scan()'s own
+    filing-event read/write and translate_cached()'s own translation-
+    cache read/write are never affected by this parameter."""
     scan_id = f"scan-{uuid.uuid4().hex[:12]}"
     started_at = datetime.now(timezone.utc).isoformat()
     max_candidates_to_process = clamp_max_candidates(max_candidates_to_process)
@@ -200,9 +214,13 @@ def run_pipeline(
     scan_result = scan_service.scan(client, companies, cache_dir, lookback_days=lookback_days)
 
     detected_now = list(scan_result.new_candidate_signals)
-    candidate_store.upsert_new_candidates(cache_dir, detected_now)
+    if candidate_repository is None:
+        candidate_store.upsert_new_candidates(cache_dir, detected_now)
+        store = candidate_store.load_candidates(cache_dir)
+    else:
+        candidate_repository.upsert_new_candidates(detected_now)
+        store = candidate_repository.load_candidates()
 
-    store = candidate_store.load_candidates(cache_dir)
     eligible = sorted(
         (
             c for c in store.values()
@@ -218,11 +236,17 @@ def run_pipeline(
 
     for candidate in to_process:
         processed = process_candidate(client, translation_provider, candidate, cache_dir, counters, error_counts)
-        candidate_store.update_candidate(cache_dir, processed)
+        if candidate_repository is None:
+            candidate_store.update_candidate(cache_dir, processed)
+        else:
+            candidate_repository.update_candidate(processed)
 
     for candidate in to_defer:
         deferred = _transition(candidate, CandidateStatus.PROCESSING_DEFERRED, "Scan processing budget reached.")
-        candidate_store.update_candidate(cache_dir, deferred)
+        if candidate_repository is None:
+            candidate_store.update_candidate(cache_dir, deferred)
+        else:
+            candidate_repository.update_candidate(deferred)
 
     warnings: list[str] = []
     for message in scan_result.errors:
@@ -255,6 +279,7 @@ def process_single_candidate(
     translation_provider: TranslationProvider,
     candidate_id: str,
     cache_dir: Path,
+    candidate_repository: CandidatePersistence | None = None,
 ) -> CandidateSignal | None:
     """On-demand processing of exactly one named candidate — the seam
     Radar Inbox's manual "Process now" (a PROCESSING_DEFERRED candidate)
@@ -263,13 +288,24 @@ def process_single_candidate(
     _ELIGIBLE_STATUSES and the confidence filter — those govern automatic
     pickup by run_pipeline's budgeted loop, not an explicit single-item
     user click, which is its own bounded action. Returns None if the id
-    isn't found rather than raising, so a caller can show a clear message."""
-    store = candidate_store.load_candidates(cache_dir)
+    isn't found rather than raising, so a caller can show a clear message.
+
+    `candidate_repository` (Durable-State Phase 3A) is additive and
+    optional — see run_pipeline's own docstring above for the shared
+    reasoning. process_candidate's own network/extraction/translation
+    calls are never affected either way."""
+    if candidate_repository is None:
+        store = candidate_store.load_candidates(cache_dir)
+    else:
+        store = candidate_repository.load_candidates()
     candidate = store.get(candidate_id)
     if candidate is None:
         return None
     counters = {"documents_retrieved": 0, "documents_extracted": 0, "translations_completed": 0, "cache_hits": 0}
     error_counts: dict[str, int] = {}
     processed = process_candidate(client, translation_provider, candidate, cache_dir, counters, error_counts)
-    candidate_store.update_candidate(cache_dir, processed)
+    if candidate_repository is None:
+        candidate_store.update_candidate(cache_dir, processed)
+    else:
+        candidate_repository.update_candidate(processed)
     return processed

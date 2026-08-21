@@ -2789,3 +2789,83 @@ exactly.
   and passes; zero access to the real cache directory, `.env`, the
   Streamlit secrets file, or the pre-existing legacy database at any
   point.
+
+## Durable-State Phase 3A — candidate-persistence-only injection seam
+
+A read-only design audit (chat-only, no files) preceding this phase
+established that candidate persistence in all three pipelines is a
+syntactically *separate statement* from the network call it follows
+(`scan_service.scan()`, `process_candidate()`) — unlike filing-event,
+excerpt, and translation persistence, which write from *inside* the same
+function that makes the network call and remain genuinely entangled,
+explicitly out of scope here. EDINET's `backfill_candidate_from_existing_
+event` — already fully network-free, taking no client parameter at all —
+was identified as the safest first proof point and implemented first, per
+the approved order.
+
+**Collaborator contract**: a new, narrow `CandidatePersistence` Protocol
+(`load_candidates`/`upsert_new_candidates`/`update_candidate`) lives in
+`candidate_store.py` rather than `backend_factory.py` — `backend_factory.
+py` already imports `edgar_pipeline`/`radar_pipeline`/`edinet_pipeline`,
+so a reverse import for the type would be circular. Structural typing
+means `backend_factory`'s own `JsonCandidateRepository`/
+`SqliteCandidateRepository` satisfy it with no import relationship to
+`candidate_store.py` required. Every touched function gained one strictly
+additive `candidate_repository: CandidatePersistence | None = None`
+parameter: omitted, every candidate-store touch is exactly today's JSON
+behavior via `candidate_store.py`; supplied, every candidate-store touch
+*within that one call* — including the read used for `backfill`'s
+existence check and `run_pipeline`'s eligibility selection, not just the
+final write — routes through the same collaborator, so candidates a call
+just wrote are visible to that same call's own later reads. Filing-event,
+excerpt, translation, identifier, discovery, and Signal persistence are
+never touched by this parameter.
+
+**Known, deliberate limitation, not a bug**: `backfill_candidate_from_
+existing_event`'s existence-check read routes through the injected
+collaborator when one is supplied — so idempotency is preserved *within*
+a consistent choice of collaborator across repeated calls, but a real
+caller that mixed JSON and SQLite calls for the same doc_id across
+separate invocations would not see each other's writes. Not a concern
+this phase: no real service entry point passes a collaborator at all.
+
+**Wired**: `edinet_pipeline.backfill_candidate_from_existing_event`,
+`edgar_pipeline.run_pipeline`/`process_single_candidate`,
+`radar_pipeline.run_pipeline`/`process_single_candidate`,
+`edinet_pipeline.run_pipeline`/`process_single_candidate`. **Deliberately
+NOT wired**: `edgar_service.py`/`dart/radar_service.py`/`edinet_service.
+py`'s `run_scan`/`process_candidate_now` — none passes a
+`candidate_repository` from real `Settings`; verified by a dedicated
+signature-inspection test. No UI action can cause SQLite candidate
+persistence this phase.
+
+- **Tests**: 15 new in `test_candidate_persistence_phase3a.py` —
+  EDINET backfill JSON-default/injected-SQLite parity, idempotency
+  through an injected repository, and a no-client-parameter guarantee;
+  per-source (EDGAR/DART/EDINET) `run_pipeline` JSON-vs-SQLite
+  equivalence on candidate identity/status/confidence/matched
+  rules/filing linkage, using the same `MagicMock()` client fixtures as
+  the existing pipeline suites; a two-candidate budget test exercising
+  both the `to_process` and `to_defer` write statements through the
+  injected collaborator; `process_single_candidate` SQLite equivalence;
+  full synthetic-pipeline-to-Signal round trips (published → `signal-
+  {id}`, non-published → no Signal, stale conflict → rejected, current
+  state preserved) built from a candidate the injected pipeline seam
+  itself created, not a hand-built one; confirmation filing-event
+  persistence stays JSON regardless of candidate-backend selection; the
+  service-entry-point signature guard; and the same real-local-state
+  source guard pattern established in Phase 2A/2B, scoped to every file
+  this phase touched. Full suite (1086 tests, +15) re-run and passes;
+  zero access to the real cache directory, `.env`, the Streamlit secrets
+  file, or the pre-existing legacy database at any point; no test calls
+  `get_settings()` or uses a bare ambient `Settings()` — every `Settings`
+  construction in the new test file passes explicit `tmp_path`-derived
+  arguments.
+
+**Contract clarification (single-backend atomicity)**: Phase 3A
+guarantees candidate idempotency within one selected backend per
+invocation. It does not provide cross-backend continuity, cross-store
+deduplication, migration, dual-read, dual-write, or reconciliation.
+Those remain future migration/cutover concerns and are not reachable in
+production because no real service entry point passes the injected
+repository in this phase.

@@ -33,6 +33,7 @@ from pathlib import Path
 
 from src.config.tracked_companies import TrackedCompany
 from src.data_access.dart import candidate_store
+from src.data_access.dart.candidate_store import CandidatePersistence
 from src.data_access.edinet import document_service, edinet_rules, scan_service
 from src.data_access.edinet.client import EdinetClient
 from src.models.models import CandidateSignal, CandidateStatus, ExtractionState, StateTransition, TranslationState
@@ -158,6 +159,7 @@ def backfill_candidate_from_existing_event(
     cache_dir: Path,
     doc_id: str,
     code_category_map: dict[str, str] = edinet_rules.DEFAULT_CODE_CATEGORY_MAP,
+    candidate_repository: CandidatePersistence | None = None,
 ) -> CandidateBackfillResult:
     """No network call of any kind — purely local. Re-evaluates an
     already-persisted FilingEvent's own already-recorded
@@ -173,14 +175,25 @@ def backfill_candidate_from_existing_event(
     Never creates a new FilingEvent, never modifies any existing
     FilingEvent field, never touches document_service/translation.
     Idempotent: a second call with an already-existing candidate is a
-    no-op, reported via `already_existed=True`."""
+    no-op, reported via `already_existed=True`.
+
+    `candidate_repository` (Durable-State Phase 3A) is additive and
+    optional. Omitted, every candidate-store touch below is exactly
+    today's JSON behavior via candidate_store.py. Supplied, both the
+    existence check and the write route through the collaborator instead
+    — see candidate_store.CandidatePersistence's own docstring for why
+    both, not just the write, move together. FilingEvent reads
+    (scan_service.load_filing_events) are never affected either way."""
     filings = {f.rcept_no: f for f in scan_service.load_filing_events(cache_dir)}
     filing = filings.get(doc_id)
     if filing is None:
         return CandidateBackfillResult(error=f"{doc_id}: no existing FilingEvent found.")
 
     candidate_id = f"edinet-cand-{doc_id}"
-    existing_candidates = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
+    if candidate_repository is None:
+        existing_candidates = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
+    else:
+        existing_candidates = candidate_repository.load_candidates()
     if candidate_id in existing_candidates:
         return CandidateBackfillResult(candidate_id=candidate_id, already_existed=True)
 
@@ -203,22 +216,41 @@ def backfill_candidate_from_existing_event(
         status=CandidateStatus.CANDIDATE_DETECTED,
         state_history=[StateTransition(status=CandidateStatus.CANDIDATE_DETECTED, at=now, detail=detail)],
     )
-    candidate_store.upsert_new_candidates(cache_dir, [candidate], CANDIDATE_STORE_FILENAME)
+    if candidate_repository is None:
+        candidate_store.upsert_new_candidates(cache_dir, [candidate], CANDIDATE_STORE_FILENAME)
+    else:
+        candidate_repository.upsert_new_candidates([candidate])
     return CandidateBackfillResult(candidate_id=candidate_id, created=True)
 
 
-def process_single_candidate(client: EdinetClient, candidate_id: str, cache_dir: Path) -> CandidateSignal | None:
+def process_single_candidate(
+    client: EdinetClient,
+    candidate_id: str,
+    cache_dir: Path,
+    candidate_repository: CandidatePersistence | None = None,
+) -> CandidateSignal | None:
     """On-demand processing of exactly one named candidate — the seam
     Radar Inbox's manual "Process now"/"Retry processing" actions would
-    call for an EDINET candidate. Returns None if the id isn't found."""
-    store = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
+    call for an EDINET candidate. Returns None if the id isn't found.
+
+    `candidate_repository` (Durable-State Phase 3A) is additive and
+    optional — see run_pipeline's own docstring below for the shared
+    reasoning. process_candidate's own network/extraction call is never
+    affected either way."""
+    if candidate_repository is None:
+        store = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
+    else:
+        store = candidate_repository.load_candidates()
     candidate = store.get(candidate_id)
     if candidate is None:
         return None
     counters = {"documents_retrieved": 0, "documents_extracted": 0, "cache_hits": 0}
     error_counts: dict[str, int] = {}
     processed = process_candidate(client, candidate, cache_dir, counters, error_counts)
-    candidate_store.update_candidate(cache_dir, processed, CANDIDATE_STORE_FILENAME)
+    if candidate_repository is None:
+        candidate_store.update_candidate(cache_dir, processed, CANDIDATE_STORE_FILENAME)
+    else:
+        candidate_repository.update_candidate(processed)
     return processed
 
 
@@ -228,6 +260,7 @@ def run_pipeline(
     cache_dir: Path,
     lookback_days: int = scan_service.DEFAULT_LOOKBACK_DAYS,
     max_candidates_to_process: int = DEFAULT_MAX_CANDIDATES_PER_SCAN,
+    candidate_repository: CandidatePersistence | None = None,
 ) -> ScanReport:
     """One bounded, idempotent pipeline run. Re-running with the same
     scope never creates duplicate FilingEvents/CandidateSignals
@@ -238,7 +271,18 @@ def run_pipeline(
     `max_candidates_to_process`. Gate 1 note: has zero real callers yet
     (see edinet_service.py) — `companies` will be empty in real use until
     a later gate adds tracked EDINET companies; fixtures exercise this
-    function directly with explicit fictional company data."""
+    function directly with explicit fictional company data.
+
+    `candidate_repository` (Durable-State Phase 3A) is additive and
+    optional. Omitted (the only path any real service entry point uses
+    this phase), every candidate-store touch below is exactly today's
+    JSON behavior via candidate_store.py. Supplied — synthetic tests
+    only this phase — every candidate-store touch in this one call
+    (the post-scan upsert, the eligibility-selection read, and both
+    processing-loop writes) routes through the same collaborator, so
+    candidates this call just detected are visible to its own
+    eligibility selection and processing loops. scan_service.scan()'s own
+    filing-event read/write is never affected by this parameter."""
     scan_id = f"edinet-scan-{uuid.uuid4().hex[:12]}"
     started_at = datetime.now(timezone.utc).isoformat()
     max_candidates_to_process = clamp_max_candidates(max_candidates_to_process)
@@ -246,9 +290,13 @@ def run_pipeline(
     scan_result = scan_service.scan(client, companies, cache_dir, lookback_days=lookback_days)
 
     detected_now = list(scan_result.new_candidate_signals)
-    candidate_store.upsert_new_candidates(cache_dir, detected_now, CANDIDATE_STORE_FILENAME)
+    if candidate_repository is None:
+        candidate_store.upsert_new_candidates(cache_dir, detected_now, CANDIDATE_STORE_FILENAME)
+        store = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
+    else:
+        candidate_repository.upsert_new_candidates(detected_now)
+        store = candidate_repository.load_candidates()
 
-    store = candidate_store.load_candidates(cache_dir, CANDIDATE_STORE_FILENAME)
     eligible = sorted(
         (c for c in store.values() if c.status in _ELIGIBLE_STATUSES and c.confidence in _PROCESSABLE_CONFIDENCE_LEVELS),
         key=lambda c: (c.filing.rcept_dt, c.filing.rcept_no),
@@ -261,11 +309,17 @@ def run_pipeline(
 
     for candidate in to_process:
         processed = process_candidate(client, candidate, cache_dir, counters, error_counts)
-        candidate_store.update_candidate(cache_dir, processed, CANDIDATE_STORE_FILENAME)
+        if candidate_repository is None:
+            candidate_store.update_candidate(cache_dir, processed, CANDIDATE_STORE_FILENAME)
+        else:
+            candidate_repository.update_candidate(processed)
 
     for candidate in to_defer:
         deferred = _transition(candidate, CandidateStatus.PROCESSING_DEFERRED, "Scan processing budget reached.")
-        candidate_store.update_candidate(cache_dir, deferred, CANDIDATE_STORE_FILENAME)
+        if candidate_repository is None:
+            candidate_store.update_candidate(cache_dir, deferred, CANDIDATE_STORE_FILENAME)
+        else:
+            candidate_repository.update_candidate(deferred)
 
     warnings: list[str] = []
     for message in scan_result.errors:
