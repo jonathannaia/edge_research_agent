@@ -1,6 +1,89 @@
 [
   {
     "niche": "Space",
+    "headline": "Rocket Lab launches 9th satellite for iQPS",
+    "summary": "Rocket Lab launched its ninth satellite for Japanese radar-imaging company iQPS on August 20, 2026.",
+    "source_url": "https://spacenews.com/rocket-lab-launches-9th-satellite-for-iqps/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 16:38:31 +0000",
+    "retrieved_at": "2026-08-21T16:22:15+00:00",
+    "tickers": [
+      {
+        "ticker": "RKLB",
+        "company_name": "Rocket Lab USA Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      },
+      {
+        "ticker": "1448",
+        "company_name": "iQPS Inc.",
+        "jurisdiction": "Japan",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Directly concerns a space launch of satellites by a commercial space company.",
+    "url_hash": "72441e0c7c89995d",
+    "id": "72441e0c7c89995d"
+  },
+  {
+    "niche": "Space",
+    "headline": "SpaceWERX selects 11 firms to scale technologies for military space",
+    "summary": "SpaceWERX awarded funding (STRATFIs) to 11 companies including Agile Space Industries, Antares Nuclear, EO Solutions, Hydrosat, Kall Morris, Method Security, Muon Space, Scout Space, Sedaro, Star Catcher Industries, and ThinkOrbital to scale military space technologies.",
+    "source_url": "https://spacenews.com/spacewerx-selects-11-firms-to-scale-technologies-for-military-space/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 21:44:35 +0000",
+    "retrieved_at": "2026-08-21T16:22:12+00:00",
+    "tickers": [],
+    "relevance_reason": "SpaceWERX selected 11 firms to scale technologies for military space applications, directly relevant to the space scope.",
+    "url_hash": "43150e8cc5a81de2",
+    "id": "43150e8cc5a81de2"
+  },
+  {
+    "niche": "Space",
+    "headline": "Elve qualifies millimeter-wave amplifiers for spaceflight",
+    "summary": "California startup Elve has qualified its 100-watt millimeter-wave Traveling Wave Tube Amplifier platform for spaceflight, with support from U.S. Space Force Small Business Innovation Research funding.",
+    "source_url": "https://spacenews.com/elve-qualifies-millimeter-wave-amplifiers-for-spaceflight/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 22:51:53 +0000",
+    "retrieved_at": "2026-08-21T16:22:09+00:00",
+    "tickers": [],
+    "relevance_reason": "Directly addresses spaceflight-qualified hardware development for space applications.",
+    "url_hash": "ffcae9ee822a4f26",
+    "id": "ffcae9ee822a4f26"
+  },
+  {
+    "niche": "Space",
+    "headline": "New space transportation policy focuses on increased launch rates",
+    "summary": "The White House released a new space transportation policy on August 20 with an emphasis on enabling increased numbers of launches and reentries.",
+    "source_url": "https://spacenews.com/new-space-transportation-policy-focuses-on-increased-launch-rates/",
+    "source_name": "SpaceNews",
+    "source_type": "Reputable Financial News",
+    "published_at": "Thu, 20 Aug 2026 23:30:13 +0000",
+    "retrieved_at": "2026-08-21T16:22:07+00:00",
+    "tickers": [],
+    "relevance_reason": "White House released space transportation policy explicitly focused on increasing launch rates, directly within the Space scope.",
+    "url_hash": "c9c5d836d3a31bd3",
+    "id": "c9c5d836d3a31bd3"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Edge data center for AI workloads proposed in Manchester, UK",
+    "summary": "A two-building edge data center scheme designed for AI workloads is proposed in Manchester, UK as part of a planned network of edge sites.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/edge-data-center-for-ai-workloads-proposed-in-manchester-uk/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 15:47:11 +0000",
+    "retrieved_at": "2026-08-21T16:21:40+00:00",
+    "tickers": [],
+    "relevance_reason": "Edge data center facility explicitly designed for AI workloads represents infrastructure buildout within AI scope.",
+    "url_hash": "60ea809ff9b76f27",
+    "id": "60ea809ff9b76f27"
+  },
+  {
+    "niche": "Space",
     "headline": "Landspace aims to refly recovered Zhuque-3 booster within six months",
     "summary": "Chinese commercial launch firm Landspace successfully achieved a vertical landing of its Zhuque-3 first stage booster on August 18 and is targeting a reflight of the recovered booster within six months.",
     "source_url": "https://spacenews.com/landspace-aims-to-refly-recovered-zhuque-3-booster-within-six-months/",
