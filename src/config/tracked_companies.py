@@ -493,6 +493,91 @@ TRACKED_COMPANIES: tuple[TrackedCompany, ...] = (
             "code-list resolution."
         ),
     ),
+    # Radar expansion — INDI/AIP/CEVA, added after a controlled,
+    # explicitly-approved bounded live cik_resolver.resolve_and_cache()
+    # gate (2026-08-20; exactly 4 SEC requests: one company_tickers.json
+    # bulk lookup + one submissions cross-check per ticker, all three
+    # resolved and cross-check-passed). corp_code left unset here, same
+    # as every other EDGAR entry above — the CIK is already resolved
+    # into data/cache/edgar_ciks.json and populates automatically via
+    # with_resolved_ciks() the next time EDGAR companies are loaded.
+    #
+    # `subthemes` is left unset for all three: none of the theme/layer
+    # assignments requested for this batch (automotive-sensing,
+    # soc-interconnect, edge-ai-connectivity) matched an existing
+    # tracked-company subtheme string closely enough to reuse without
+    # misrepresenting the issuer (e.g. the existing "interconnect"
+    # subtheme means optical/photonic switching fabric elsewhere in this
+    # registry, not Arteris's on-chip Network-on-Chip IP) — flagged as a
+    # reported conflict rather than silently reused or invented. The
+    # intended subtheme and a supply-chain-layer classification are
+    # recorded in each entry's own `notes` below as an explicitly
+    # informal, auditable research classification — not a structured
+    # registry/Issuer field in this phase (TrackedCompany/Issuer carry no
+    # supply-chain-layer field of their own yet for SEED_ISSUERS entries;
+    # see design/DECISIONS.md).
+    TrackedCompany(
+        name="indie Semiconductor, Inc.",
+        exchange="NASDAQ",
+        krx_code="INDI",
+        source="SEC EDGAR",
+        themes=("humanoids",),
+        notes=(
+            "SEC EDGAR pilot cohort — Humanoids. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() bounded gate, "
+            "2026-08-20 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001841925). `exchange` is "
+            "a display label only, not part of the live-verified gate "
+            "(same convention as every other EDGAR entry above). "
+            "Intended subtheme (not applied — no accurate existing match, "
+            "see module docstring): automotive-sensing. Informal "
+            "supply-chain-layer classification (not a structured field): "
+            "edge-physical-ai, compute-hardware. Automotive sensing/"
+            "perception exposure — radar, vision, in-cabin sensing, and "
+            "edge processing; classification may overlap physical AI and "
+            "automotive ADAS."
+        ),
+    ),
+    TrackedCompany(
+        name="Arteris, Inc.",
+        exchange="NASDAQ",
+        krx_code="AIP",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() bounded gate, "
+            "2026-08-20 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001667011). `exchange` is "
+            "a display label only, not part of the live-verified gate. "
+            "Intended subtheme (not applied — no accurate existing match, "
+            "see module docstring): soc-interconnect. Informal "
+            "supply-chain-layer classification (not a structured field): "
+            "compute-hardware, software-infrastructure. Semiconductor "
+            "design infrastructure — Network-on-Chip IP, SoC integration, "
+            "custom silicon, and AI-chip design complexity."
+        ),
+    ),
+    TrackedCompany(
+        name="CEVA INC",
+        exchange="NASDAQ",
+        krx_code="CEVA",
+        source="SEC EDGAR",
+        themes=("ai-buildout",),
+        notes=(
+            "SEC EDGAR pilot cohort — AI Buildout. CIK verified via a "
+            "controlled cik_resolver.resolve_and_cache() bounded gate, "
+            "2026-08-20 (ticker cross-checked against SEC's own "
+            "submissions metadata; cached CIK 0001173489). `exchange` is "
+            "a display label only, not part of the live-verified gate. "
+            "Intended subtheme (not applied — no accurate existing match, "
+            "see module docstring): edge-ai-connectivity. Informal "
+            "supply-chain-layer classification (not a structured field): "
+            "edge-physical-ai, software-infrastructure. Edge AI, "
+            "connectivity IP, DSP, sensor fusion, and smart-edge "
+            "semiconductor design."
+        ),
+    ),
 )
 
 

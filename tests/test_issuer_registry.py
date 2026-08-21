@@ -178,3 +178,38 @@ def test_mrvl_and_tsem_registry_themes_are_unchanged_by_ontology_module():
     by_ticker = {i.primary_ticker: i for i in SEED_ISSUERS}
     assert by_ticker["MRVL"].themes == ("photonics",)
     assert by_ticker["TSEM"].themes == ("ai-buildout",)
+
+
+# --- INDI/AIP/CEVA batch (2026-08-20) — grew the registry from 29 to 32 ---
+
+def test_seed_issuer_count_is_32_after_the_indi_aip_ceva_batch():
+    assert len(SEED_ISSUERS) == 32
+
+
+def test_indi_aip_ceva_appear_exactly_once_each_in_seed_issuers():
+    tickers = [i.primary_ticker for i in SEED_ISSUERS]
+    for ticker in ("INDI", "AIP", "CEVA"):
+        assert tickers.count(ticker) == 1
+
+
+def test_indi_aip_ceva_still_pass_the_lossless_migration_and_compat_invariants():
+    # These three flow through the exact same generated-not-hand-authored
+    # path as every other SEED_ISSUERS entry — the existing
+    # test_every_tracked_company_has_a_corresponding_seed_issuer and
+    # compatibility-adapter-equality tests above already re-verify this
+    # for all 32 (dynamic, not hardcoded to a stale count); this test
+    # exists only to make the specific claim explicit for this batch.
+    compat = tracked_companies_from_issuer_registry(active_only=True)
+    real_tickers = {c.krx_code for c in compat}
+    assert {"INDI", "AIP", "CEVA"} <= real_tickers
+
+
+def test_discovery_stubs_are_unaffected_by_the_indi_aip_ceva_batch():
+    # 21 stubs before and after — this batch only appended to
+    # TRACKED_COMPANIES, DISCOVERY_STUBS is a wholly separate static
+    # tuple untouched by that change.
+    assert len(DISCOVERY_STUBS) == 21
+    stub_tickers = {i.primary_ticker for i in DISCOVERY_STUBS}
+    assert stub_tickers.isdisjoint({"INDI", "AIP", "CEVA"})
+    compat_tickers = {c.krx_code for c in tracked_companies_from_issuer_registry(active_only=False)}
+    assert stub_tickers.isdisjoint(compat_tickers)

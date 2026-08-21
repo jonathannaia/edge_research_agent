@@ -2533,3 +2533,50 @@ one small confirming pull) before any code depends on its exact shape.
   write. A separate approval is required before the Gate-1 endpoint
   verification step, and a further separate approval before any live
   discovery run regardless of these budgets.
+
+## Radar expansion — INDI/AIP/CEVA (2026-08-20, bounded live gate + local onboarding)
+
+Two separately-approved steps: (1) a tightly bounded, request-guarded live
+CIK-resolution gate — exactly 4 SEC requests (one `company_tickers.json`
+bulk lookup + one submissions cross-check per ticker), all three resolved
+and cross-check-passed, result cached to `data/cache/edgar_ciks.json`
+(gitignored); (2) this local-only onboarding batch, using only that
+already-cached result — no further network call. Registry grows from 29
+to 32 active seed issuers / tracked companies; 21 discovery stubs
+untouched.
+
+- **indie Semiconductor, Inc.** (INDI, CIK 0001841925) — theme
+  `humanoids`.
+- **Arteris, Inc.** (AIP, CIK 0001667011) — theme `ai-buildout`.
+- **CEVA INC** (CEVA, CIK 0001173489) — theme `ai-buildout`.
+
+`corp_code` deliberately left unset in `tracked_companies.py` for all
+three, same convention as every other EDGAR entry — resolved lazily via
+`with_resolved_ciks()` from the cache already populated in step (1).
+
+**Subtheme conflict, reported rather than silently resolved**: none of
+the three requested subthemes (`automotive-sensing`, `soc-interconnect`,
+`edge-ai-connectivity`) matched an existing tracked-company subtheme
+string closely enough to reuse accurately — e.g. the existing
+`interconnect` subtheme (used for Nokia/photonics) means optical/photonic
+switching fabric, not Arteris's on-chip Network-on-Chip IP; reusing it
+would misrepresent the issuer. All three subthemes are left unset
+(`subthemes=()`); the intended subtheme and an informal, non-structured
+supply-chain-layer classification (`edge-physical-ai`/`compute-hardware`
+for INDI, `compute-hardware`/`software-infrastructure` for AIP,
+`edge-physical-ai`/`software-infrastructure` for CEVA) are recorded in
+each entry's own `notes` instead — auditable, not a new registry field.
+Neither `TrackedCompany` nor `Issuer` gained a supply-chain-layer field in
+this batch; `SEED_ISSUERS` entries generated from these three carry
+`supply_chain_layers=()`, identical to every other seed issuer.
+
+`exchange="NASDAQ"` for all three is a display label only, consistent
+with every existing EDGAR entry's own documented convention — it was not
+part of the live-verified gate (only ticker, legal name, and CIK were).
+
+- **Tests**: 6 new in `test_tracked_companies.py`, 4 new in
+  `test_issuer_registry.py`, 2 hardcoded-count assertions updated in
+  `test_coverage_page.py` (29→32; an expected, necessary consequence of
+  the registry growing, not a page/UI behavior change — `coverage.py`
+  itself derives every count dynamically and was not touched). Full
+  suite re-run and passes.

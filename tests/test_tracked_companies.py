@@ -191,3 +191,79 @@ def test_edinet_cohort_exchange_is_tse():
 def test_native_name_defaults_to_empty_for_non_edinet_entries():
     for c in get_tracked_companies_for_source("SEC EDGAR") + get_tracked_companies_for_source("OpenDART / DART"):
         assert c.native_name == ""
+
+
+# --- Radar expansion — INDI/AIP/CEVA batch (2026-08-20, bounded live gate) ---
+
+def test_indi_aip_ceva_present_exactly_once_each_and_active():
+    companies = get_tracked_companies(active_only=True)
+    by_ticker = {c.krx_code: c for c in companies}
+    for ticker in ("INDI", "AIP", "CEVA"):
+        matches = [c for c in companies if c.krx_code == ticker]
+        assert len(matches) == 1, f"{ticker} must appear exactly once"
+        assert by_ticker[ticker].active is True
+        assert by_ticker[ticker].source == "SEC EDGAR"
+
+
+def test_indi_aip_ceva_legal_names_and_themes():
+    by_ticker = {c.krx_code: c for c in get_tracked_companies(active_only=True)}
+    assert by_ticker["INDI"].name == "indie Semiconductor, Inc."
+    assert by_ticker["INDI"].themes == ("humanoids",)
+    assert by_ticker["AIP"].name == "Arteris, Inc."
+    assert by_ticker["AIP"].themes == ("ai-buildout",)
+    assert by_ticker["CEVA"].name == "CEVA INC"
+    assert by_ticker["CEVA"].themes == ("ai-buildout",)
+
+
+def test_indi_aip_ceva_subthemes_left_unset_with_intent_recorded_in_notes():
+    # No existing tracked-company subtheme accurately represented any of
+    # the three proposed classifications — reported as a conflict rather
+    # than silently reused or invented (see tracked_companies.py's own
+    # comment above this batch).
+    by_ticker = {c.krx_code: c for c in get_tracked_companies(active_only=True)}
+    assert by_ticker["INDI"].subthemes == ()
+    assert by_ticker["AIP"].subthemes == ()
+    assert by_ticker["CEVA"].subthemes == ()
+    assert "automotive-sensing" in by_ticker["INDI"].notes
+    assert "soc-interconnect" in by_ticker["AIP"].notes
+    assert "edge-ai-connectivity" in by_ticker["CEVA"].notes
+
+
+def test_indi_aip_ceva_corp_code_not_hardcoded():
+    # Same convention as every other EDGAR entry — resolved lazily from
+    # data/cache/edgar_ciks.json via with_resolved_ciks(), never stored
+    # statically.
+    by_ticker = {c.krx_code: c for c in get_tracked_companies(active_only=True)}
+    for ticker in ("INDI", "AIP", "CEVA"):
+        assert by_ticker[ticker].corp_code is None
+
+
+def test_active_tracked_company_count_is_exactly_32():
+    assert len(get_tracked_companies(active_only=True)) == 32
+
+
+def test_edgar_ciks_cache_already_resolves_indi_aip_ceva_with_no_network_call():
+    # Reads the real, already-populated data/cache/edgar_ciks.json left
+    # by the prior, separately-approved bounded live resolution gate —
+    # a plain local file read, zero network calls.
+    from src.config.settings import get_settings
+    from src.data_access.edgar import cik_resolver
+
+    cached = cik_resolver.load_cached_ciks(get_settings().cache_dir)
+    assert cached["INDI"].cik == "0001841925"
+    assert cached["AIP"].cik == "0001667011"
+    assert cached["CEVA"].cik == "0001173489"
+
+
+def test_indi_aip_ceva_resolve_via_with_resolved_ciks_using_cached_mapping():
+    from src.config.settings import get_settings
+    from src.data_access.edgar import cik_resolver
+
+    cached = cik_resolver.load_cached_ciks(get_settings().cache_dir)
+    resolved_map = {ticker: record.cik for ticker, record in cached.items()}
+    edgar_companies = get_tracked_companies_for_source("SEC EDGAR")
+    resolved = with_resolved_ciks(edgar_companies, resolved_map)
+    by_ticker = {c.krx_code: c for c in resolved}
+    assert by_ticker["INDI"].corp_code == "0001841925"
+    assert by_ticker["AIP"].corp_code == "0001667011"
+    assert by_ticker["CEVA"].corp_code == "0001173489"
