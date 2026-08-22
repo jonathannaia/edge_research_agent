@@ -1,5 +1,75 @@
 [
   {
+    "niche": "Space",
+    "headline": "SpaceX sends 27 Starlink satellites to orbit on 100th Falcon rocket launch of the year (photos)",
+    "summary": "SpaceX launched 27 Starlink satellites to orbit on its 100th Falcon rocket mission of the year from California.",
+    "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-satellite-launch-group-15-20",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 22 Aug 2026 12:23:59 +0000",
+    "retrieved_at": "2026-08-22T14:13:05+00:00",
+    "tickers": [
+      {
+        "ticker": "TSLA",
+        "company_name": "Tesla, Inc.",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "SpaceX's satellite launch directly addresses space launch and satellite deployment.",
+    "url_hash": "b93d3babcd6a23a4",
+    "id": "b93d3babcd6a23a4"
+  },
+  {
+    "niche": "Humanoids",
+    "headline": "The technology that could bring robot mowers to one in two American lawns",
+    "summary": "Improvements in AI, satellite navigation, and machine vision are enabling increased adoption of robotic lawn mowers in the United States.",
+    "source_url": "https://www.therobotreport.com/technology-could-bring-robot-mowers-one-half-american-lawns/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 22 Aug 2026 12:30:08 +0000",
+    "retrieved_at": "2026-08-22T14:12:57+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses technological advances enabling robotic lawn mower adoption, which is robotics automation within the humanoids scope.",
+    "url_hash": "13f8401196912cda",
+    "id": "13f8401196912cda"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Terronova starts work on 300MW data center campus outside São Paulo, Brazil",
+    "summary": "Terronova has begun construction on a 300MW data center campus near São Paulo, Brazil, with potential to expand beyond 1GW in capacity.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/terranova-boosts-technology-infrastructure-with-the-construction-of-one-of-latin-americas-first-ai-data-centers/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 22 Aug 2026 11:00:30 +0000",
+    "retrieved_at": "2026-08-22T14:12:48+00:00",
+    "tickers": [],
+    "relevance_reason": "directly addresses AI infrastructure buildout through large-scale data center construction",
+    "url_hash": "e16d3182af39442c",
+    "id": "e16d3182af39442c"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Ignis and Acciona look to build a data center in Segovia, Spain",
+    "summary": "Ignis and Acciona are pursuing a joint project to build a data center in Segovia, Spain, which includes development of a photovoltaic plant to power the facility.",
+    "source_url": "https://www.datacenterdynamics.com/en/news/ignis-and-acciona-join-forces-to-build-a-data-center-in-segovia/",
+    "source_name": "Data Center Dynamics",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 22 Aug 2026 14:00:33 +0000",
+    "retrieved_at": "2026-08-22T14:12:45+00:00",
+    "tickers": [
+      {
+        "ticker": "ANA.MC",
+        "company_name": "Acciona",
+        "jurisdiction": "Other",
+        "verified": false
+      }
+    ],
+    "relevance_reason": "Data center construction directly falls within AI Buildout scope; power infrastructure development is integral to the project.",
+    "url_hash": "79fddc7d4ccd012d",
+    "id": "79fddc7d4ccd012d"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Nvidia just showed that the harness, not the AI model, is now the real hero",
     "summary": "Nvidia research demonstrates that AI agents can perform effectively through fine-tuning techniques even when underlying AI models are not initially well-suited to a task.",
