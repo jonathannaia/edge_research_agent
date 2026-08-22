@@ -1,6 +1,20 @@
 [
   {
     "niche": "Space",
+    "headline": "How will NASA's astronaut training hub change with commercial space stations?",
+    "summary": "NASA and private industry are collaborating on the future of human spaceflight, including commercial space stations, as evidenced by activities at NASA's Johnson Space Center in Houston.",
+    "source_url": "https://www.space.com/space-exploration/international-space-station/how-will-nasas-astronaut-training-hub-change-with-commercial-space-stations",
+    "source_name": "Space.com",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 22 Aug 2026 16:00:00 +0000",
+    "retrieved_at": "2026-08-22T16:13:43+00:00",
+    "tickers": [],
+    "relevance_reason": "Article discusses NASA's collaboration with private industry on future human spaceflight and commercial space stations, which is directly within the Space scope.",
+    "url_hash": "54dbf72ca6bd4a91",
+    "id": "54dbf72ca6bd4a91"
+  },
+  {
+    "niche": "Space",
     "headline": "SpaceX sends 27 Starlink satellites to orbit on 100th Falcon rocket launch of the year (photos)",
     "summary": "SpaceX launched 27 Starlink satellites to orbit on its 100th Falcon rocket mission of the year from California.",
     "source_url": "https://www.space.com/space-exploration/launches-spacecraft/spacex-starlink-satellite-launch-group-15-20",
