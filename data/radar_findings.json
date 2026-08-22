@@ -1,5 +1,40 @@
 [
   {
+    "niche": "Humanoids",
+    "headline": "How software-defined manufacturing fits into real factory operations",
+    "summary": "R2 Labs bridges PLCs, robots, and AI to unify fragmented manufacturing systems through software-defined manufacturing approaches.",
+    "source_url": "https://www.therobotreport.com/how-software-defined-manufacturing-fits-into-real-factory-operations/",
+    "source_name": "The Robot Report",
+    "source_type": "Reputable Financial News",
+    "published_at": "Sat, 22 Aug 2026 00:48:35 +0000",
+    "retrieved_at": "2026-08-22T04:23:57+00:00",
+    "tickers": [],
+    "relevance_reason": "discusses robotics and AI integration in manufacturing automation systems",
+    "url_hash": "14b61e6d972e9c83",
+    "id": "14b61e6d972e9c83"
+  },
+  {
+    "niche": "AI Buildout",
+    "headline": "Chip Industry Week In Review",
+    "summary": "A weekly industry roundup covering chip and AI-related developments including a new Micron lab, chip/AI price movements, multi-die monitoring technology, quantum chip cooling links, interconnect bottlenecks, process technology wins, and executive leadership changes in the semiconductor sector.",
+    "source_url": "https://semiengineering.com/chip-industry-week-in-review-152/",
+    "source_name": "Semiconductor Engineering",
+    "source_type": "Reputable Financial News",
+    "published_at": "Fri, 21 Aug 2026 07:01:08 +0000",
+    "retrieved_at": "2026-08-22T04:23:47+00:00",
+    "tickers": [
+      {
+        "ticker": "MU",
+        "company_name": "Micron Technology",
+        "jurisdiction": "United States",
+        "verified": true
+      }
+    ],
+    "relevance_reason": "Covers multiple AI infrastructure topics including chip pricing, interconnect technology, and semiconductor developments relevant to AI buildout.",
+    "url_hash": "0f56a1d5e6a50b86",
+    "id": "0f56a1d5e6a50b86"
+  },
+  {
     "niche": "AI Buildout",
     "headline": "Nvidia partners with data center developer Cloverleaf",
     "summary": "Nvidia is partnering with data center developer Cloverleaf as part of its continued investment in data center development.",
