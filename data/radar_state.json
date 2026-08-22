@@ -83,6 +83,7 @@
     "5f58cfa807d1bcf5",
     "5fc8f31b557a499f",
     "60ea809ff9b76f27",
+    "620096717211c01e",
     "6240877718987147",
     "62772b5b9b6e7ef9",
     "629d8109835eb491",
@@ -209,6 +210,19 @@
     "ffcae9ee822a4f26"
   ],
   "run_history": [
+    {
+      "started_at": "2026-08-22T10:14:07+00:00",
+      "finished_at": "2026-08-22T10:14:49+00:00",
+      "status": "ok",
+      "feeds_checked": 16,
+      "items_seen": 436,
+      "items_after_freshness_filter": 52,
+      "items_after_keyword_filter": 17,
+      "items_sent_to_llm": 17,
+      "items_saved": 1,
+      "items_rejected_by_guardrail": 0,
+      "errors": []
+    },
     {
       "started_at": "2026-08-22T08:18:37+00:00",
       "finished_at": "2026-08-22T08:19:14+00:00",
